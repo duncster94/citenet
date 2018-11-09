@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>CiteNet</title>
+
+    <link rel="stylesheet" href="stylesheets/selectize.css" />
+    <link rel="stylesheet" href="stylesheets/paper-div.css" />
+    <link rel="stylesheet" href="stylesheets/unicorn_button.css" />
+    <link rel="stylesheet" href="stylesheets/scroll-bar.css" />
+    <link rel="stylesheet" href="stylesheets/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" href="stylesheets/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" href="stylesheets/jquery.nstSlider.css" />
+    <link rel="stylesheet" href="stylesheets/cytoscape-style.css" />
+    <link rel="stylesheet" href="stylesheets/loading-div.css" />
+    <link rel="stylesheet" href="stylesheets/vex.css" />
+    <link rel="stylesheet" href="stylesheets/vex-theme-wireframe.css" />
+    <link rel="stylesheet" href="stylesheets/tippy_style.css" />
+    <link rel="stylesheet" href="stylesheets/accessory-buttons.css" />
+    <link rel="stylesheet" href="stylesheets/vex_text.css" />
+
+
+  </head>
+  <body>
+
+    <div id="cy" style="display: none;"></div>
+
+    <div id="loading" class="spinner" style="display: none;">
+      <div class="double-bounce1"></div>
+      <div class="double-bounce2"></div>
+    </div>
+
+    <div id="option_buttons_div" style="display: none;">
+
+      <div id="home_div">
+        <button id="home_button" class="button button-rounded" onClick="window.location.reload()">H</button>
+      </div>
+
+      <div id="refine_div">
+        <button id="refine_button" class="button button-rounded">R</button>
+      </div>
+
+    </div>
+
+    <div id="slider-div" style="display: none;">
+      <div class="labels">
+        <span>Number of Results</span>
+        <span class="leftLabel" style="float: right;"></span>
+      </div>
+      <div id="nResultsSlider" class="nstSlider" data-range_min="10" data-range_max="100" data-cur_min="60" data-cur_max="10">
+        <div class="bar"></div>
+        <div class="leftGrip"></div>
+        <div class="slider-line"></div>
+      </div>
+    </div>
+
+
+    <div id="front-page">
+      <!-- <div id="test-popup-template" style="display: none;">
+        <span id="test-popup">
+
+          <div class="labels">
+            <span>Number of Results</span>
+            <span class="leftLabel" style="float: right;"></span>
+          </div>
+          <div id="nResultsSlider" class="nstSlider" data-range_min="10" data-range_max="100" data-cur_min="60", data-cur_max="10">
+            <div class="bar"></div>
+            <div class="leftGrip"></div>
+          </div>
+
+        </span>
+      </div> -->
+
+
+      <div id="paper-div">
+
+        <span id="paper-select-div">
+          <input id="selectize" type="text" name="selectize_form_input">
+        </span>
+
+        <!-- <span id="paper-submit-options-div">
+          <a id="paper-submit-options" class="button button-rounded tipster" data-tooltip-content="#test-popup">+</a>
+        </span> -->
+
+        <span id="paper-submit-div">
+          <button id="selectize_submit" class="button button-glow button-rounded button-highlight">Go</button>
+        </span>
+
+      </div>
+
+  </div>
+    <!-- Figure out how to use Bower to import libraries. -->
+
+    <!-- <script src="https://unpkg.com/tippy.js@2.5.4/dist/tippy.all.min.js"></script>
+    <script>
+      window.tippy || document.write("<script src='javascript/tippy.all.min.js'><\/script>")
+    </script> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+      window.jQuery || document.write("<script src='javascript/jquery-3.3.1.min.js'><\/script>")
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microplugin/0.0.3/microplugin.js"></script>
+    <script>
+      window.microplugin || document.write("<script src='javascript/microplugin.js'><\/script>")
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sifter/0.5.3/sifter.js"></script>
+    <script>
+      window.sifter || document.write("<script src='javascript/sifter.js'><\/script>")
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/selectize.min.js"></script>
+    <script>
+      window.selectize || document.write("<script src='javascript/selectize.min.js'><\/script>")
+    </script>
+
+    <!-- Get CDN -->
+    <script src="javascript/cytoscape.min.js"></script>
+
+    <script src="javascript/vex.min.js"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-wireframe'</script>
+
+    <script src="javascript/popper/popper.min.js"></script>
+    <script src="javascript/popper/cytoscape-popper.js"></script>
+
+    <!-- <script src="https://unpkg.com/tippy.js@2/dist/tippy.all.min.js"></script>
+    <script>
+      window.selectize || document.write("<script src='javascript/tippy.all.min.js'><\/script>")
+    </script> -->
+
+    <script src="javascript/tippy.all.min.js"></script>
+    <script src="javascript/tooltipster.bundle.min.js"></script>
+    <script src="javascript/jquery.nstSlider.min.js"></script>
+    <script src="javascript/selectize_test.js"></script>
+    <script src="javascript/layout.js"></script>
+    <script src="javascript/submitPapers.js"></script>
+    <script src="javascript/vex_modal.js"></script>
+    <script src="javascript/onReady.js"></script>
+
+  </body>
+</html>

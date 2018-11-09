@@ -1,0 +1,87 @@
+.is_clickable {
+  cursor: hand;
+  cursor: pointer;
+}
+.nstSlider {
+  cursor: hand;
+  cursor: pointer;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  position: relative;
+  width: inherit;
+  height: 16px;
+}
+.nstSlider .leftGrip.gripHighlighted {
+  background: #113344;
+}
+.nstSlider .rightGrip.gripHighlighted {
+  background: #113344;
+}
+.nstSlider .rightGrip,
+.nstSlider .leftGrip {
+  position: absolute;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  width: 15px;
+  height: 15px;
+  background: #ffffff;
+  border: solid 1px #ccc;
+  box-shadow: -1px 1px 2px #ccc;
+  z-index: 10;
+}
+
+.nstSlider .rightGrip:hover,
+.nstSlider .leftGrip:hover,
+.nstSlider .rightGrip:active,
+.nstSlider .leftGrip:active {
+  background-color: #eee;
+}
+
+.nstSlider .bar {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  position: absolute;
+  background: #ddd;
+  height: 7px;
+  top: 5px;
+}
+.nstSlider .highlightPanel {
+  -webkit-transition: all 500ms ease-in-out;
+  -moz-transition: all 500ms ease-in-out;
+  -ms-transition: all 500ms ease-in-out;
+  -o-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  position: absolute;
+  background: #e87722;
+  height: 20px;
+  top: 0;
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: Arial;
+  font-size: 13px;
+}
+
+.leftLabel {
+  /* float: left; */
+}
+
+.rightLabel {
+  /* float: right; */
+}
+
+.slider-line {
+  position: absolute;
+  width: inherit;
+  height: 1px;
+  background-color: #ddd;
+  top: 50%;
+}

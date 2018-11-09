@@ -1,0 +1,15 @@
+html, body {
+  width: 98%;
+  height: 98%;
+}
+
+#cy {
+  position: fixed;
+  width: 99%;
+  height: 99%;
+  display: block;
+}
+
+/* .cy-nodes {
+  background-color: 'green';
+} */
