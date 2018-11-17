@@ -1,0 +1,17 @@
+.tippy-tooltip.customLight-theme {
+    color: #666;
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid #666
+}
+
+/* .tippy-popper[x-placement^='top'] .tippy-tooltip.customLight-theme .tippy-arrow {
+    border-top-color: #666;
+} */
+
+.tippy-tooltip.customLight-theme .tippy-roundarrow {
+    fill: #666;
+}
+
+.tippy-content {
+    font-family: Arial, Helvetica, sans-serif;
+}
