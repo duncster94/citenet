@@ -1,13 +1,14 @@
 {
-  "name": "selecizetest",
-  "version": "1.0.0",
-  "description": "getting selectize to communicate with server",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "name": "CiteNet",
   "author": "Duncan Forster",
-  "license": "ISC",
+  "description": "CiteNet, a better way to search the scientific literature.",
+  "keywords": [
+    "science",
+    "scientific",
+    "search",
+    "literature",
+    "visulization"
+  ],
   "dependencies": {
     "body-parser": "^1.18.3",
     "browserify": "^16.2.2",
@@ -15,6 +16,15 @@
     "elasticsearch": "^15.1.1",
     "express": "^4.16.3",
     "neo4j-driver": "^1.6.0",
-    "selectize": "^0.12.5"
-  }
+    "selectize": "^0.12.6"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JohnGiorgi/citenet"
+  },
+  "version": "0.1.0"
 }
