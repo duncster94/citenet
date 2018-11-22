@@ -1,10 +1,16 @@
-var express = require("express");
-var path = require("path");
-var bodyParser = require("body-parser");
+const express = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const elasticsearch = require("elasticsearch");
+const extractSubnetwork = require("./random-walk.js");
 
-var app = express();
+const app = express();
+const es = new elasticsearch.Client({
+  host: 'localhost:9200',
+  log: 'error'
+});
 
-var port = 8001;
+const port = 8001;
 
 // Boilerplate
 app.set("view engine", "ejs");
@@ -14,7 +20,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.render("index");
+
+    extSub = new extractSubnetwork(["21966264", "26004540"], 10000, 0.25, 100, es, 'gisample');
+    console.time('Get subgraph time')
+    let subgraph = extSub.get_subgraph();
+    subgraph.then(() => {
+      console.timeEnd('Get subgraph time');
+      res.render("index");
+    });
+
 });
 
 app.listen(port, () => {
