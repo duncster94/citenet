@@ -1,36 +1,67 @@
 const d3 = require("d3");
 const $ = require("jquery");
 
-function d3_layout(graph) {
+function d3_layout(response, create_modal) {
     /*
     TODO: add documentation.
     */
 
-    const svg = d3.select("#network"),
-    width = svg.attr("width"),
-    height = svg.attr("height");
+    // Define display colours.
+    let link_colour = "#aaa";
+    let node_stroke_colour = "#666";
 
-    var radius = 10; 
+    // Get subgraph from response.
+    let graph = response.subgraph;
 
-    var simulation = d3.forceSimulation()
+    // Get seeds from response.
+    let seeds = response.seeds;
+
+    // Get minimum and maximum publication years from 'graph'.
+    let dates = [];
+    graph.nodes.forEach(function(node) {
+        dates.push(node.pub_date.Year);
+    })
+    let min_date = Math.min(...dates);
+    let max_date = Math.max(...dates);
+
+    // Get SVG canvas to draw layout on.
+    const svg = d3.select("#network");
+
+    // Get SVG width and height (which is window width and height).
+    let width = $("#network").width();
+    let height = $("#network").height();
+
+    // Assign width and height attributes to SVG canvas.
+    svg.attr("width", width).attr("height", height);
+
+    // Define the D3 layout object.
+    const simulation = d3.forceSimulation()
         .nodes(graph.nodes);
                                 
-    var link_force =  d3.forceLink(graph.links)
-        .id(function(d) { return d.name; });            
+    // Define link physics.
+    const link_force =  d3.forceLink(graph.links)
+        .id(function(d) { return d.id; });            
             
-    var charge_force = d3.forceManyBody()
-        .strength(-300); 
+    // Define node charge physics.
+    const charge_force = d3.forceManyBody()
+        .strength(-200); 
         
-    var center_force = d3.forceCenter(width / 2, height / 2);  
-                        
+    // Define attrictive center to keep graph in one place.
+    const center_force = d3.forceCenter(width / 2, height / 2);
+
+    // Define collision physics between nodes to avoid overlaps.
+    const collision_force = d3.forceCollide()
+        .radius(function(d) { 
+            return score_to_radius(d) + 0.5; 
+        })
+       
+    // Add forces and tick behaviour to force simulation.
     simulation
+        .force("collide", collision_force)
         .force("charge_force", charge_force)
         .force("center_force", center_force)
-        .force("links",link_force)
-    ;
-            
-    //add tick instructions: 
-    simulation.on("tick", tickActions);
+        .force("links", link_force)
+        .on("tick", tickActions)
 
     //add encompassing group for the zoom 
     var g = svg.append("g")
@@ -43,7 +74,7 @@ function d3_layout(graph) {
         .data(graph.links)
         .enter().append("line")
         .attr("stroke-width", 2)
-        .style("stroke", "#aaa");        
+        .style("stroke", link_colour);        
 
     //draw circles for the nodes 
     var node = g.append("g")
@@ -52,11 +83,19 @@ function d3_layout(graph) {
         .data(graph.nodes)
         .enter()
         .append("circle")
-        .attr("r", radius) // Map PageRank radius here.
-        .attr("fill", "#666") // Map date colour here.
+        .attr("r", function(d) {
+            return score_to_radius(d);
+        })
+        .attr("fill", function(d) {
+            return date_to_colour(d, min_date, max_date, seeds);
+        }) // Map date colour here.
+        .attr("stroke", node_stroke_colour)
+        .attr("stroke-width", "2px")
         .on("click", function(d) {
             // Call modal here.
             console.log('Modal');
+            create_modal.create_modal(d);
+
         })
 
     // Object specifying whether dragging is currently happening. This
@@ -79,12 +118,11 @@ function d3_layout(graph) {
 
     zoom_handler(svg);
     
-    var vis = svg
+    let vis = svg
         .call(zoom_handler)
         .call(zoom_handler.transform, d3.zoomIdentity
-            .scale(0.25)
-            .translate(700, 700));
-
+            .translate(width / 4, height / 4)
+            .scale(0.5))
 
     /** Functions **/
 
@@ -118,8 +156,8 @@ function d3_layout(graph) {
     function tickActions() {
         //update circle positions each tick of the simulation 
         node
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
+            .attr("cx", function(d) {return d.x; })
+            .attr("cy", function(d) {return d.y; });
             
         //update link positions 
         link
@@ -129,7 +167,45 @@ function d3_layout(graph) {
             .attr("y2", function(d) { return d.target.y; });
     } 
 
-    return {'node': node, 'is_dragging': is_dragging}
+    return {'node': node, 'is_dragging': is_dragging, 'simulation': simulation}
+}
+
+function score_to_radius(node) {
+    /*
+    Given a node, take its score and map it to a radius.
+    */
+
+    let radius = 100 * Math.pow(node.score, 1/3);
+
+    return radius;
+}
+
+function date_to_colour(node, D_min, D_max, seeds) {
+    /*
+    Given a node, map the appropriate colour.
+    */
+
+    // If the node is a seed node, colour it differently.
+    if (seeds.includes(node.id.toString())) {
+        return '#f00'
+    }
+
+    // Get publication year.
+    let year = node.pub_date.Year;
+
+    // Define minimum and maximum lightness.
+    L_min = 50
+    L_max = 100
+    
+    // Get lightness of node colour based on date.
+    let m = (L_max - L_min) / (D_min - D_max);
+    let b = L_max - m * D_min;
+  
+    let lightness = m * year + b;
+
+    let colour = 'hsla(41,100%,' + lightness.toString() + '%,1)';
+
+    return colour;
 }
 
 module.exports.d3_layout = d3_layout;

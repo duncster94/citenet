@@ -5,10 +5,39 @@
 
     <!-- Stylesheet Imports -->
     <link rel="stylesheet" href="stylesheets/front-page.css" />
+    <link rel="stylesheet" href="stylesheets/selectize.css" />
+    <link rel="stylesheet" href="stylesheets/selectize-option.css" />
+    <link rel="stylesheet" href="stylesheets/mdc.button.css" />
     <link rel="stylesheet" href="stylesheets/tippy-style.css" />
+    <link rel="stylesheet" href="stylesheets/vex.css" />
+    <link rel="stylesheet" href="stylesheets/vex-theme-wireframe.css" />
+    <link rel="stylesheet" href="stylesheets/vex-modal-style.css" />
   </head>
   <body>
-    <svg id="network" width="500" height="500"></svg>
+
+    <!-- Front Page Div -->
+    <div id="front-page" style="display: none;">
+         
+      <!-- Selectize Input -->
+      <div id="user-input-div">
+
+        <span id="selectize-span">
+          <input id="selectize" type="text" name="selectize-form-input">
+        </span>
+  
+        <button id="selectize-go-button" 
+        class="mdc-button mdc-button--raised" disabled>
+          Go!
+        </button>
+  
+      </div>
+
+    </div>
+
+
+
+    <!-- D3 Canvas -->
+    <svg id="network" style="display: none;"></svg>
 
     <!-- Script Import -->
     <script src="javascript/main-bundle.js"></script>

@@ -4,17 +4,24 @@ and interface with each other. This file is packaged using browserify
 and included in the index HTML page.
 */
 
-// Les Mis data, used for testing purposes.
-const graph = require("./les-mis-data.js")
+const $ = require("jquery");
+const on_start = require("./on-start.js");
+const selectize_input = require("./selectize-input.js");
+const create_modal = require("./create-modals.js");
 const d3_layout = require("./d3-layout");
 const create_tooltips = require("./create-tooltips.js");
+const on_go = require("./on-go.js");
 
-// Here a force directed graph is rendered. Rendered nodes and a Boolean
-// indicated drag status are returned. Call 'd3_layout' after random 
-// walk has run and client recieves response.
-const node_and_drag = d3_layout.d3_layout(graph.data);
-const node_obj = node_and_drag.node
-const is_dragging = node_and_drag.is_dragging
+// Called when the document is ready.
+$(document).ready(function() {
+    on_start.on_start();
+})
 
-// Tooltips are created for each node.
-create_tooltips.create_tooltips(node_obj, is_dragging);
+// Instantiate selectize search bar.
+selectize_input.instantiate_selectize();
+
+// Define search behaviour. Here, after user query, a D3 force-
+// directed graph is rendered. Tooltips are assigned to each
+// node as well as modals.
+const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal);
+OnGo.create_listeners();
