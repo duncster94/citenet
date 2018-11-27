@@ -2,6 +2,8 @@ const vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
 vex.defaultOptions.className = 'vex-theme-wireframe';
 
+const refine_button = require("./refine-button.js");
+
 function create_modal(node) {
     /*
     */
@@ -17,6 +19,11 @@ function create_modal(node) {
         pub_month = pub_date.Month.toString();
     }
 
+    let pub_date_string = "No date available.";
+    if (pub_year) {
+        pub_date_string = pub_month + '  ' + pub_year;
+    }
+
     let abstract = node.abstract;
     let id = node.id;
 
@@ -27,7 +34,8 @@ function create_modal(node) {
         unsafeContent:
         '<span class="vex-paper-info">' +
             '<div id="vex-header-div">' + 
-                '<button id="add-to-refine-button" class="mdc-button">' +
+                '<button id="add-to-refine-button" class="mdc-button" ' +
+                'paper=' + id + '>' +
                     '+' + 
                 '</button>' +
                 '<div id="vex-title-div">' +
@@ -35,7 +43,7 @@ function create_modal(node) {
                 '</div>' +
                 '<div id="date-journal-div">' +
                     '<span>' +
-                        pub_month + '  ' + pub_year +
+                        pub_date_string +
                     '</span>' +
                     '<span id="journal-span">' +
                         journal +
@@ -55,6 +63,8 @@ function create_modal(node) {
             '</a>' +
         '</span>'
     });
+
+    refine_button.add_refine_button_listener(id, node);
     
 }
 

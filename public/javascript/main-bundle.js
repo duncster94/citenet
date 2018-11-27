@@ -39109,6 +39109,8 @@ const vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
 vex.defaultOptions.className = 'vex-theme-wireframe';
 
+const refine_button = require("./refine-button.js");
+
 function create_modal(node) {
     /*
     */
@@ -39124,6 +39126,11 @@ function create_modal(node) {
         pub_month = pub_date.Month.toString();
     }
 
+    let pub_date_string = "No date available.";
+    if (pub_year) {
+        pub_date_string = pub_month + '  ' + pub_year;
+    }
+
     let abstract = node.abstract;
     let id = node.id;
 
@@ -39134,7 +39141,8 @@ function create_modal(node) {
         unsafeContent:
         '<span class="vex-paper-info">' +
             '<div id="vex-header-div">' + 
-                '<button id="add-to-refine-button" class="mdc-button">' +
+                '<button id="add-to-refine-button" class="mdc-button" ' +
+                'paper=' + id + '>' +
                     '+' + 
                 '</button>' +
                 '<div id="vex-title-div">' +
@@ -39142,7 +39150,7 @@ function create_modal(node) {
                 '</div>' +
                 '<div id="date-journal-div">' +
                     '<span>' +
-                        pub_month + '  ' + pub_year +
+                        pub_date_string +
                     '</span>' +
                     '<span id="journal-span">' +
                         journal +
@@ -39162,6 +39170,8 @@ function create_modal(node) {
             '</a>' +
         '</span>'
     });
+
+    refine_button.add_refine_button_listener(id, node);
     
 }
 
@@ -39194,7 +39204,7 @@ function create_refined_button() {
 }
 
 module.exports.create_modal = create_modal;
-},{"vex-dialog":43,"vex-js":44}],46:[function(require,module,exports){
+},{"./refine-button.js":51,"vex-dialog":43,"vex-js":44}],46:[function(require,module,exports){
 const tippy = require("tippy.js");
 
 
@@ -39226,6 +39236,12 @@ function create_tooltips(node_obj, is_dragging) {
         let authors = node_data.authors;
         let pub_date = node_data.pub_date;
 
+        // Check if publication year is defined.
+        let pub_year = "";
+        if (pub_date.Year) {
+            pub_year = pub_date.Year;
+        }
+
         // Create an author string.
         let author_string;
         if (authors.length == 1) {
@@ -39244,7 +39260,7 @@ function create_tooltips(node_obj, is_dragging) {
                         title + 
                     '</p>' +
                     '<p>' +
-                        author_string + pub_date.Year + 
+                        author_string + pub_year + 
                     '</p>' +
                 '</span>' +
             '</div>',
@@ -39291,8 +39307,8 @@ function d3_layout(response, create_modal) {
     */
 
     // Define display colours.
-    let link_colour = "#aaa";
-    let node_stroke_colour = "#666";
+    let link_colour = "#ccc";
+    let node_stroke_colour = "#888";
 
     // Get subgraph from response.
     let graph = response.subgraph;
@@ -39303,10 +39319,18 @@ function d3_layout(response, create_modal) {
     // Get minimum and maximum publication years from 'graph'.
     let dates = [];
     graph.nodes.forEach(function(node) {
-        dates.push(node.pub_date.Year);
-    })
+
+        let pub_year = node.pub_date.Year;
+
+        // Make sure publication year is defined.
+        if (pub_year) {
+            dates.push(node.pub_date.Year);
+        }
+    });
     let min_date = Math.min(...dates);
     let max_date = Math.max(...dates);
+
+    console.log('mindate', min_date, 'maxdate', max_date);
 
     // Get SVG canvas to draw layout on.
     const svg = d3.select("#network");
@@ -39336,7 +39360,7 @@ function d3_layout(response, create_modal) {
     // Define collision physics between nodes to avoid overlaps.
     const collision_force = d3.forceCollide()
         .radius(function(d) { 
-            return score_to_radius(d) + 0.5; 
+            return score_to_radius(d) + 3; 
         })
        
     // Add forces and tick behaviour to force simulation.
@@ -39357,7 +39381,7 @@ function d3_layout(response, create_modal) {
         .selectAll("line")
         .data(graph.links)
         .enter().append("line")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", "5px")
         .style("stroke", link_colour);        
 
     //draw circles for the nodes 
@@ -39367,6 +39391,9 @@ function d3_layout(response, create_modal) {
         .data(graph.nodes)
         .enter()
         .append("circle")
+        .attr("id", function(d) {
+            return d.id;
+        })
         .attr("r", function(d) {
             return score_to_radius(d);
         })
@@ -39374,10 +39401,9 @@ function d3_layout(response, create_modal) {
             return date_to_colour(d, min_date, max_date, seeds);
         }) // Map date colour here.
         .attr("stroke", node_stroke_colour)
-        .attr("stroke-width", "2px")
+        .attr("stroke-width", "5px")
         .on("click", function(d) {
             // Call modal here.
-            console.log('Modal');
             create_modal.create_modal(d);
 
         })
@@ -39477,6 +39503,12 @@ function date_to_colour(node, D_min, D_max, seeds) {
     // Get publication year.
     let year = node.pub_date.Year;
 
+    // If publication year is not available, set node colour to
+    // grey.
+    if (!year) {
+        return "#ccc"
+    }
+
     // Define minimum and maximum lightness.
     L_min = 50
     L_max = 100
@@ -39521,7 +39553,8 @@ selectize_input.instantiate_selectize();
 // node as well as modals.
 const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal);
 OnGo.create_listeners();
-},{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"./on-go.js":49,"./on-start.js":50,"./selectize-input.js":51,"jquery":38}],49:[function(require,module,exports){
+
+},{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"./on-go.js":49,"./on-start.js":50,"./selectize-input.js":52,"jquery":38}],49:[function(require,module,exports){
 const $ = require("jquery");
 
 /*
@@ -39635,7 +39668,6 @@ class OnGo {
 
         let self = this;
 
-        
         const layout_obj = self.d3_layout.d3_layout(response, 
             self.create_modal);
         const node_obj = layout_obj.node;
@@ -39668,6 +39700,45 @@ function on_start() {
 
 module.exports.on_start = on_start;
 },{"jquery":38}],51:[function(require,module,exports){
+const $ = require("jquery");
+
+// Object to store refined papers.
+let refined_papers = {};
+
+function add_refine_button_listener(paper_id, node) {
+    /*
+    Adds a click listener to modal refine button and stores the
+    added papers in an object.
+    */
+
+    // Get refine button.
+    let refine_button = $('#add-to-refine-button')
+
+    // Add a click listener to the refine button.
+    refine_button.on("click", function() {
+        on_refine_click(paper_id, node);
+    })
+}
+
+function on_refine_click(paper_id, node) {
+    /*
+    */
+
+    // Check if 'paper_id' is already in the refined search
+    // object. If so, remove it, if not, add it.
+    if (paper_id in refined_papers) {
+        delete refined_papers[paper_id];
+    } else {
+        refined_papers[paper_id] = true;
+    }
+
+    console.log(refined_papers);
+    console.log(node);
+}
+
+module.exports.refined_papers = refined_papers;
+module.exports.add_refine_button_listener = add_refine_button_listener;
+},{"jquery":38}],52:[function(require,module,exports){
 const $ = require("jquery");
 const selectize = require("selectize");
 

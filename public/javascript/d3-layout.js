@@ -7,8 +7,8 @@ function d3_layout(response, create_modal) {
     */
 
     // Define display colours.
-    let link_colour = "#aaa";
-    let node_stroke_colour = "#666";
+    let link_colour = "#ccc";
+    let node_stroke_colour = "#888";
 
     // Get subgraph from response.
     let graph = response.subgraph;
@@ -19,10 +19,18 @@ function d3_layout(response, create_modal) {
     // Get minimum and maximum publication years from 'graph'.
     let dates = [];
     graph.nodes.forEach(function(node) {
-        dates.push(node.pub_date.Year);
-    })
+
+        let pub_year = node.pub_date.Year;
+
+        // Make sure publication year is defined.
+        if (pub_year) {
+            dates.push(node.pub_date.Year);
+        }
+    });
     let min_date = Math.min(...dates);
     let max_date = Math.max(...dates);
+
+    console.log('mindate', min_date, 'maxdate', max_date);
 
     // Get SVG canvas to draw layout on.
     const svg = d3.select("#network");
@@ -52,7 +60,7 @@ function d3_layout(response, create_modal) {
     // Define collision physics between nodes to avoid overlaps.
     const collision_force = d3.forceCollide()
         .radius(function(d) { 
-            return score_to_radius(d) + 0.5; 
+            return score_to_radius(d) + 3; 
         })
        
     // Add forces and tick behaviour to force simulation.
@@ -73,7 +81,7 @@ function d3_layout(response, create_modal) {
         .selectAll("line")
         .data(graph.links)
         .enter().append("line")
-        .attr("stroke-width", 2)
+        .attr("stroke-width", "5px")
         .style("stroke", link_colour);        
 
     //draw circles for the nodes 
@@ -83,6 +91,9 @@ function d3_layout(response, create_modal) {
         .data(graph.nodes)
         .enter()
         .append("circle")
+        .attr("id", function(d) {
+            return d.id;
+        })
         .attr("r", function(d) {
             return score_to_radius(d);
         })
@@ -90,10 +101,9 @@ function d3_layout(response, create_modal) {
             return date_to_colour(d, min_date, max_date, seeds);
         }) // Map date colour here.
         .attr("stroke", node_stroke_colour)
-        .attr("stroke-width", "2px")
+        .attr("stroke-width", "5px")
         .on("click", function(d) {
             // Call modal here.
-            console.log('Modal');
             create_modal.create_modal(d);
 
         })
@@ -192,6 +202,12 @@ function date_to_colour(node, D_min, D_max, seeds) {
 
     // Get publication year.
     let year = node.pub_date.Year;
+
+    // If publication year is not available, set node colour to
+    // grey.
+    if (!year) {
+        return "#ccc"
+    }
 
     // Define minimum and maximum lightness.
     L_min = 50

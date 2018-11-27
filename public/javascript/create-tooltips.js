@@ -29,6 +29,12 @@ function create_tooltips(node_obj, is_dragging) {
         let authors = node_data.authors;
         let pub_date = node_data.pub_date;
 
+        // Check if publication year is defined.
+        let pub_year = "";
+        if (pub_date.Year) {
+            pub_year = pub_date.Year;
+        }
+
         // Create an author string.
         let author_string;
         if (authors.length == 1) {
@@ -47,7 +53,7 @@ function create_tooltips(node_obj, is_dragging) {
                         title + 
                     '</p>' +
                     '<p>' +
-                        author_string + pub_date.Year + 
+                        author_string + pub_year + 
                     '</p>' +
                 '</span>' +
             '</div>',

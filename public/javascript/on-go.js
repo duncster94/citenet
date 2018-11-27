@@ -111,7 +111,6 @@ class OnGo {
 
         let self = this;
 
-        
         const layout_obj = self.d3_layout.d3_layout(response, 
             self.create_modal);
         const node_obj = layout_obj.node;
