@@ -1,14 +1,14 @@
 .selectize-option {
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid #eeeeee;
 }
 
 .selectize-option-title {
   font-size: 13px;
   font-weight: bold;
-  padding-left: 5px;
+  padding: 5px 0px 0px 10px;
 }
 
 .selectize-option-authors {
   font-size: 11px;
-  padding-left: 15px;
+  padding: 0px 0px 0px 10px;
 }
