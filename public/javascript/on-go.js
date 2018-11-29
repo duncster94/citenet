@@ -120,7 +120,8 @@ class OnGo {
         self.create_tooltips.create_tooltips(node_obj, is_dragging);
 
         // After layout is instantiated and begins, fade in the svg canvas.
-        $('#network').fadeIn(300, function() {
+        $("#post-layout-buttons").show();
+        $("#network").fadeIn(300, function() {
         });
 
     }

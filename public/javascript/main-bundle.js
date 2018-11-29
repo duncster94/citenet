@@ -39542,6 +39542,7 @@ const on_go = require("./on-go.js");
 
 // Called when the document is ready.
 $(document).ready(function() {
+    console.log('ready');
     on_start.on_start();
 })
 
@@ -39677,7 +39678,8 @@ class OnGo {
         self.create_tooltips.create_tooltips(node_obj, is_dragging);
 
         // After layout is instantiated and begins, fade in the svg canvas.
-        $('#network').fadeIn(300, function() {
+        $("#post-layout-buttons").show();
+        $("#network").fadeIn(300, function() {
         });
 
     }
@@ -39695,7 +39697,11 @@ function on_start() {
     let window_width = $(window).width;
     let window_height = $(window).height;
     
-    $("#front-page").fadeIn(600);
+    console.log("ready to fade");
+    // $("#front-page").fadeIn(600);
+    // $("#front-page").addClass("in");
+
+    $('#front-page').show();
 }
 
 module.exports.on_start = on_start;

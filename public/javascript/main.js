@@ -14,6 +14,7 @@ const on_go = require("./on-go.js");
 
 // Called when the document is ready.
 $(document).ready(function() {
+    console.log('ready');
     on_start.on_start();
 })
 

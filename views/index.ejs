@@ -21,8 +21,33 @@
     </head>
   <body>
 
+    <!-- D3 Canvas -->
+    <svg id="network" style="display: none;"></svg>
+
+    <!-- Post Layout Buttons -->
+    <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
+        
+      <div class="row h-0 justify-content-left align-items-left">
+        <div class="col-0">
+            <button id="home-button" type="button" class="btn btn-primary btn-md">
+              H
+            </button>
+        </div>
+      </div>
+
+      <div class="row h-0 justify-content-left align-items-left">
+        <div class="col-0">
+            <button id="refine-button" type="button" class="btn btn-primary btn-md">
+              R
+            </button>
+        </div>
+      </div>
+
+    </div>
+
     <!-- Front Page Div -->
-    <div id="front-page" class="container h-100">
+    <div id="front-page" class="container-fluid h-100 animated fadeIn slow" style="display: none;">
+
       <div class="row h-100 justify-content-center align-items-center">
         <div class="col-8">
           <!-- Selectize Input -->
@@ -30,6 +55,7 @@
             <input id="selectize" type="text" name="selectize-form-input">
           </span>
         </div>
+
         <div class="col-2">
           <!-- GO Button -->
           <button id="selectize-go-button" type="button" class="btn btn-primary btn-md" disabled>
@@ -38,9 +64,6 @@
         </div>
       </div>
     </div>
-
-    <!-- D3 Canvas -->
-    <svg id="network" style="display: none;"></svg>
 
     <!-- Script Import -->
     <script src="javascript/main-bundle.js"></script>
