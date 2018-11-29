@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>D3 test</title>
+    <title>CiteNet</title>
 
     <!-- Stylesheet Imports -->
     <link rel="stylesheet" href="stylesheets/front-page.css" />
@@ -22,28 +22,32 @@
   <body>
 
     <!-- Front Page Div -->
-    <div id="front-page" class="container h-100">
-      <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-8">
-          <!-- Selectize Input -->
-          <span id="selectize-span">
-            <input id="selectize" type="text" name="selectize-form-input">
-          </span>
-        </div>
-        <div class="col-2">
-          <!-- GO Button -->
-          <button id="selectize-go-button" type="button" class="btn btn-primary btn-md" disabled>
-            GO
-          </button>
-        </div>
+    <div class="jumbotron d-flex align-items-center">
+      <div id="front-page" class="container text-center">
+        <!-- Title -->
+        <h1 class="card-title h1 text-center">CiteNet</h1>
+        <!-- Subtitle -->
+        <p class="orange-text my-4 font-weight-bold text-center">A powerfully intuitive way to search the scientific literature</p>
+        <hr class="my-4">
+        <!-- Selectize Input -->
+        <span id="selectize-span">
+          <input id="selectize" type="text" name="selectize-form-input">
+        </span>
+        <!-- GO Button -->
+        <button id="selectize-go-button" type="button" class="btn purple-gradient btn-block" disabled>
+          GO
+        </button>
       </div>
     </div>
+
 
     <!-- D3 Canvas -->
     <svg id="network" style="display: none;"></svg>
 
     <!-- Script Import -->
     <script src="javascript/main-bundle.js"></script>
-    
+
+
+
   </body>
 </html>

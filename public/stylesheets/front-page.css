@@ -22,3 +22,7 @@ svg {
 #network > g > g.nodes > circle {
   outline: none;
 }
+
+.jumbotron {
+    height: 100vh;
+}
