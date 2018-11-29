@@ -20,6 +20,7 @@
     "express": "^4.16.3",
     "jquery": "^3.3.1",
     "mdbootstrap": "^4.5.15",
+    "package.json": "^2.0.1",
     "popper": "^1.0.1",
     "rc-tooltip": "^3.7.3",
     "react": "^16.6.1",
