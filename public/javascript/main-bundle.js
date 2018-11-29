@@ -39109,7 +39109,7 @@ const vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
 vex.defaultOptions.className = 'vex-theme-wireframe';
 
-const refine_button = require("./refine-button.js");
+const refine_button = require("./refine-search.js");
 
 function create_modal(node) {
     /*
@@ -39204,7 +39204,7 @@ function create_refined_button() {
 }
 
 module.exports.create_modal = create_modal;
-},{"./refine-button.js":51,"vex-dialog":43,"vex-js":44}],46:[function(require,module,exports){
+},{"./refine-search.js":51,"vex-dialog":43,"vex-js":44}],46:[function(require,module,exports){
 const tippy = require("tippy.js");
 
 
@@ -39552,7 +39552,7 @@ selectize_input.instantiate_selectize();
 // Define search behaviour. Here, after user query, a D3 force-
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
-const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal);
+const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal, '#selectize-go-button');
 OnGo.create_listeners();
 
 },{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"./on-go.js":49,"./on-start.js":50,"./selectize-input.js":52,"jquery":38}],49:[function(require,module,exports){
@@ -39577,7 +39577,7 @@ class OnGo {
 
     create_listeners() {
         /*
-        Adds listeners to the 'GO!' button and specifies search behaviour.
+        Adds listeners to the search button and specifies search behaviour.
         TODO: expand this documentation.
         */
 
@@ -39728,6 +39728,8 @@ function add_refine_button_listener(paper_id, node) {
 
 function on_refine_click(paper_id, node) {
     /*
+    Specifies behaviour when the user clicks to add or remove a
+    paper from the refined search list.
     */
 
     // Check if 'paper_id' is already in the refined search
@@ -39738,8 +39740,39 @@ function on_refine_click(paper_id, node) {
         refined_papers[paper_id] = true;
     }
 
+    // Check if 'refined_papers' is empty. If so, disable
+    // the refine search button, if not, enable it.
+    if (Object.keys(refined_papers).length === 0) {
+        $('#refine-button').prop("disabled", true);
+    } else {
+        $('#refine-button').prop("disabled", false);
+    }
+
     console.log(refined_papers);
     console.log(node);
+}
+
+function add_refine_search_listener() {
+    /*
+    Adds a click listener to the refine search button.
+    */
+
+    // Get the search button.
+    refine_button = $('#refine-button');
+
+    // Add a click listener.
+    refine_button.on("click", function() {
+
+        // Disable the refine button to prevent any double
+        // searching.
+        refine_button.prop("disabled", true);
+
+        // Fade out screen.
+
+        // Create new 'OnGo' object.
+
+        // Call search.
+    })
 }
 
 module.exports.refined_papers = refined_papers;

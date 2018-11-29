@@ -2,7 +2,7 @@ const vex = require('vex-js');
 vex.registerPlugin(require('vex-dialog'));
 vex.defaultOptions.className = 'vex-theme-wireframe';
 
-const refine_button = require("./refine-button.js");
+const refine_button = require("./refine-search.js");
 
 function create_modal(node) {
     /*

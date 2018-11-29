@@ -24,5 +24,5 @@ selectize_input.instantiate_selectize();
 // Define search behaviour. Here, after user query, a D3 force-
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
-const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal);
+const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal, '#selectize-go-button');
 OnGo.create_listeners();

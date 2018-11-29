@@ -19,7 +19,7 @@ class OnGo {
 
     create_listeners() {
         /*
-        Adds listeners to the 'GO!' button and specifies search behaviour.
+        Adds listeners to the search button and specifies search behaviour.
         TODO: expand this documentation.
         */
 
