@@ -7,10 +7,8 @@ and included in the index HTML page.
 const $ = require("jquery");
 const on_start = require("./on-start.js");
 const selectize_input = require("./selectize-input.js");
-const create_modal = require("./create-modals.js");
-const d3_layout = require("./d3-layout");
-const create_tooltips = require("./create-tooltips.js");
 const on_go = require("./on-go.js");
+const refine_search = require("./refine-search.js")
 
 // Called when the document is ready.
 $(document).ready(function() {
@@ -24,5 +22,6 @@ selectize_input.instantiate_selectize();
 // Define search behaviour. Here, after user query, a D3 force-
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
-const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal, '#selectize-go-button');
-OnGo.create_listeners();
+on_go.create_listeners();
+
+refine_search.add_refine_search_listener();

@@ -40,7 +40,8 @@ function d3_layout(response, create_modal) {
     let height = $("#network").height();
 
     // Assign width and height attributes to SVG canvas.
-    svg.attr("width", width).attr("height", height);
+    svg.attr("viewBox", "0 0 " + width + " " + height)
+        .attr("preserveAspectRatio", "xMidYMid meet");
 
     // Define the D3 layout object.
     const simulation = d3.forceSimulation()

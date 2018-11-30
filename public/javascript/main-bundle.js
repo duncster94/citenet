@@ -39340,7 +39340,8 @@ function d3_layout(response, create_modal) {
     let height = $("#network").height();
 
     // Assign width and height attributes to SVG canvas.
-    svg.attr("width", width).attr("height", height);
+    svg.attr("viewBox", "0 0 " + width + " " + height)
+        .attr("preserveAspectRatio", "xMidYMid meet");
 
     // Define the D3 layout object.
     const simulation = d3.forceSimulation()
@@ -39535,10 +39536,8 @@ and included in the index HTML page.
 const $ = require("jquery");
 const on_start = require("./on-start.js");
 const selectize_input = require("./selectize-input.js");
-const create_modal = require("./create-modals.js");
-const d3_layout = require("./d3-layout");
-const create_tooltips = require("./create-tooltips.js");
 const on_go = require("./on-go.js");
+const refine_search = require("./refine-search.js")
 
 // Called when the document is ready.
 $(document).ready(function() {
@@ -39552,141 +39551,131 @@ selectize_input.instantiate_selectize();
 // Define search behaviour. Here, after user query, a D3 force-
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
-const OnGo = new on_go.OnGo(d3_layout, create_tooltips, create_modal, '#selectize-go-button');
-OnGo.create_listeners();
+on_go.create_listeners();
 
-},{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"./on-go.js":49,"./on-start.js":50,"./selectize-input.js":52,"jquery":38}],49:[function(require,module,exports){
+refine_search.add_refine_search_listener();
+
+},{"./on-go.js":49,"./on-start.js":50,"./refine-search.js":51,"./selectize-input.js":52,"jquery":38}],49:[function(require,module,exports){
 const $ = require("jquery");
+const d3_layout = require("./d3-layout");
+const create_tooltips = require("./create-tooltips.js");
+const create_modal = require("./create-modals.js");
 
-/*
-Specifies behaviour when papers in selectize search bar are submitted.
-*/
-
-class OnGo {
+function create_listeners() {
     /*
+    Adds listeners to the search button and specifies search behaviour.
+    TODO: expand this documentation.
     */
 
-    constructor (d3_layout, create_tooltips, create_modal) {
-        
-        this.d3_layout = d3_layout;
-        this.create_tooltips = create_tooltips;
-        this.create_modal = create_modal;
-        this.seeds = [];
+    // Get 'GO!' button element.
+    let go = $('#selectize-go-button');
+    
+    // Set a click listener.
+    go.click(function() {
+        disable_and_send();
+    });
 
-    }
-
-    create_listeners() {
-        /*
-        Adds listeners to the search button and specifies search behaviour.
-        TODO: expand this documentation.
-        */
-
-        let self = this;
-
-        // Get 'GO!' button element.
-        let go = $('#selectize-go-button');
-        
-        // Set a click listener.
-        go.click(function() {
+    // Set an 'enter' keypress listener.
+    go.keypress(function(event) {
+        if(event.which == 13) {
             disable_and_send();
-        });
-
-        // Set an 'enter' keypress listener.
-        go.keypress(function(event) {
-            if(event.which == 13) {
-                disable_and_send();
-            }
-        });
-
-        function disable_and_send() {
-
-            // Disable button to avoid double searching.
-            go.prop("disabled", true);
-
-            // Get user inputs and set as object property.
-            self.seeds = $("#selectize")[0].value.split(',');
-
-            // Send request.
-            self.send_papers();
         }
-    }
+    });
 
-    send_papers() {
-        /*
-        POSTs an ajax request to the server and awaits a response.
-        */
+    function disable_and_send() {
 
-        let self = this;
+        // Disable button to avoid double searching.
+        go.prop("disabled", true);
 
-        $.ajax({
-            url: "/submit_paper",
-            method: "POST",
-            dataType: "json",
-            data: {"seeds": self.seeds},
-            cache: false,
-            timeout: 0, // set this to a reasonable value for production
+        // Get user inputs and set as object property.
+        seeds = $("#selectize")[0].value.split(',');
 
-            // Before request is sent, hide front page and show loading 
-            // page.
-            beforeSend: function() {
-                self.before_send();
-            },
-
-            // Fires when response is recieved, error or timeout.
-            complete: function() {
-            },
-
-            // Fires on a successful response. Here response is processed
-            // and D3 layout is rendered.
-            success: function(response) {
-                self.process_response(response);
-            },
-
-            // Fires if there is an error.
-            // TODO: properly handle errors.
-            error: function(jqXHR, status, error) {
-                console.log(error);
-            }
-        });
-    }
-
-    before_send() {
-        /*
-        Fades out the front search page and fades in the loading page.
-        */
-
-        // Fade out the front page.
-        $("#front-page").fadeOut(600, function() {
-
-            // Fade in the loading screen.
-            console.log('faded out');
-        })
-    }
-
-    process_response(response) {
-        /*
-        */
-
-        let self = this;
-
-        const layout_obj = self.d3_layout.d3_layout(response, 
-            self.create_modal);
-        const node_obj = layout_obj.node;
-        const is_dragging = layout_obj.is_dragging;
-        const simulation = layout_obj.simulation;
-
-        self.create_tooltips.create_tooltips(node_obj, is_dragging);
-
-        // After layout is instantiated and begins, fade in the svg canvas.
-        $("#post-layout-buttons").show();
-        $("#network").fadeIn(300, function() {
-        });
-
+        // Send request.
+        send_papers(seeds, before_send, process_response);
     }
 }
 
-module.exports.OnGo = OnGo;
-},{"jquery":38}],50:[function(require,module,exports){
+function send_papers(seeds, before_send, process_response) {
+    /*
+    POSTs an ajax request to the server and awaits a response.
+    */
+
+    $.ajax({
+        url: "/submit_paper",
+        method: "POST",
+        dataType: "json",
+        data: {"seeds": seeds},
+        cache: false,
+        timeout: 0, // set this to a reasonable value for production
+
+        // Before request is sent, hide front page and show loading 
+        // page.
+        beforeSend: function() {
+            before_send();
+        },
+
+        // Fires when response is recieved, error or timeout.
+        complete: function() {
+        },
+
+        // Fires on a successful response. Here response is processed
+        // and D3 layout is rendered.
+        success: function(response) {
+            process_response(response);
+        },
+
+        // Fires if there is an error.
+        // TODO: properly handle errors.
+        error: function(jqXHR, status, error) {
+            console.log(error);
+        }
+    });
+}
+
+function before_send() {
+    /*
+    Fades out the front search page and fades in the loading page.
+    */
+
+    // Fade out the front page.
+    $("#front-page").fadeOut(600, function() {
+
+        // Fade in the loading screen.
+        console.log('faded out');
+    })
+}
+
+function process_response(response) {
+    /*
+    */
+
+    create_layout(response);
+
+    // After layout is instantiated and begins, fade in the svg canvas.
+    $("#post-layout-buttons").show();
+    $("#network").fadeIn(300, function() {
+    });
+
+}
+
+function create_layout(response) {
+    /*
+    Creates D3 layout in addition to tooltips and modals.
+    */
+
+    let layout_obj = d3_layout.d3_layout(response, 
+        create_modal);
+    let node_obj = layout_obj.node;
+    let is_dragging = layout_obj.is_dragging;
+    let simulation = layout_obj.simulation;
+
+    create_tooltips.create_tooltips(node_obj, is_dragging);
+}
+
+module.exports.create_listeners = create_listeners;
+module.exports.send_papers = send_papers;
+module.exports.create_layout = create_layout;
+},{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"jquery":38}],50:[function(require,module,exports){
 const $ = require("jquery");
 
 /*
@@ -39707,6 +39696,8 @@ function on_start() {
 module.exports.on_start = on_start;
 },{"jquery":38}],51:[function(require,module,exports){
 const $ = require("jquery");
+const on_go = require("./on-go.js");
+const d3 = require("d3");
 
 // Object to store refined papers.
 let refined_papers = {};
@@ -39763,21 +39754,40 @@ function add_refine_search_listener() {
     // Add a click listener.
     refine_button.on("click", function() {
 
+        console.log("clicked");
         // Disable the refine button to prevent any double
         // searching.
         refine_button.prop("disabled", true);
 
         // Fade out screen.
 
-        // Create new 'OnGo' object.
+        // Get refined papers array.
+        let refined_papers_arr = Object.keys(refined_papers);
 
-        // Call search.
+        // Send paper query.
+        on_go.send_papers(refined_papers_arr, 
+            before_refined_send, process_refined_response);
     })
+}
+
+function before_refined_send() {
+    /*
+    */
+
+   d3.select("svg").selectAll("*").remove();
+}
+
+function process_refined_response(response) {
+    /*
+    */
+
+    on_go.create_layout(response)
 }
 
 module.exports.refined_papers = refined_papers;
 module.exports.add_refine_button_listener = add_refine_button_listener;
-},{"jquery":38}],52:[function(require,module,exports){
+module.exports.add_refine_search_listener = add_refine_search_listener;
+},{"./on-go.js":49,"d3":33,"jquery":38}],52:[function(require,module,exports){
 const $ = require("jquery");
 const selectize = require("selectize");
 

@@ -1,4 +1,6 @@
 const $ = require("jquery");
+const on_go = require("./on-go.js");
+const d3 = require("d3");
 
 // Object to store refined papers.
 let refined_papers = {};
@@ -55,17 +57,36 @@ function add_refine_search_listener() {
     // Add a click listener.
     refine_button.on("click", function() {
 
+        console.log("clicked");
         // Disable the refine button to prevent any double
         // searching.
         refine_button.prop("disabled", true);
 
         // Fade out screen.
 
-        // Create new 'OnGo' object.
+        // Get refined papers array.
+        let refined_papers_arr = Object.keys(refined_papers);
 
-        // Call search.
+        // Send paper query.
+        on_go.send_papers(refined_papers_arr, 
+            before_refined_send, process_refined_response);
     })
+}
+
+function before_refined_send() {
+    /*
+    */
+
+   d3.select("svg").selectAll("*").remove();
+}
+
+function process_refined_response(response) {
+    /*
+    */
+
+    on_go.create_layout(response)
 }
 
 module.exports.refined_papers = refined_papers;
 module.exports.add_refine_button_listener = add_refine_button_listener;
+module.exports.add_refine_search_listener = add_refine_search_listener;
