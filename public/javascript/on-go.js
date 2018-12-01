@@ -3,6 +3,9 @@ const d3_layout = require("./d3-layout");
 const create_tooltips = require("./create-tooltips.js");
 const create_modal = require("./create-modals.js");
 
+// Object to store refined papers.
+let refined_papers = {};
+
 function create_listeners() {
     /*
     Adds listeners to the search button and specifies search behaviour.
@@ -41,6 +44,11 @@ function send_papers(seeds, before_send, process_response) {
     /*
     POSTs an ajax request to the server and awaits a response.
     */
+
+    // Adds seeds to 'refined_papers' object.
+    seeds.forEach( function (seed){
+        refined_papers[seed] = true;
+    })
 
     $.ajax({
         url: "/submit_paper",
@@ -91,6 +99,7 @@ function process_response(response) {
     /*
     */
 
+    // Run the D3 layout.
     create_layout(response);
 
     // After layout is instantiated and begins, fade in the svg canvas.
@@ -106,7 +115,7 @@ function create_layout(response) {
     */
 
     let layout_obj = d3_layout.d3_layout(response, 
-        create_modal);
+        create_modal, refined_papers);
     let node_obj = layout_obj.node;
     let is_dragging = layout_obj.is_dragging;
     let simulation = layout_obj.simulation;
@@ -117,3 +126,4 @@ function create_layout(response) {
 module.exports.create_listeners = create_listeners;
 module.exports.send_papers = send_papers;
 module.exports.create_layout = create_layout;
+module.exports.refined_papers = refined_papers;

@@ -23,5 +23,6 @@ selectize_input.instantiate_selectize();
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
 on_go.create_listeners();
+const refined_papers = on_go.refined_papers;
 
-refine_search.add_refine_search_listener();
+refine_search.add_refine_search_listener(refined_papers);

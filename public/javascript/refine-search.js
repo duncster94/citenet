@@ -2,10 +2,7 @@ const $ = require("jquery");
 const on_go = require("./on-go.js");
 const d3 = require("d3");
 
-// Object to store refined papers.
-let refined_papers = {};
-
-function add_refine_button_listener(paper_id, node) {
+function add_refine_button_listener(paper_id, node, refined_papers) {
     /*
     Adds a click listener to modal refine button and stores the
     added papers in an object.
@@ -16,11 +13,11 @@ function add_refine_button_listener(paper_id, node) {
 
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
-        on_refine_click(paper_id, node);
+        on_refine_click(paper_id, node, refined_papers);
     })
 }
 
-function on_refine_click(paper_id, node) {
+function on_refine_click(paper_id, node, refined_papers) {
     /*
     Specifies behaviour when the user clicks to add or remove a
     paper from the refined search list.
@@ -46,7 +43,7 @@ function on_refine_click(paper_id, node) {
     console.log(node);
 }
 
-function add_refine_search_listener() {
+function add_refine_search_listener(refined_papers) {
     /*
     Adds a click listener to the refine search button.
     */
@@ -58,12 +55,6 @@ function add_refine_search_listener() {
     refine_button.on("click", function() {
 
         console.log("clicked");
-        // Disable the refine button to prevent any double
-        // searching.
-        refine_button.prop("disabled", true);
-
-        // Fade out screen.
-
         // Get refined papers array.
         let refined_papers_arr = Object.keys(refined_papers);
 
@@ -77,16 +68,30 @@ function before_refined_send() {
     /*
     */
 
-   d3.select("svg").selectAll("*").remove();
+    // Disable the refine button to prevent any double
+    // searching.
+    $('#refine-button').prop("disabled", true);
+
+    // Fade-out screen.
+    $("#post-layout-buttons").removeClass("fadeIn").addClass("fadeOut")
+
+    // Clear the D3 canvas.
+    d3.select("svg").selectAll("*").remove();
 }
 
 function process_refined_response(response) {
     /*
     */
 
+    // Fade in buttons.
+    $("#post-layout-buttons").removeClass("fadeOut").addClass("fadeIn")
+
+    // Re-enable refine button.
+    $('#refine-button').prop("disabled", false);
+
     on_go.create_layout(response)
 }
 
-module.exports.refined_papers = refined_papers;
+// module.exports.refined_papers = refined_papers;
 module.exports.add_refine_button_listener = add_refine_button_listener;
 module.exports.add_refine_search_listener = add_refine_search_listener;

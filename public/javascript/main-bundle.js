@@ -39111,7 +39111,7 @@ vex.defaultOptions.className = 'vex-theme-wireframe';
 
 const refine_button = require("./refine-search.js");
 
-function create_modal(node) {
+function create_modal(node, refined_papers) {
     /*
     */
     
@@ -39171,7 +39171,8 @@ function create_modal(node) {
         '</span>'
     });
 
-    refine_button.add_refine_button_listener(id, node);
+    // Add a listener to the refine button.
+    refine_button.add_refine_button_listener(id, node, refined_papers);
     
 }
 
@@ -39301,7 +39302,7 @@ module.exports.create_tooltips = create_tooltips;
 const d3 = require("d3");
 const $ = require("jquery");
 
-function d3_layout(response, create_modal) {
+function d3_layout(response, create_modal, refined_papers) {
     /*
     TODO: add documentation.
     */
@@ -39405,7 +39406,7 @@ function d3_layout(response, create_modal) {
         .attr("stroke-width", "5px")
         .on("click", function(d) {
             // Call modal here.
-            create_modal.create_modal(d);
+            create_modal.create_modal(d, refined_papers);
 
         })
 
@@ -39552,14 +39553,18 @@ selectize_input.instantiate_selectize();
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
 on_go.create_listeners();
+const refined_papers = on_go.refined_papers;
 
-refine_search.add_refine_search_listener();
+refine_search.add_refine_search_listener(refined_papers);
 
 },{"./on-go.js":49,"./on-start.js":50,"./refine-search.js":51,"./selectize-input.js":52,"jquery":38}],49:[function(require,module,exports){
 const $ = require("jquery");
 const d3_layout = require("./d3-layout");
 const create_tooltips = require("./create-tooltips.js");
 const create_modal = require("./create-modals.js");
+
+// Object to store refined papers.
+let refined_papers = {};
 
 function create_listeners() {
     /*
@@ -39599,6 +39604,11 @@ function send_papers(seeds, before_send, process_response) {
     /*
     POSTs an ajax request to the server and awaits a response.
     */
+
+    // Adds seeds to 'refined_papers' object.
+    seeds.forEach( function (seed){
+        refined_papers[seed] = true;
+    })
 
     $.ajax({
         url: "/submit_paper",
@@ -39649,6 +39659,7 @@ function process_response(response) {
     /*
     */
 
+    // Run the D3 layout.
     create_layout(response);
 
     // After layout is instantiated and begins, fade in the svg canvas.
@@ -39664,7 +39675,7 @@ function create_layout(response) {
     */
 
     let layout_obj = d3_layout.d3_layout(response, 
-        create_modal);
+        create_modal, refined_papers);
     let node_obj = layout_obj.node;
     let is_dragging = layout_obj.is_dragging;
     let simulation = layout_obj.simulation;
@@ -39675,6 +39686,7 @@ function create_layout(response) {
 module.exports.create_listeners = create_listeners;
 module.exports.send_papers = send_papers;
 module.exports.create_layout = create_layout;
+module.exports.refined_papers = refined_papers;
 },{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"jquery":38}],50:[function(require,module,exports){
 const $ = require("jquery");
 
@@ -39699,10 +39711,7 @@ const $ = require("jquery");
 const on_go = require("./on-go.js");
 const d3 = require("d3");
 
-// Object to store refined papers.
-let refined_papers = {};
-
-function add_refine_button_listener(paper_id, node) {
+function add_refine_button_listener(paper_id, node, refined_papers) {
     /*
     Adds a click listener to modal refine button and stores the
     added papers in an object.
@@ -39713,11 +39722,11 @@ function add_refine_button_listener(paper_id, node) {
 
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
-        on_refine_click(paper_id, node);
+        on_refine_click(paper_id, node, refined_papers);
     })
 }
 
-function on_refine_click(paper_id, node) {
+function on_refine_click(paper_id, node, refined_papers) {
     /*
     Specifies behaviour when the user clicks to add or remove a
     paper from the refined search list.
@@ -39743,7 +39752,7 @@ function on_refine_click(paper_id, node) {
     console.log(node);
 }
 
-function add_refine_search_listener() {
+function add_refine_search_listener(refined_papers) {
     /*
     Adds a click listener to the refine search button.
     */
@@ -39755,12 +39764,6 @@ function add_refine_search_listener() {
     refine_button.on("click", function() {
 
         console.log("clicked");
-        // Disable the refine button to prevent any double
-        // searching.
-        refine_button.prop("disabled", true);
-
-        // Fade out screen.
-
         // Get refined papers array.
         let refined_papers_arr = Object.keys(refined_papers);
 
@@ -39774,17 +39777,31 @@ function before_refined_send() {
     /*
     */
 
-   d3.select("svg").selectAll("*").remove();
+    // Disable the refine button to prevent any double
+    // searching.
+    $('#refine-button').prop("disabled", true);
+
+    // Fade-out screen.
+    $("#post-layout-buttons").removeClass("fadeIn").addClass("fadeOut")
+
+    // Clear the D3 canvas.
+    d3.select("svg").selectAll("*").remove();
 }
 
 function process_refined_response(response) {
     /*
     */
 
+    // Fade in buttons.
+    $("#post-layout-buttons").removeClass("fadeOut").addClass("fadeIn")
+
+    // Re-enable refine button.
+    $('#refine-button').prop("disabled", false);
+
     on_go.create_layout(response)
 }
 
-module.exports.refined_papers = refined_papers;
+// module.exports.refined_papers = refined_papers;
 module.exports.add_refine_button_listener = add_refine_button_listener;
 module.exports.add_refine_search_listener = add_refine_search_listener;
 },{"./on-go.js":49,"d3":33,"jquery":38}],52:[function(require,module,exports){

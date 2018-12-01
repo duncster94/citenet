@@ -1,7 +1,7 @@
 const d3 = require("d3");
 const $ = require("jquery");
 
-function d3_layout(response, create_modal) {
+function d3_layout(response, create_modal, refined_papers) {
     /*
     TODO: add documentation.
     */
@@ -105,7 +105,7 @@ function d3_layout(response, create_modal) {
         .attr("stroke-width", "5px")
         .on("click", function(d) {
             // Call modal here.
-            create_modal.create_modal(d);
+            create_modal.create_modal(d, refined_papers);
 
         })
 

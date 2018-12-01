@@ -22,10 +22,20 @@
   <body>
 
     <!-- D3 Canvas -->
-    <svg id="network" style="display: none;"></svg>
+    <svg id="network" style="display: none;">
+      <defs>
+          <pattern id="transformedPattern"
+              x="0" y="0" width="2" height="20"
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(45)">
+  
+              <circle cx="1" cy="1" r="2" style="stroke: none; fill: #0000ff" />
+          </pattern>
+      </defs>
+    </svg>
 
     <!-- Post Layout Buttons -->
-    <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
+    <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn" style="display: none;">
         
       <div class="row h-0 justify-content-left align-items-left">
         <div class="col-0">
@@ -37,7 +47,7 @@
 
       <div class="row h-0 justify-content-left align-items-left">
         <div class="col-0">
-            <button id="refine-button" type="button" class="btn btn-primary btn-md" disabled>
+            <button id="refine-button" type="button" class="btn btn-primary btn-md">
               R
             </button>
         </div>
