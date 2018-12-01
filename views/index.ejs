@@ -1,72 +1,82 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>D3 test</title>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <title>CiteNet</title>
+      <!-- Font Awesome -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+      <!-- Bootstrap core CSS -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Material Design Bootstrap -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.15/css/mdb.min.css" rel="stylesheet">
+      <!-- Google Fonts -->
+      <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto" rel="stylesheet">
+      <!-- Custom styles -->
+      <link rel="stylesheet" href="stylesheets/front-page.css" />
+      <link rel="stylesheet" href="stylesheets/selectize.css" />
+      <link rel="stylesheet" href="stylesheets/selectize-option.css" />
+      <link rel="stylesheet" href="stylesheets/mdc.button.css" />
+      <link rel="stylesheet" href="stylesheets/tippy-style.css" />
+      <link rel="stylesheet" href="stylesheets/vex.css" />
+      <link rel="stylesheet" href="stylesheets/vex-theme-wireframe.css" />
+      <link rel="stylesheet" href="stylesheets/vex-modal-style.css" />
+   </head>
+   <body>
+      <!--Main Navigation-->
+      <header>
+      </header>
+      <!--Main Navigation-->
 
-    <!-- Stylesheet Imports -->
-    <link rel="stylesheet" href="stylesheets/front-page.css" />
-    <link rel="stylesheet" href="stylesheets/selectize.css" />
-    <link rel="stylesheet" href="stylesheets/selectize-option.css" />
-    <link rel="stylesheet" href="stylesheets/mdc.button.css" />
-    <link rel="stylesheet" href="stylesheets/tippy-style.css" />
-    <link rel="stylesheet" href="stylesheets/vex.css" />
-    <link rel="stylesheet" href="stylesheets/vex-theme-wireframe.css" />
-    <link rel="stylesheet" href="stylesheets/vex-modal-style.css" />
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.15/css/mdb.min.css" rel="stylesheet">
-    </head>
-  <body>
+      <!--Main Layout-->
+      <main>
+        <!-- D3 Canvas -->
+        <svg id="network" style="display: none;"></svg>
+         <div class="jumbotron vertical-center">
+            <!-- Post Layout Buttons -->
+            <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
+               <div class="row h-0 justify-content-left align-items-left">
+                  <div class="col-0">
+                     <button id="home-button" type="button" class="btn peach-gradient btn-md">
+                     H
+                     </button>
+                  </div>
+               </div>
+               <div class="row h-0 justify-content-left align-items-left">
+                  <div class="col-0">
+                     <button id="refine-button" type="button" class="btn peach-gradient btn-md">
+                     R
+                     </button>
+                  </div>
+               </div>
+            </div>
+            <!-- Main Page Content -->
+            <div id="front-page" class="container text-center">
+               <!-- Title -->
+               <h1 class="card-title h1 text-center animated fadeIn slow">CiteNet</h1>
+               <!-- Selectize Input -->
+               <span id="selectize-span">
+                 <input id="selectize" type="text" name="selectize-form-input" aria-label="Search">
+               </span>
+               <!-- GO Button -->
+               <button id="selectize-go-button" type="button" class="btn peach-gradient btn-block animated fadeIn slow" disabled>
+                 <i class="fa fa-search"></i>
+               </button>
+               <!-- Subtitle -->
+               <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
+            </div>
+         </div>
 
-    <!-- D3 Canvas -->
-    <svg id="network" style="display: none;"></svg>
+      </main>
+      <!--Main layout-->
 
-    <!-- Post Layout Buttons -->
-    <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
-        
-      <div class="row h-0 justify-content-left align-items-left">
-        <div class="col-0">
-            <button id="home-button" type="button" class="btn btn-primary btn-md">
-              H
-            </button>
-        </div>
-      </div>
+      <!--Footer-->
+      <footer>
+      </footer>
+      <!--Footer-->
 
-      <div class="row h-0 justify-content-left align-items-left">
-        <div class="col-0">
-            <button id="refine-button" type="button" class="btn btn-primary btn-md">
-              R
-            </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Front Page Div -->
-    <div id="front-page" class="container-fluid h-100 animated fadeIn slow" style="display: none;">
-
-      <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-8">
-          <!-- Selectize Input -->
-          <span id="selectize-span">
-            <input id="selectize" type="text" name="selectize-form-input">
-          </span>
-        </div>
-
-        <div class="col-2">
-          <!-- GO Button -->
-          <button id="selectize-go-button" type="button" class="btn btn-primary btn-md" disabled>
-            GO
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Script Import -->
-    <script src="javascript/main-bundle.js"></script>
-    
-  </body>
+      <!-- Custom script import -->
+      <script src="javascript/main-bundle.js"></script>
+   </body>
 </html>
