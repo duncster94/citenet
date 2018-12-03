@@ -39344,6 +39344,27 @@ function d3_layout(response, create_modal, refined_papers) {
     svg.attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMidYMid meet");
 
+    svg.append('defs')
+        .append('pattern')
+        .attr('id', 'diagonalHatch')
+    //   .attr('patternUnits', 'userSpaceOnUse')
+        // .attr("patternUnits", "objectBoundingBox")
+        .attr('patternContentUnits', "objectBoundingBox")
+        .attr('width', 1)
+        .attr('height', 1)
+        .append('rect')
+        .attr('width', 4)
+        .attr('height', 4)
+        .attr('x', 0)
+        .attr('x', 0)
+        .attr('fill', 'white');
+
+    d3.select('svg pattern#diagonalHatch').append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+      .attr('stroke', '#010101')
+      .attr('stroke-width', 1)
+      .attr("opacity", 0.5);
+
     // Define the D3 layout object.
     const simulation = d3.forceSimulation()
         .nodes(graph.nodes);
@@ -39387,12 +39408,19 @@ function d3_layout(response, create_modal, refined_papers) {
         .style("stroke", link_colour);        
 
     //draw circles for the nodes 
-    var node = g.append("g")
+    let node = g.append("g")
         .attr("class", "nodes") 
         .selectAll("circle")
         .data(graph.nodes)
         .enter()
-        .append("circle")
+        .append("g")
+        .attr("id", function(d) {
+            return "group_" + d.id
+        })
+        .attr("cx", 0)
+        .attr("cy", 0)
+
+    node.append("circle")
         .attr("id", function(d) {
             return d.id;
         })
@@ -39401,14 +39429,23 @@ function d3_layout(response, create_modal, refined_papers) {
         })
         .attr("fill", function(d) {
             return date_to_colour(d, min_date, max_date, seeds);
-        }) // Map date colour here.
+        })
         .attr("stroke", node_stroke_colour)
         .attr("stroke-width", "5px")
-        .on("click", function(d) {
-            // Call modal here.
-            create_modal.create_modal(d, refined_papers);
 
-        })
+    node.append("use")
+        .attr("xlink:href", "#testimage")
+        .attr("x", function(d) {return -25;})
+        .attr("y", function(d) {return -25;})
+        // .attr("height", function(d) {
+        //     return score_to_radius(d) * 2
+        // })
+        // .attr("width", function(d) {
+        //     return score_to_radius(d) * 2
+        // })
+
+    console.log(node.selectAll("circle"))
+    console.log(node.selectAll("image"))
 
     // Object specifying whether dragging is currently happening. This
     // gets passed to 'create-tooltips' and ensures tooltips do not
@@ -39466,12 +39503,13 @@ function d3_layout(response, create_modal, refined_papers) {
     }
 
     function tickActions() {
-        //update circle positions each tick of the simulation 
+        // Update group (circle and image) positions for each simulation tick.
         node
-            .attr("cx", function(d) {return d.x; })
-            .attr("cy", function(d) {return d.y; });
-            
-        //update link positions 
+            .attr("transform", function(d) {
+                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")"
+            })
+
+        // Update link positions for each simulation tick.
         link
             .attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
@@ -39499,7 +39537,7 @@ function date_to_colour(node, D_min, D_max, seeds) {
 
     // If the node is a seed node, colour it differently.
     if (seeds.includes(node.id.toString())) {
-        return '#f00'
+        return "#f00";
     }
 
     // Get publication year.
