@@ -39309,7 +39309,7 @@ function d3_layout(response, create_modal, refined_papers) {
 
     // Define display colours.
     let link_colour = "#ccc";
-    let node_stroke_colour = "#888";
+    let node_stroke_colour = "#bbb";
 
     // Get subgraph from response.
     let graph = response.subgraph;
@@ -39343,27 +39343,6 @@ function d3_layout(response, create_modal, refined_papers) {
     // Assign width and height attributes to SVG canvas.
     svg.attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMidYMid meet");
-
-    svg.append('defs')
-        .append('pattern')
-        .attr('id', 'diagonalHatch')
-    //   .attr('patternUnits', 'userSpaceOnUse')
-        // .attr("patternUnits", "objectBoundingBox")
-        .attr('patternContentUnits', "objectBoundingBox")
-        .attr('width', 1)
-        .attr('height', 1)
-        .append('rect')
-        .attr('width', 4)
-        .attr('height', 4)
-        .attr('x', 0)
-        .attr('x', 0)
-        .attr('fill', 'white');
-
-    d3.select('svg pattern#diagonalHatch').append('path')
-      .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
-      .attr('stroke', '#010101')
-      .attr('stroke-width', 1)
-      .attr("opacity", 0.5);
 
     // Define the D3 layout object.
     const simulation = d3.forceSimulation()
@@ -39433,16 +39412,25 @@ function d3_layout(response, create_modal, refined_papers) {
         .attr("stroke", node_stroke_colour)
         .attr("stroke-width", "5px")
 
+    node.append("clipPath")
+        .attr("id", function(d) {
+            return "clip_" + d.id
+        })
+        .append("circle")
+        .attr("cx", 75)
+        .attr("cy", 75)
+        .attr("r", function(d) {
+            return score_to_radius(d);
+        })
+
     node.append("use")
         .attr("xlink:href", "#testimage")
-        .attr("x", function(d) {return -25;})
-        .attr("y", function(d) {return -25;})
-        // .attr("height", function(d) {
-        //     return score_to_radius(d) * 2
-        // })
-        // .attr("width", function(d) {
-        //     return score_to_radius(d) * 2
-        // })
+        .attr("x", function(d) {return -75;})
+        .attr("y", function(d) {return -75;})
+        .attr("clip-path", function(d) {
+            return "url(#clip_" + d.id + ")";
+        })
+        .style("display", "none")
 
     console.log(node.selectAll("circle"))
     console.log(node.selectAll("image"))
