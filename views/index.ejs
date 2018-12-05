@@ -31,38 +31,45 @@
 
       <!--Main Layout-->
       <main>
+
         <!-- D3 Canvas -->
         <svg id="network" style="display: none;"></svg>
          <div class="jumbotron vertical-center">
+
             <!-- Post Layout Buttons -->
             <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
                <div class="row h-0 justify-content-left align-items-left">
                   <div class="col-0">
-                     <button id="home-button" type="button" class="btn peach-gradient btn-md">
-                     H
-                     </button>
+                      <button id="home-button" type="button" class="btn peach-gradient btn-md">
+                        <i class="fa fa-home"></i>
+                      </button>
                   </div>
                </div>
                <div class="row h-0 justify-content-left align-items-left">
                   <div class="col-0">
-                     <button id="refine-button" type="button" class="btn peach-gradient btn-md">
-                     R
-                     </button>
+                      <button id="refine-button" type="button" class="btn peach-gradient btn-md">
+                        <i class="fa fa-search"></i>
+                      </button>
                   </div>
                </div>
             </div>
+
             <!-- Main Page Content -->
             <div id="front-page" class="container text-center">
+
                <!-- Title -->
                <h1 class="card-title h1 text-center animated fadeIn slow">CiteNet</h1>
+
                <!-- Selectize Input -->
                <span id="selectize-span">
                  <input id="selectize" type="text" name="selectize-form-input" aria-label="Search">
                </span>
+
                <!-- GO Button -->
                <button id="selectize-go-button" type="button" class="btn peach-gradient btn-block animated fadeIn slow" disabled>
                  <i class="fa fa-search"></i>
                </button>
+
                <!-- Subtitle -->
                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
             </div>

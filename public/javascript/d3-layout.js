@@ -8,7 +8,7 @@ function d3_layout(response, create_modal) {
 
     // Define display colours.
     let link_colour = "#ccc";
-    let node_stroke_colour = "#888";
+    let node_stroke_colour = "#fff";
 
     // Get subgraph from response.
     let graph = response.subgraph;
