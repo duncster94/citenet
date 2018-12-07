@@ -58,6 +58,7 @@ Adds a "onKeyDown" event listener to the selectize search bar. If the earch bar 
 the user hits enter, a click event is registered on the search button.
 References:
    - https://github.com/selectize/selectize.js/issues/78#issuecomment-104990055
+   - https://stackoverflow.com/a/12293655
 */
 selectize.define('enter_key_submit', function(options) {
     let self = this;
@@ -80,7 +81,8 @@ selectize.define('enter_key_submit', function(options) {
             // enter after pressing DOWN key to trigger the dropdown options
             else if (initialSelection && initialSelection === this.items.length &&
               this.$control_input.val() === '') {
-                goButton.click(); // Trigger the button element with a click
+                self.blur();  // Makes the keyboard go away on mobile
+                goButton.click();  // Register click on the button, initiatiating search
             }
             // No need to `return false;`
             event.preventDefault();
