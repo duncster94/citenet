@@ -3,7 +3,7 @@ const selectize = require("selectize");
 
 /*
 Instantiates selectize search bar. An ajax POST query to Elasticsearch
-is defined. Selectize dropdown options are formatted in HTML for 
+is defined. Selectize dropdown options are formatted in HTML for
 rendering.
 */
 
@@ -46,7 +46,7 @@ function instantiate_selectize() {
     // Add event listener to the search bar to ensure dropdown is not
     // displayed when selectize is empty, and to set 'GO!' button state.
     add_selectize_listener($select[0].selectize);
-
+    add_search_button_listener();
 }
 
 function search_ES(query, callback, selectize_obj) {
@@ -58,7 +58,7 @@ function search_ES(query, callback, selectize_obj) {
     if (!query.length) {
         selectize_obj.clearOptions();
         selectize_obj.refreshOptions(false);
-        return callback();  
+        return callback();
     }
 
     // Sends an ajax POST request to the server with user query as data.
@@ -66,8 +66,8 @@ function search_ES(query, callback, selectize_obj) {
         url: "/selectize_query",
         type: "POST",
         data: {"value": query},
-        
-        // Temporary error callback. 
+
+        // Temporary error callback.
         // TODO: add proper handling in future versions.
         error: function() {
             console.log('Ajax POST request error in search_ES.');
@@ -109,8 +109,8 @@ function format_response(response) {
 
         // Iterate over authors and format names appropriately.
         for (let author of hit._source.authors) {
-            
-            let formatted_author = author['Initials'] + ' ' + 
+
+            let formatted_author = author['Initials'] + ' ' +
                 author['LastName'] + ',   ';
 
             author_string += formatted_author
@@ -132,7 +132,7 @@ function render(item, escape) {
     Returns HTML to render in selectize dropdown.
     */
 
-    let HTML_string = 
+    let HTML_string =
     '<div class="selectize-option">' +
         '<p class="selectize-option-title">' +
             escape(item.title) +
@@ -145,16 +145,31 @@ function render(item, escape) {
     return(HTML_string);
 }
 
+function add_search_button_listener () {
+  /*
+  Adds a "keyup" event listener to the selectize search bar. If the
+  search bar is not empty and the user hits enter, a click event is
+  registered on the search button.
+  */
+  let input = $("#selectize-span");
+  let goButton = $("#selectize-go-button");
+  input.keyup(event => {
+    if(event.key !== "Enter") return;  // Use `.key` instead.
+    goButton.click();  // Trigger the button element with a click
+    event.preventDefault();  // No need to `return false;`.
+  });
+}
+
 function add_selectize_listener(selectize_obj) {
     /*
-    Adds a "change" event listener to the selectize search bar. If the 
+    Adds a "change" event listener to the selectize search bar. If the
     search bar is empty, the dropdown is cleared and the 'GO!' button is
     disabled. If it is not empty, the 'GO!' button is enabled.
     */
 
     selectize_obj.on("change", function() {
 
-        // First, if the query is empty, ensure dropdown is not 
+        // First, if the query is empty, ensure dropdown is not
         // displayed.
         selectize_obj.clearOptions();
         selectize_obj.refreshOptions(true);
@@ -170,8 +185,7 @@ function add_selectize_listener(selectize_obj) {
         if (items.length > 0) {
             go.prop('disabled', false);
         }
-
-        if (items === undefined || items.length == 0) {
+        else if (items === undefined || items.length == 0) {
             go.prop('disabled', true);
         }
     });
