@@ -8,7 +8,7 @@ function d3_layout(response, create_modal, refined_papers) {
 
     // Define display colours.
     let link_colour = "#ccc";
-    let node_stroke_colour = "#bbb";
+    let node_stroke_colour = "#fff";
     let link_stroke_width = "5px";
     let node_stroke_width = "5px";
     let node_stroke_width_num = 5;
