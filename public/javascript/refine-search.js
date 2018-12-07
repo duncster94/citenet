@@ -24,11 +24,14 @@ function on_refine_click(paper_id, node, refined_papers) {
     */
 
     // Check if 'paper_id' is already in the refined search
-    // object. If so, remove it, if not, add it.
+    // object. If so, remove it, if not, add it. Add or remove
+    // image overlay accordingly.
     if (paper_id in refined_papers) {
         delete refined_papers[paper_id];
+        $("#overlay_" + paper_id).hide();
     } else {
         refined_papers[paper_id] = true;
+        $("#overlay_" + paper_id).show();
     }
 
     // Check if 'refined_papers' is empty. If so, disable
@@ -57,6 +60,8 @@ function add_refine_search_listener(refined_papers) {
         console.log("clicked");
         // Get refined papers array.
         let refined_papers_arr = Object.keys(refined_papers);
+
+        console.log('refined send', refined_papers_arr)
 
         // Send paper query.
         on_go.send_papers(refined_papers_arr, 

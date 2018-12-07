@@ -23,7 +23,7 @@ function create_tooltips(node_obj, is_dragging) {
     // Iterate over each node and create a corresponding tooltip containing
     // relevant metadata about the paper (node).
     node_obj._groups[0].forEach(function (node) {
-        
+
         let node_data = node.__data__
         let title = node_data.title;
         let authors = node_data.authors;
@@ -45,7 +45,7 @@ function create_tooltips(node_obj, is_dragging) {
 
         // Define the node specific tooltip, including it's HTML and
         // behaviour.
-        let tip = tippy(node, {
+        let tip = tippy(node.children[0], {
             content: 
             '<div>' +
                 '<span>' +
@@ -59,7 +59,7 @@ function create_tooltips(node_obj, is_dragging) {
             '</div>',
             trigger: "manual",
             arrow: true,
-            arrowType: 'round',
+            arrowType: "round",
             animation: "scale",
             inertia: true,
             theme: "customLight"
@@ -68,6 +68,8 @@ function create_tooltips(node_obj, is_dragging) {
         // Add this tooltip to 'tips', indexing with paper ID.
         tips[node.__data__.id] = tip
     })
+
+    let is_over = false;
 
     // Add event listeners to nodes.
     node_obj
@@ -85,6 +87,7 @@ function create_tooltips(node_obj, is_dragging) {
         // Hide tooltip on mouseout.
         .on("mouseout", function(d) {
             tips[d.id].hide();
+            is_over = false
         })
 
 }

@@ -9,6 +9,9 @@ function d3_layout(response, create_modal, refined_papers) {
     // Define display colours.
     let link_colour = "#ccc";
     let node_stroke_colour = "#bbb";
+    let link_stroke_width = "5px";
+    let node_stroke_width = "5px";
+    let node_stroke_width_num = 5;
 
     // Get subgraph from response.
     let graph = response.subgraph;
@@ -82,10 +85,10 @@ function d3_layout(response, create_modal, refined_papers) {
         .selectAll("line")
         .data(graph.links)
         .enter().append("line")
-        .attr("stroke-width", "5px")
+        .attr("stroke-width", link_stroke_width)
         .style("stroke", link_colour);        
 
-    //draw circles for the nodes 
+    // Add a group for each node object. 
     let node = g.append("g")
         .attr("class", "nodes") 
         .selectAll("circle")
@@ -97,10 +100,15 @@ function d3_layout(response, create_modal, refined_papers) {
         })
         .attr("cx", 0)
         .attr("cy", 0)
+        .on("click", function(d) {
+            // Call modal here.
+            create_modal.create_modal(d, refined_papers);
+        })
 
+    // Draw circles representing the nodes.
     node.append("circle")
         .attr("id", function(d) {
-            return d.id;
+            return "circle_" + d.id;
         })
         .attr("r", function(d) {
             return score_to_radius(d);
@@ -109,30 +117,43 @@ function d3_layout(response, create_modal, refined_papers) {
             return date_to_colour(d, min_date, max_date, seeds);
         })
         .attr("stroke", node_stroke_colour)
-        .attr("stroke-width", "5px")
+        .attr("stroke-width", node_stroke_width)
 
+    // Add a clip path for any overlaid images so they are clipped
+    // to the circle.
     node.append("clipPath")
         .attr("id", function(d) {
             return "clip_" + d.id
         })
         .append("circle")
-        .attr("cx", 75)
-        .attr("cy", 75)
         .attr("r", function(d) {
-            return score_to_radius(d);
+            return score_to_radius(d) - node_stroke_width_num / 2;
         })
 
-    node.append("use")
-        .attr("xlink:href", "#testimage")
+    // Add image overlay for refined search papers.
+    node.append("image")
+        .attr("xlink:href", "./hatch.png")
+        .attr("pointer-events", "none") // Won't be hoverable/clickable
         .attr("x", function(d) {return -75;})
         .attr("y", function(d) {return -75;})
         .attr("clip-path", function(d) {
             return "url(#clip_" + d.id + ")";
         })
-        .style("display", "none")
+        .attr("id", function(d) {
+            return "overlay_" + d.id;
+        })
+        .style("display", function(d) {
+            
+            // Check if node is in refine list, if so,
+            // display overlay.
+            if (seeds.includes(d.id)) {
+                return "inline";
+            } else {
+                return "none";
+            }
+        })
 
-    console.log(node.selectAll("circle"))
-    console.log(node.selectAll("image"))
+    console.log(refined_papers)
 
     // Object specifying whether dragging is currently happening. This
     // gets passed to 'create-tooltips' and ensures tooltips do not

@@ -46,7 +46,7 @@ function send_papers(seeds, before_send, process_response) {
     */
 
     // Adds seeds to 'refined_papers' object.
-    seeds.forEach( function (seed){
+    seeds.forEach(function (seed){
         refined_papers[seed] = true;
     })
 
