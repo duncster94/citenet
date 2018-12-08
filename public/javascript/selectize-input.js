@@ -7,14 +7,14 @@ function instantiate_selectize() {
     is defined. Selectize dropdown options are formatted in HTML for
     rendering.
     */
-    const $select = $('#selectize').selectize({
-        delimiter: ',',
+    const $select = $("#selectize").selectize({
+        delimiter: ",",
         persist: false,
         create: false,
-        labelField: 'title',
-        searchField: ['title', 'authors'], // expand this
-        placeholder: 'Enter paper title, author name(s), journal,' +
-            ' publication date and/or PubMed ID.',
+        labelField: "title",
+        searchField: ["title", "authors"], // expand this
+        placeholder: "Enter paper title, author name(s), journal," +
+            " publication date and/or PubMed ID.",
         openOnFocus: false,
         highlight: false,
         maxItems: 10,
@@ -27,7 +27,7 @@ function instantiate_selectize() {
             }
         },
 
-        // 'search_ES' is called on user query.
+        // "search_ES" is called on user query.
         load: function(query, callback) {
             search_ES(query, callback, this);
         },
@@ -40,16 +40,16 @@ function instantiate_selectize() {
         },
 
         // Necc. to allow enter key to submit forms
-        plugins: ['enter_key_submit'],
+        plugins: ["enter_key_submit"],
         onInitialize: function() {
-            this.on('submit', function() {
-                this.$input.closest('form').submit();
+            this.on("submit", function() {
+                this.$input.closest("form").submit();
             }, this);
         }
     });
 
     // Add event listener to the search bar to ensure dropdown is not displayed when selectize is
-    // empty, and to set 'GO!' button state.
+    // empty, and to set "GO!" button state.
     add_selectize_listener($select[0].selectize);
 }
 
@@ -60,7 +60,7 @@ References:
    - https://github.com/selectize/selectize.js/issues/78#issuecomment-104990055
    - https://stackoverflow.com/a/12293655
 */
-selectize.define('enter_key_submit', function(options) {
+selectize.define("enter_key_submit", function(options) {
     let self = this;
     let goButton = $("#selectize-go-button");
 
@@ -80,9 +80,9 @@ selectize.define('enter_key_submit', function(options) {
             // Necessary because we don't want this to be triggered when an option is selected with
             // enter after pressing DOWN key to trigger the dropdown options
             else if (initialSelection && initialSelection === this.items.length &&
-              this.$control_input.val() === '') {
-                self.blur();  // Makes the keyboard go away on mobile
-                goButton.click();  // Register click on the button, initiatiating search
+                this.$control_input.val() === "") {
+                self.blur(); // Makes the keyboard go away on mobile
+                goButton.click(); // Register click on the button, initiatiating search
             }
             // No need to `return false;`
             event.preventDefault();
@@ -113,7 +113,7 @@ function search_ES(query, callback, selectize) {
         // Temporary error callback.
         // TODO: add proper handling in future versions.
         error: function() {
-            console.log('Ajax POST request error in search_ES.');
+            console.log("Ajax POST request error in search_ES.");
             callback();
         },
 
@@ -136,24 +136,24 @@ function format_response(response) {
     Formats Elasticsearch response to be rendered in selectize dropdown.
     */
 
-    // Get hits from 'response'.
+    // Get hits from "response".
     let hits = response.hits.hits;
 
     // Array to store formatted responses in.
     let formatted_arr = [];
 
-    // Iterate over 'hits' and store object of formatted paper
-    // information in 'formatted_arr'.
+    // Iterate over "hits" and store object of formatted paper
+    // information in "formatted_arr".
     for (let hit of hits) {
 
         // Store author list in a string.
-        let author_string = '';
+        let author_string = "";
 
         // Iterate over authors and format names appropriately.
         for (let author of hit._source.authors) {
 
-            let formatted_author = author['Initials'] + ' ' +
-                author['LastName'] + ',   ';
+            let formatted_author = author["Initials"] + " " +
+                author["LastName"] + ",   ";
 
             author_string += formatted_author
         }
@@ -161,7 +161,7 @@ function format_response(response) {
         // Remove comma and spaces added at the end of the last author.
         author_string = author_string.slice(0, -4);
 
-        // Add results to 'formatted_arr'.
+        // Add results to "formatted_arr".
         formatted_arr.push({
             value: hit._id,
             title: hit._source.title,
@@ -212,9 +212,9 @@ function add_selectize_listener(selectize) {
         // Next, determine state of 'GO!' button. If the search bar is
         // not empty, button is enabled - otherwise disabled.
         if (items.length > 0) {
-            goButton.prop('disabled', false);
-        } else if (items === undefined || items.length == 0) {
-            goButton.prop('disabled', true);
+            goButton.prop("disabled", false);
+        } else if (items === undefined || items.length === 0) {
+            goButton.prop("disabled", true);
         }
     });
 }

@@ -31,7 +31,7 @@ svg {
 }
 
 /* Removes outline when selecting & dragging nodes */
-#network > g > g.nodes > circle {
+#network > g > g.nodes > g > circle {
   outline: none;
 }
 
