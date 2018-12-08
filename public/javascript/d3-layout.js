@@ -13,6 +13,11 @@ function d3Layout(response, createModal, refinedPapers) {
     let nodeStrokeWidth = "5px";
     let nodeStrokeWidthNum = 5;
 
+    // Specify a variable that is set on a click event and
+    // disabled on a double click event. This ensures the
+    // click listener is not triggered on a doubleclick.
+    let isSingleClick = false;
+
     // Get subgraph from response.
     let graph = response.subgraph;
 
@@ -33,8 +38,6 @@ function d3Layout(response, createModal, refinedPapers) {
     let min_date = Math.min(...dates);
     let max_date = Math.max(...dates);
 
-    console.log("mindate", min_date, "maxdate", max_date);
-
     // Get SVG canvas to draw layout on.
     const svg = d3.select("#network");
 
@@ -42,7 +45,8 @@ function d3Layout(response, createModal, refinedPapers) {
     let width = $("#network").width();
     let height = $("#network").height();
 
-    // Assign width and height attributes to SVG canvas.
+    // Assign width and height attributes to SVG canvas. 
+    // preserveAspectRatio allows for responsive sizing of canvas.
     svg.attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMidYMid meet");
 
@@ -103,8 +107,27 @@ function d3Layout(response, createModal, refinedPapers) {
         .attr("cx", 0)
         .attr("cy", 0)
         .on("click", function(d) {
-            // Call modal here.
-            createModal.createModal(d, refinedPapers);
+
+            // Set click variable to true.
+            isSingleClick = true;
+
+            // Set a timeout. If the click event is still a
+            // single click at the end of the timeout, create
+            // the modal.
+            setTimeout(function() {
+                if (isSingleClick) {
+                    createModal.createModal(d, refinedPapers)
+                }
+            }, 300)
+        })
+        .on("dblclick", function(d) {
+
+            // Set click variable to false.
+            isSingleClick = false;
+
+            // Set fixed positions of node to null.
+            d.fx = null;
+            d.fy = null;
         })
 
     // Draw circles representing the nodes.
@@ -161,8 +184,6 @@ function d3Layout(response, createModal, refinedPapers) {
             }
         })
 
-    console.log(refinedPapers);
-
     // Object specifying whether dragging is currently happening. This
     // gets passed to "create-tooltips" and ensures tooltips do not
     // display during drag.
@@ -190,6 +211,7 @@ function d3Layout(response, createModal, refinedPapers) {
         .call(zoom_handler.transform, d3.zoomIdentity
             .translate(width / 4, height / 4)
             .scale(0.5))
+            .on("dblclick.zoom", null); // Disable doubleclick zooming.
 
     /** Functions **/
 
@@ -211,8 +233,12 @@ function d3Layout(response, createModal, refinedPapers) {
     function drag_end(d) {
         isDragging.state = false;
         if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
+        // d.fx = null;
+        // d.fy = null;
+
+        // Set fixed position of node to where user dragged it.
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
     }
 
     //Zoom functions
