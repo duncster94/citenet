@@ -22,6 +22,8 @@
       <link rel="stylesheet" href="stylesheets/vex.css" />
       <link rel="stylesheet" href="stylesheets/vex-theme-wireframe.css" />
       <link rel="stylesheet" href="stylesheets/vex-modal-style.css" />
+      <!-- Add support for selectize on IE 9 -->
+      <!--[if lt IE 9]><script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.0.8/es5-shim.min.js"></script><![endif]-->
    </head>
    <body>
       <!--Main Navigation-->
@@ -35,7 +37,6 @@
         <!-- D3 Canvas -->
         <svg id="network" style="display: none;"></svg>
          <div class="jumbotron vertical-center">
-
             <!-- Post Layout Buttons -->
             <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
                <div class="row h-0 justify-content-left align-items-left">
@@ -62,14 +63,11 @@
 
                <!-- Selectize Input -->
                <span id="selectize-span">
-                 <input id="selectize" type="text" name="selectize-form-input" aria-label="Search">
+                 <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
+                 <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
+                   <i class="fa fa-search"></i>
+                 </button>
                </span>
-
-               <!-- GO Button -->
-               <button id="selectize-go-button" type="button" class="btn peach-gradient btn-block animated fadeIn slow" disabled>
-                 <i class="fa fa-search"></i>
-               </button>
-
                <!-- Subtitle -->
                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
             </div>
@@ -85,5 +83,6 @@
 
       <!-- Custom script import -->
       <script src="javascript/main-bundle.js"></script>
+
    </body>
 </html>

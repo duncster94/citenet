@@ -1,17 +1,26 @@
 const tippy = require("tippy.js");
 
 
-function create_tooltips(node_obj, is_dragging) {
+function createTooltips(nodeObj, isDragging) {
     /*
     Creates a tooltip for each node based on the data it contains and
     sets event listeners to control their display.
 
-    params: 
-        node_obj: Object. Contains the node objects as defined in
+    params:
+        nodeObj: Object. Contains the node objects as defined in
             'd3-layout'.
-        is_dragging: Object. Contains a Boolean that specifies whether
+        isDragging: Object. Contains a Boolean that specifies whether
             a node is currently being dragged.
-    
+    /*
+    Creates a tooltip for each node based on the data it contains and
+    sets event listeners to control their display.
+
+    params:
+        nodeObj: Object. Contains the node objects as defined in
+            'd3-layout'.
+        isDragging: Object. Contains a Boolean that specifies whether
+            a node is currently being dragged.
+
     returns:
         null
     */
@@ -22,7 +31,7 @@ function create_tooltips(node_obj, is_dragging) {
 
     // Iterate over each node and create a corresponding tooltip containing
     // relevant metadata about the paper (node).
-    node_obj._groups[0].forEach(function (node) {
+    nodeObj._groups[0].forEach(function(node) {
 
         let node_data = node.__data__
         let title = node_data.title;
@@ -37,7 +46,7 @@ function create_tooltips(node_obj, is_dragging) {
 
         // Create an author string.
         let author_string;
-        if (authors.length == 1) {
+        if (authors.length === 1) {
             author_string = authors[0].LastName + '   ';
         } else {
             author_string = authors[0].LastName + ' et al.   ';
@@ -46,17 +55,16 @@ function create_tooltips(node_obj, is_dragging) {
         // Define the node specific tooltip, including it's HTML and
         // behaviour.
         let tip = tippy(node.children[0], {
-            content: 
-            '<div>' +
+            content: '<div>' +
                 '<span>' +
-                    '<p>' + 
-                        title + 
-                    '</p>' +
-                    '<p>' +
-                        author_string + pub_year + 
-                    '</p>' +
+                '<p>' +
+                title +
+                '</p>' +
+                '<p>' +
+                author_string + pub_year +
+                '</p>' +
                 '</span>' +
-            '</div>',
+                '</div>',
             trigger: "manual",
             arrow: true,
             arrowType: "round",
@@ -64,32 +72,32 @@ function create_tooltips(node_obj, is_dragging) {
             inertia: true,
             theme: "customLight"
         }).instances[0]
-        
+
         // Add this tooltip to 'tips', indexing with paper ID.
         tips[node.__data__.id] = tip
     })
 
-    let is_over = false;
+    let isOver = false;
 
     // Add event listeners to nodes.
-    node_obj
+    nodeObj
         // Show tooltip on mouseover.
         .on("mouseover", function(d) {
             // If the node is not currently being dragged, display
             // the tooltip.
-            // TODO: tooltips still displaying on mousedown, D3 zoom/drag 
+            // TODO: tooltips still displaying on mousedown, D3 zoom/drag
             // consumes mousedown event. Need to find a way to properly
             // hide tooltips on mousedown.
-            if (!is_dragging.state) {
+            if (!isDragging.state) {
                 tips[d.id].show();
             }
         })
         // Hide tooltip on mouseout.
         .on("mouseout", function(d) {
             tips[d.id].hide();
-            is_over = false
+            isOver = false;
         })
 
 }
 
-module.exports.create_tooltips = create_tooltips;
+module.exports.createTooltips = createTooltips;

@@ -26,12 +26,12 @@ app.use(bodyParser.json());
 
 // Called on page load.
 app.get("/", (request, response) => {
-  response.render("index");    
+  response.render("index");
 });
 
 // Called on user selectize query.
 app.post("/selectize_query", (request, response) => {
-  
+
   // Get Elasticsearch query Promise and package response on Promise
   // resolution.
   query_es.query_es(request.body.value, index_name, es)
@@ -44,7 +44,7 @@ app.post("/selectize_query", (request, response) => {
 app.post("/submit_paper", (request, response) => {
 
   // Set response type to JSON.
-  response.contentType('json');
+  response.contentType("json");
 
   console.log(request.body);
   // Get seeds from request body.
@@ -65,7 +65,7 @@ app.post("/submit_paper", (request, response) => {
   fork_randomwalk.on("message", function(message) {
     response.send({subgraph: message.subgraph, seeds: seeds});
   });
-})
+});
 
 app.listen(port, () => {
   console.log("Server listening on Port " + port);
