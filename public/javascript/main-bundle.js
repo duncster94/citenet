@@ -39161,7 +39161,7 @@ vex.defaultOptions.className = 'vex-theme-wireframe';
 
 const refine_button = require("./refine-search.js");
 
-function create_modal(node, refined_papers) {
+function createModal(node, refinedPapers) {
     /*
      */
 
@@ -39221,7 +39221,7 @@ function create_modal(node, refined_papers) {
     });
 
     // Add a listener to the refine button.
-    refine_button.add_refine_button_listener(id, node, refined_papers);
+    refine_button.add_refine_button_listener(id, node, refinedPapers);
 
 }
 
@@ -39253,19 +39253,19 @@ function create_refined_button() {
 
 }
 
-module.exports.create_modal = create_modal;
+module.exports.createModal = createModal;
 
 },{"./refine-search.js":51,"vex-dialog":43,"vex-js":44}],46:[function(require,module,exports){
 const tippy = require("tippy.js");
 
 
-function create_tooltips(node_obj, isDragging) {
+function createTooltips(nodeObj, isDragging) {
     /*
     Creates a tooltip for each node based on the data it contains and
     sets event listeners to control their display.
 
     params:
-        node_obj: Object. Contains the node objects as defined in
+        nodeObj: Object. Contains the node objects as defined in
             'd3-layout'.
         isDragging: Object. Contains a Boolean that specifies whether
             a node is currently being dragged.
@@ -39274,7 +39274,7 @@ function create_tooltips(node_obj, isDragging) {
     sets event listeners to control their display.
 
     params:
-        node_obj: Object. Contains the node objects as defined in
+        nodeObj: Object. Contains the node objects as defined in
             'd3-layout'.
         isDragging: Object. Contains a Boolean that specifies whether
             a node is currently being dragged.
@@ -39289,7 +39289,7 @@ function create_tooltips(node_obj, isDragging) {
 
     // Iterate over each node and create a corresponding tooltip containing
     // relevant metadata about the paper (node).
-    node_obj._groups[0].forEach(function(node) {
+    nodeObj._groups[0].forEach(function(node) {
 
         let node_data = node.__data__
         let title = node_data.title;
@@ -39335,10 +39335,10 @@ function create_tooltips(node_obj, isDragging) {
         tips[node.__data__.id] = tip
     })
 
-    let is_over = false;
+    let isOver = false;
 
     // Add event listeners to nodes.
-    node_obj
+    nodeObj
         // Show tooltip on mouseover.
         .on("mouseover", function(d) {
             // If the node is not currently being dragged, display
@@ -39353,18 +39353,18 @@ function create_tooltips(node_obj, isDragging) {
         // Hide tooltip on mouseout.
         .on("mouseout", function(d) {
             tips[d.id].hide();
-            is_over = false
+            isOver = false;
         })
 
 }
 
-module.exports.create_tooltips = create_tooltips;
+module.exports.createTooltips = createTooltips;
 
 },{"tippy.js":42}],47:[function(require,module,exports){
 const d3 = require("d3");
 const $ = require("jquery");
 
-function d3_layout(response, create_modal, refined_papers) {
+function d3Layout(response, createModal, refinedPapers) {
     /*
     TODO: add documentation.
     */
@@ -39461,13 +39461,13 @@ function d3_layout(response, create_modal, refined_papers) {
         .enter()
         .append("g")
         .attr("id", function(d) {
-            return "group_" + d.id
+            return "group_" + d.id;
         })
         .attr("cx", 0)
         .attr("cy", 0)
         .on("click", function(d) {
             // Call modal here.
-            create_modal.create_modal(d, refined_papers);
+            createModal.createModal(d, refinedPapers);
         })
 
     // Draw circles representing the nodes.
@@ -39482,13 +39482,13 @@ function d3_layout(response, create_modal, refined_papers) {
             return date_to_colour(d, min_date, max_date, seeds);
         })
         .attr("stroke", nodeStrokeColour)
-        .attr("stroke-width", nodeStrokeWidth)
+        .attr("stroke-width", nodeStrokeWidth);
 
     // Add a clip path for any overlaid images so they are clipped
     // to the circle.
     node.append("clipPath")
         .attr("id", function(d) {
-            return "clip_" + d.id
+            return "clip_" + d.id;
         })
         .append("circle")
         .attr("r", function(d) {
@@ -39522,7 +39522,7 @@ function d3_layout(response, create_modal, refined_papers) {
             }
         })
 
-    console.log(refined_papers)
+    console.log(refinedPapers);
 
     // Object specifying whether dragging is currently happening. This
     // gets passed to "create-tooltips" and ensures tooltips do not
@@ -39585,7 +39585,7 @@ function d3_layout(response, create_modal, refined_papers) {
         // Update group (circle and image) positions for each simulation tick.
         node
             .attr("transform", function(d) {
-                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")"
+                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")";
             })
 
         // Update link positions for each simulation tick.
@@ -39608,7 +39608,7 @@ function d3_layout(response, create_modal, refined_papers) {
         "node": node,
         "isDragging": isDragging,
         "simulation": simulation
-    }
+    };
 }
 
 function score_to_radius(node) {
@@ -39655,7 +39655,7 @@ function date_to_colour(node, D_min, D_max, seeds) {
     return colour;
 }
 
-module.exports.d3_layout = d3_layout;
+module.exports.d3Layout = d3Layout;
 
 },{"d3":33,"jquery":38}],48:[function(require,module,exports){
 /*
@@ -39664,36 +39664,36 @@ and interface with each other. This file is packaged using browserify
 and included in the index HTML page.
 */
 const $ = require("jquery");
-const on_start = require("./on-start.js");
-const selectize_input = require("./selectize-input.js");
-const on_go = require("./on-go.js");
-const refine_search = require("./refine-search.js");
+const onStart = require("./on-start.js");
+const selectizeInput = require("./selectize-input.js");
+const onGo = require("./on-go.js");
+const refineSearch = require("./refine-search.js");
 
 // Called when the document is ready.
 $(document).ready(function() {
     console.log("ready");
-    on_start.on_start();
+    onStart.onStart();
 });
 
 // Instantiate selectize search bar.
-selectize_input.instantiate_selectize();
+selectizeInput.instantiate_selectize();
 
 // Define search behaviour. Here, after user query, a D3 force-
 // directed graph is rendered. Tooltips are assigned to each
 // node as well as modals.
-on_go.create_listeners();
-const refined_papers = on_go.refined_papers;
+onGo.create_listeners();
+const refinedPapers = onGo.refinedPapers;
 
-refine_search.add_refine_search_listener(refined_papers);
+refineSearch.add_refineSearch_listener(refinedPapers);
 
 },{"./on-go.js":49,"./on-start.js":50,"./refine-search.js":51,"./selectize-input.js":52,"jquery":38}],49:[function(require,module,exports){
 const $ = require("jquery");
-const d3_layout = require("./d3-layout");
-const create_tooltips = require("./create-tooltips.js");
-const create_modal = require("./create-modals.js");
+const d3Layout = require("./d3-layout");
+const createTooltips = require("./create-tooltips.js");
+const createModal = require("./create-modals.js");
 
 // Object to store refined papers.
-let refined_papers = {};
+let refinedPapers = {};
 
 function create_listeners() {
     /*
@@ -39734,9 +39734,9 @@ function send_papers(seeds, before_send, process_response) {
     POSTs an ajax request to the server and awaits a response.
     */
 
-    // Adds seeds to "refined_papers" object.
+    // Adds seeds to "refinedPapers" object.
     seeds.forEach(function(seed) {
-        refined_papers[seed] = true;
+        refinedPapers[seed] = true;
     })
 
     $.ajax({
@@ -39803,19 +39803,19 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let layout_obj = d3_layout.d3_layout(response,
-        create_modal, refined_papers);
-    let node_obj = layout_obj.node;
-    let isDragging = layout_obj.isDragging;
-    let simulation = layout_obj.simulation;
+    let layoutObj = d3Layout.d3Layout(response,
+        createModal, refinedPapers);
+    let nodeObj = layoutObj.node;
+    let isDragging = layoutObj.isDragging;
+    let simulation = layoutObj.simulation;
 
-    create_tooltips.create_tooltips(node_obj, isDragging);
+    createTooltips.createTooltips(nodeObj, isDragging);
 }
 
 module.exports.create_listeners = create_listeners;
 module.exports.send_papers = send_papers;
 module.exports.create_layout = create_layout;
-module.exports.refined_papers = refined_papers;
+module.exports.refinedPapers = refinedPapers;
 
 },{"./create-modals.js":45,"./create-tooltips.js":46,"./d3-layout":47,"jquery":38}],50:[function(require,module,exports){
 const $ = require("jquery");
@@ -39824,7 +39824,7 @@ const $ = require("jquery");
 
 */
 
-function on_start() {
+function onStart() {
     let window_width = $(window).width;
     let window_height = $(window).height;
 
@@ -39835,14 +39835,14 @@ function on_start() {
     $("#front-page").show();
 }
 
-module.exports.on_start = on_start;
+module.exports.onStart = onStart;
 
 },{"jquery":38}],51:[function(require,module,exports){
 const $ = require("jquery");
-const on_go = require("./on-go.js");
+const onGo = require("./on-go.js");
 const d3 = require("d3");
 
-function add_refine_button_listener(paper_id, node, refined_papers) {
+function add_refine_button_listener(paperId, node, refinedPapers) {
     /*
     Adds a click listener to modal refine button and stores the
     added papers in an object.
@@ -39853,40 +39853,40 @@ function add_refine_button_listener(paper_id, node, refined_papers) {
 
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
-        on_refine_click(paper_id, node, refined_papers);
+        on_refine_click(paperId, node, refinedPapers);
     })
 }
 
-function on_refine_click(paper_id, node, refined_papers) {
+function on_refine_click(paperId, node, refinedPapers) {
     /*
     Specifies behaviour when the user clicks to add or remove a
     paper from the refined search list.
     */
 
-    // Check if "paper_id" is already in the refined search
+    // Check if "paperId" is already in the refined search
     // object. If so, remove it, if not, add it. Add or remove
     // image overlay accordingly.
-    if (paper_id in refined_papers) {
-        delete refined_papers[paper_id];
-        $("#overlay_" + paper_id).hide();
+    if (paperId in refinedPapers) {
+        delete refinedPapers[paperId];
+        $("#overlay_" + paperId).hide();
     } else {
-        refined_papers[paper_id] = true;
-        $("#overlay_" + paper_id).show();
+        refinedPapers[paperId] = true;
+        $("#overlay_" + paperId).show();
     }
 
-    // Check if "refined_papers" is empty. If so, disable
+    // Check if "refinedPapers" is empty. If so, disable
     // the refine search button, if not, enable it.
-    if (Object.keys(refined_papers).length === 0) {
+    if (Object.keys(refinedPapers).length === 0) {
         $("#refine-button").prop("disabled", true);
     } else {
         $("#refine-button").prop("disabled", false);
     }
 
-    console.log(refined_papers);
+    console.log(refinedPapers);
     console.log(node);
 }
 
-function add_refine_search_listener(refined_papers) {
+function add_refineSearch_listener(refinedPapers) {
     /*
     Adds a click listener to the refine search button.
     */
@@ -39899,14 +39899,14 @@ function add_refine_search_listener(refined_papers) {
 
         console.log("clicked");
         // Get refined papers array.
-        let refined_papers_arr = Object.keys(refined_papers);
+        let refinedPapersArr = Object.keys(refinedPapers);
 
-        console.log("refined send", refined_papers_arr)
+        console.log("refined send", refinedPapersArr);
 
         // Send paper query.
-        on_go.send_papers(refined_papers_arr,
+        onGo.send_papers(refinedPapersArr,
             before_refined_send, process_refined_response);
-    })
+    });
 }
 
 function before_refined_send() {
@@ -39918,7 +39918,7 @@ function before_refined_send() {
     $("#refine-button").prop("disabled", true);
 
     // Fade-out screen.
-    $("#post-layout-buttons").removeClass("fadeIn").addClass("fadeOut")
+    $("#post-layout-buttons").removeClass("fadeIn").addClass("fadeOut");
 
     // Clear the D3 canvas.
     d3.select("svg").selectAll("*").remove();
@@ -39929,17 +39929,17 @@ function process_refined_response(response) {
      */
 
     // Fade in buttons.
-    $("#post-layout-buttons").removeClass("fadeOut").addClass("fadeIn")
+    $("#post-layout-buttons").removeClass("fadeOut").addClass("fadeIn");
 
     // Re-enable refine button.
     $("#refine-button").prop("disabled", false);
 
-    on_go.create_layout(response)
+    onGo.create_layout(response);
 }
 
-// module.exports.refined_papers = refined_papers;
+// module.exports.refinedPapers = refinedPapers;
 module.exports.add_refine_button_listener = add_refine_button_listener;
-module.exports.add_refine_search_listener = add_refine_search_listener;
+module.exports.add_refineSearch_listener = add_refineSearch_listener;
 
 },{"./on-go.js":49,"d3":33,"jquery":38}],52:[function(require,module,exports){
 const $ = require("jquery");

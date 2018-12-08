@@ -4,7 +4,7 @@ vex.defaultOptions.className = 'vex-theme-wireframe';
 
 const refine_button = require("./refine-search.js");
 
-function create_modal(node, refined_papers) {
+function createModal(node, refinedPapers) {
     /*
      */
 
@@ -64,7 +64,7 @@ function create_modal(node, refined_papers) {
     });
 
     // Add a listener to the refine button.
-    refine_button.add_refine_button_listener(id, node, refined_papers);
+    refine_button.add_refine_button_listener(id, node, refinedPapers);
 
 }
 
@@ -96,4 +96,4 @@ function create_refined_button() {
 
 }
 
-module.exports.create_modal = create_modal;
+module.exports.createModal = createModal;

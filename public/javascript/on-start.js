@@ -4,7 +4,7 @@ const $ = require("jquery");
 
 */
 
-function on_start() {
+function onStart() {
     let window_width = $(window).width;
     let window_height = $(window).height;
 
@@ -15,4 +15,4 @@ function on_start() {
     $("#front-page").show();
 }
 
-module.exports.on_start = on_start;
+module.exports.onStart = onStart;

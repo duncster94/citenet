@@ -1,13 +1,13 @@
 const tippy = require("tippy.js");
 
 
-function create_tooltips(node_obj, isDragging) {
+function createTooltips(nodeObj, isDragging) {
     /*
     Creates a tooltip for each node based on the data it contains and
     sets event listeners to control their display.
 
     params:
-        node_obj: Object. Contains the node objects as defined in
+        nodeObj: Object. Contains the node objects as defined in
             'd3-layout'.
         isDragging: Object. Contains a Boolean that specifies whether
             a node is currently being dragged.
@@ -16,7 +16,7 @@ function create_tooltips(node_obj, isDragging) {
     sets event listeners to control their display.
 
     params:
-        node_obj: Object. Contains the node objects as defined in
+        nodeObj: Object. Contains the node objects as defined in
             'd3-layout'.
         isDragging: Object. Contains a Boolean that specifies whether
             a node is currently being dragged.
@@ -31,7 +31,7 @@ function create_tooltips(node_obj, isDragging) {
 
     // Iterate over each node and create a corresponding tooltip containing
     // relevant metadata about the paper (node).
-    node_obj._groups[0].forEach(function(node) {
+    nodeObj._groups[0].forEach(function(node) {
 
         let node_data = node.__data__
         let title = node_data.title;
@@ -77,10 +77,10 @@ function create_tooltips(node_obj, isDragging) {
         tips[node.__data__.id] = tip
     })
 
-    let is_over = false;
+    let isOver = false;
 
     // Add event listeners to nodes.
-    node_obj
+    nodeObj
         // Show tooltip on mouseover.
         .on("mouseover", function(d) {
             // If the node is not currently being dragged, display
@@ -95,9 +95,9 @@ function create_tooltips(node_obj, isDragging) {
         // Hide tooltip on mouseout.
         .on("mouseout", function(d) {
             tips[d.id].hide();
-            is_over = false
+            isOver = false;
         })
 
 }
 
-module.exports.create_tooltips = create_tooltips;
+module.exports.createTooltips = createTooltips;

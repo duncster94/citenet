@@ -1,10 +1,10 @@
 const $ = require("jquery");
-const d3_layout = require("./d3-layout");
-const create_tooltips = require("./create-tooltips.js");
-const create_modal = require("./create-modals.js");
+const d3Layout = require("./d3-layout");
+const createTooltips = require("./create-tooltips.js");
+const createModal = require("./create-modals.js");
 
 // Object to store refined papers.
-let refined_papers = {};
+let refinedPapers = {};
 
 function create_listeners() {
     /*
@@ -45,9 +45,9 @@ function send_papers(seeds, before_send, process_response) {
     POSTs an ajax request to the server and awaits a response.
     */
 
-    // Adds seeds to "refined_papers" object.
+    // Adds seeds to "refinedPapers" object.
     seeds.forEach(function(seed) {
-        refined_papers[seed] = true;
+        refinedPapers[seed] = true;
     })
 
     $.ajax({
@@ -114,16 +114,16 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let layout_obj = d3_layout.d3_layout(response,
-        create_modal, refined_papers);
-    let node_obj = layout_obj.node;
-    let isDragging = layout_obj.isDragging;
-    let simulation = layout_obj.simulation;
+    let layoutObj = d3Layout.d3Layout(response,
+        createModal, refinedPapers);
+    let nodeObj = layoutObj.node;
+    let isDragging = layoutObj.isDragging;
+    let simulation = layoutObj.simulation;
 
-    create_tooltips.create_tooltips(node_obj, isDragging);
+    createTooltips.createTooltips(nodeObj, isDragging);
 }
 
 module.exports.create_listeners = create_listeners;
 module.exports.send_papers = send_papers;
 module.exports.create_layout = create_layout;
-module.exports.refined_papers = refined_papers;
+module.exports.refinedPapers = refinedPapers;

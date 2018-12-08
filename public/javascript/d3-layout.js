@@ -1,7 +1,7 @@
 const d3 = require("d3");
 const $ = require("jquery");
 
-function d3_layout(response, create_modal, refined_papers) {
+function d3Layout(response, createModal, refinedPapers) {
     /*
     TODO: add documentation.
     */
@@ -98,13 +98,13 @@ function d3_layout(response, create_modal, refined_papers) {
         .enter()
         .append("g")
         .attr("id", function(d) {
-            return "group_" + d.id
+            return "group_" + d.id;
         })
         .attr("cx", 0)
         .attr("cy", 0)
         .on("click", function(d) {
             // Call modal here.
-            create_modal.create_modal(d, refined_papers);
+            createModal.createModal(d, refinedPapers);
         })
 
     // Draw circles representing the nodes.
@@ -119,13 +119,13 @@ function d3_layout(response, create_modal, refined_papers) {
             return date_to_colour(d, min_date, max_date, seeds);
         })
         .attr("stroke", nodeStrokeColour)
-        .attr("stroke-width", nodeStrokeWidth)
+        .attr("stroke-width", nodeStrokeWidth);
 
     // Add a clip path for any overlaid images so they are clipped
     // to the circle.
     node.append("clipPath")
         .attr("id", function(d) {
-            return "clip_" + d.id
+            return "clip_" + d.id;
         })
         .append("circle")
         .attr("r", function(d) {
@@ -159,7 +159,7 @@ function d3_layout(response, create_modal, refined_papers) {
             }
         })
 
-    console.log(refined_papers)
+    console.log(refinedPapers);
 
     // Object specifying whether dragging is currently happening. This
     // gets passed to "create-tooltips" and ensures tooltips do not
@@ -222,7 +222,7 @@ function d3_layout(response, create_modal, refined_papers) {
         // Update group (circle and image) positions for each simulation tick.
         node
             .attr("transform", function(d) {
-                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")"
+                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")";
             })
 
         // Update link positions for each simulation tick.
@@ -245,7 +245,7 @@ function d3_layout(response, create_modal, refined_papers) {
         "node": node,
         "isDragging": isDragging,
         "simulation": simulation
-    }
+    };
 }
 
 function score_to_radius(node) {
@@ -292,4 +292,4 @@ function date_to_colour(node, D_min, D_max, seeds) {
     return colour;
 }
 
-module.exports.d3_layout = d3_layout;
+module.exports.d3Layout = d3Layout;
