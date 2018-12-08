@@ -132,8 +132,10 @@ function d3_layout(response, create_modal, refined_papers) {
 
     // Add image overlay for refined search papers.
     node.append("image")
-        .attr("xlink:href", "./hatch.png")
+        .attr("xlink:href", "images/hatch.svg")
         .attr("pointer-events", "none") // Won't be hoverable/clickable
+        .attr("height", "150")
+        .attr("width", "150")
         .attr("x", function(d) {return -75;})
         .attr("y", function(d) {return -75;})
         .attr("clip-path", function(d) {
