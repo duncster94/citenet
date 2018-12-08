@@ -6,12 +6,12 @@ const refine_button = require("./refine-search.js");
 
 function create_modal(node, refined_papers) {
     /*
-    */
-    
+     */
+
     let title = node.title;
     let authors = node.authors;
     let journal = node.journal;
-    
+
     let pub_date = node.pub_date;
     let pub_year = pub_date.Year;
     let pub_month = '';
@@ -31,42 +31,41 @@ function create_modal(node, refined_papers) {
     let author_string = format_authors(authors);
 
     vexInstance = vex.open({
-        unsafeContent:
-        '<span class="vex-paper-info">' +
-            '<div id="vex-header-div">' + 
-                '<button id="add-to-refine-button" class="mdc-button" ' +
-                'paper=' + id + '>' +
-                    '+' + 
-                '</button>' +
-                '<div id="vex-title-div">' +
-                    title +
-                '</div>' +
-                '<div id="date-journal-div">' +
-                    '<span>' +
-                        pub_date_string +
-                    '</span>' +
-                    '<span id="journal-span">' +
-                        journal +
-                    '</span>' +
-                '</div>' +
+        unsafeContent: '<span class="vex-paper-info">' +
+            '<div id="vex-header-div">' +
+            '<button id="add-to-refine-button" class="mdc-button" ' +
+            'paper=' + id + '>' +
+            '+' +
+            '</button>' +
+            '<div id="vex-title-div">' +
+            title +
+            '</div>' +
+            '<div id="date-journal-div">' +
+            '<span>' +
+            pub_date_string +
+            '</span>' +
+            '<span id="journal-span">' +
+            journal +
+            '</span>' +
+            '</div>' +
             '</div>' +
             '<div id="author-div">' +
-                author_string +
+            author_string +
             '</div>' +
             '<div id="abstract-div">' +
-                '<p>' +
-                    abstract +
-                '</p>' +
+            '<p>' +
+            abstract +
+            '</p>' +
             '</div>' +
             '<a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=' +
-                id.toString() + '" target="_blank">PubMed' + 
+            id.toString() + '" target="_blank">PubMed' +
             '</a>' +
-        '</span>'
+            '</span>'
     });
 
     // Add a listener to the refine button.
     refine_button.add_refine_button_listener(id, node, refined_papers);
-    
+
 }
 
 function format_authors(authors) {
@@ -91,8 +90,8 @@ function format_authors(authors) {
 }
 
 function create_refined_button() {
-    /* 
-    */
+    /*
+     */
 
 
 }

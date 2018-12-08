@@ -1,20 +1,19 @@
 /*
-'main.js' wraps all front-end functionality. Here, modules are imported 
-and interface with each other. This file is packaged using browserify 
+'main.js' wraps all front-end functionality. Here, modules are imported
+and interface with each other. This file is packaged using browserify
 and included in the index HTML page.
 */
-
 const $ = require("jquery");
 const on_start = require("./on-start.js");
 const selectize_input = require("./selectize-input.js");
 const on_go = require("./on-go.js");
-const refine_search = require("./refine-search.js")
+const refine_search = require("./refine-search.js");
 
 // Called when the document is ready.
 $(document).ready(function() {
-    console.log('ready');
+    console.log("ready");
     on_start.on_start();
-})
+});
 
 // Instantiate selectize search bar.
 selectize_input.instantiate_selectize();

@@ -12,17 +12,17 @@ function create_listeners() {
     TODO: expand this documentation.
     */
 
-    // Get 'GO!' button element.
-    let go = $('#selectize-go-button');
-    
+    // Get "GO!" button element.
+    let go = $("#selectize-go-button");
+
     // Set a click listener.
     go.click(function() {
         disable_and_send();
     });
 
-    // Set an 'enter' keypress listener.
+    // Set an "enter" keypress listener.
     go.keypress(function(event) {
-        if(event.which == 13) {
+        if (event.which === 13) {
             disable_and_send();
         }
     });
@@ -33,7 +33,7 @@ function create_listeners() {
         go.prop("disabled", true);
 
         // Get user inputs and set as object property.
-        seeds = $("#selectize")[0].value.split(',');
+        seeds = $("#selectize")[0].value.split(",");
 
         // Send request.
         send_papers(seeds, before_send, process_response);
@@ -45,8 +45,8 @@ function send_papers(seeds, before_send, process_response) {
     POSTs an ajax request to the server and awaits a response.
     */
 
-    // Adds seeds to 'refined_papers' object.
-    seeds.forEach(function (seed){
+    // Adds seeds to "refined_papers" object.
+    seeds.forEach(function(seed) {
         refined_papers[seed] = true;
     })
 
@@ -54,19 +54,20 @@ function send_papers(seeds, before_send, process_response) {
         url: "/submit_paper",
         method: "POST",
         dataType: "json",
-        data: {"seeds": seeds},
+        data: {
+            "seeds": seeds
+        },
         cache: false,
         timeout: 0, // set this to a reasonable value for production
 
-        // Before request is sent, hide front page and show loading 
+        // Before request is sent, hide front page and show loading
         // page.
         beforeSend: function() {
             before_send();
         },
 
         // Fires when response is recieved, error or timeout.
-        complete: function() {
-        },
+        complete: function() {},
 
         // Fires on a successful response. Here response is processed
         // and D3 layout is rendered.
@@ -91,21 +92,20 @@ function before_send() {
     $("#front-page").fadeOut(600, function() {
 
         // Fade in the loading screen.
-        console.log('faded out');
+        console.log("faded out");
     })
 }
 
 function process_response(response) {
     /*
-    */
+     */
 
     // Run the D3 layout.
     create_layout(response);
 
     // After layout is instantiated and begins, fade in the svg canvas.
     $("#post-layout-buttons").show();
-    $("#network").fadeIn(300, function() {
-    });
+    $("#network").fadeIn(300, function() {});
 
 }
 
@@ -114,13 +114,13 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let layout_obj = d3_layout.d3_layout(response, 
+    let layout_obj = d3_layout.d3_layout(response,
         create_modal, refined_papers);
     let node_obj = layout_obj.node;
-    let is_dragging = layout_obj.is_dragging;
+    let isDragging = layout_obj.isDragging;
     let simulation = layout_obj.simulation;
 
-    create_tooltips.create_tooltips(node_obj, is_dragging);
+    create_tooltips.create_tooltips(node_obj, isDragging);
 }
 
 module.exports.create_listeners = create_listeners;

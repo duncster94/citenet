@@ -9,7 +9,7 @@ function add_refine_button_listener(paper_id, node, refined_papers) {
     */
 
     // Get refine button.
-    let refine_button = $('#add-to-refine-button')
+    let refine_button = $("#add-to-refine-button")
 
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
@@ -23,7 +23,7 @@ function on_refine_click(paper_id, node, refined_papers) {
     paper from the refined search list.
     */
 
-    // Check if 'paper_id' is already in the refined search
+    // Check if "paper_id" is already in the refined search
     // object. If so, remove it, if not, add it. Add or remove
     // image overlay accordingly.
     if (paper_id in refined_papers) {
@@ -34,12 +34,12 @@ function on_refine_click(paper_id, node, refined_papers) {
         $("#overlay_" + paper_id).show();
     }
 
-    // Check if 'refined_papers' is empty. If so, disable
+    // Check if "refined_papers" is empty. If so, disable
     // the refine search button, if not, enable it.
     if (Object.keys(refined_papers).length === 0) {
-        $('#refine-button').prop("disabled", true);
+        $("#refine-button").prop("disabled", true);
     } else {
-        $('#refine-button').prop("disabled", false);
+        $("#refine-button").prop("disabled", false);
     }
 
     console.log(refined_papers);
@@ -52,7 +52,7 @@ function add_refine_search_listener(refined_papers) {
     */
 
     // Get the search button.
-    refine_button = $('#refine-button');
+    refine_button = $("#refine-button");
 
     // Add a click listener.
     refine_button.on("click", function() {
@@ -61,21 +61,21 @@ function add_refine_search_listener(refined_papers) {
         // Get refined papers array.
         let refined_papers_arr = Object.keys(refined_papers);
 
-        console.log('refined send', refined_papers_arr)
+        console.log("refined send", refined_papers_arr)
 
         // Send paper query.
-        on_go.send_papers(refined_papers_arr, 
+        on_go.send_papers(refined_papers_arr,
             before_refined_send, process_refined_response);
     })
 }
 
 function before_refined_send() {
     /*
-    */
+     */
 
     // Disable the refine button to prevent any double
     // searching.
-    $('#refine-button').prop("disabled", true);
+    $("#refine-button").prop("disabled", true);
 
     // Fade-out screen.
     $("#post-layout-buttons").removeClass("fadeIn").addClass("fadeOut")
@@ -86,13 +86,13 @@ function before_refined_send() {
 
 function process_refined_response(response) {
     /*
-    */
+     */
 
     // Fade in buttons.
     $("#post-layout-buttons").removeClass("fadeOut").addClass("fadeIn")
 
     // Re-enable refine button.
-    $('#refine-button').prop("disabled", false);
+    $("#refine-button").prop("disabled", false);
 
     on_go.create_layout(response)
 }
