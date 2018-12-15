@@ -6,7 +6,7 @@
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       <title>CiteNet</title>
       <!-- Materialize CSS -->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+      <link rel="stylesheet" href="stylesheets/materialize.css">
       <!-- Font Awesome -->
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
       <!-- Bootstrap core CSS -->
@@ -49,20 +49,24 @@
                <span id="selectize-span">
                  <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
                  <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
-                   <i class="fa fa-search"></i>
+                   <i id = "search-icon" class="fas fa-search"></i>
                  </button>
                </span>
                <!-- Subtitle -->
                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
             </div>
 
-            <div id="post-layout-buttons" class="fixed-action-btn" style="display: none;">
-              <a class="btn-floating btn-large red">
-                <i class="far fa-edit"></i>
+            <div id="post-layout-buttons" class="fixed-action-btnm" style="display: none;">
+              <a class="btnm-floating btnm-large red">
+                <i class="fas fa-bars"></i>
               </a>
               <ul>
-                <li><a id="home-button" class="btn-floating red"><i class="fa fa-home"></i></a></li>
-                <li><a id="refine-button" class="btn-floating yellow darken-1"><i class="fas fa-sync-alt"></i></i></a></li>
+                <li><a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
+                    <i class="fa fa-home"></i></a>
+                </li>
+                <li><a id="refine-button" class="btnm-floating tooltipped yellow darken-1" data-position="left" data-tooltip="Refine search">
+                  <i class="fas fa-sync-alt"></i></a>
+                </li>
               </ul>
             </div>
          </div>
@@ -77,13 +81,15 @@
 
       <!-- Custom script import -->
       <script src="javascript/main-bundle.js"></script>
-      <script type="text/javascript" src="js/materialize.min.js"></script>
+      <script type="text/javascript" src="javascript/materialize.min.js"></script>
       <script>
         document.addEventListener('DOMContentLoaded', function() {
-        var elems = document.querySelectorAll('.fixed-action-btn');
+        var elems = document.querySelectorAll('.fixed-action-btnm');
         var instances = M.FloatingActionButton.init(elems, {
           hoverEnabled: false,
         });
+        var elems = document.querySelectorAll('.tooltipped');
+        var instances = M.Tooltip.init(elems);
       });
       </script>
    </body>
