@@ -5,8 +5,10 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
       <meta http-equiv="x-ua-compatible" content="ie=edge">
       <title>CiteNet</title>
+      <!-- Materialize CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
       <!-- Font Awesome -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
       <!-- Bootstrap core CSS -->
       <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
       <!-- Material Design Bootstrap -->
@@ -37,24 +39,6 @@
         <!-- D3 Canvas -->
         <svg id="network" style="display: none;"></svg>
          <div class="jumbotron vertical-center">
-            <!-- Post Layout Buttons -->
-            <div id="post-layout-buttons" class="container-fluid h-10 animated fadeIn slow" style="display: none;">
-               <div class="row h-0 justify-content-left align-items-left">
-                  <div class="col-0">
-                      <button id="home-button" type="button" class="btn peach-gradient btn-md">
-                        <i class="fa fa-home"></i>
-                      </button>
-                  </div>
-               </div>
-               <div class="row h-0 justify-content-left align-items-left">
-                  <div class="col-0">
-                      <button id="refine-button" type="button" class="btn peach-gradient btn-md">
-                        <i class="fa fa-search"></i>
-                      </button>
-                  </div>
-               </div>
-            </div>
-
             <!-- Main Page Content -->
             <div id="front-page" class="container text-center">
 
@@ -71,6 +55,16 @@
                <!-- Subtitle -->
                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
             </div>
+
+            <div id="post-layout-buttons" class="fixed-action-btn" style="display: none;">
+              <a class="btn-floating btn-large red">
+                <i class="far fa-edit"></i>
+              </a>
+              <ul>
+                <li><a id="home-button" class="btn-floating red"><i class="fa fa-home"></i></a></li>
+                <li><a id="refine-button" class="btn-floating yellow darken-1"><i class="fas fa-sync-alt"></i></i></a></li>
+              </ul>
+            </div>
          </div>
 
       </main>
@@ -83,6 +77,14 @@
 
       <!-- Custom script import -->
       <script src="javascript/main-bundle.js"></script>
-
+      <script type="text/javascript" src="js/materialize.min.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.fixed-action-btn');
+        var instances = M.FloatingActionButton.init(elems, {
+          hoverEnabled: false,
+        });
+      });
+      </script>
    </body>
 </html>
