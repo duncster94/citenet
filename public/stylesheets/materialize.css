@@ -1,3 +1,15 @@
+/*
+The Material Design Bootstrap and the Materialize libraries conflict. To get around this, you
+need to do a few things:
+
+1. Download the Materialize libraries source and stick everything in the sass folder of the
+   zip under scss
+2. Uncomment any styles we don't need in materialize.scss (as is done below)
+3. Use a Sass compiler to generate the css file:
+   `sass public/scss/materialize.scss public/stylesheets/materialize.css`
+4. Change all mentions of the .btn class to .btnm in the relevant .scss files and the
+   materialize.min.js. Careful, just change the selectors, don't change variable names.
+*/
 .materialize-red {
   background-color: #e51c23 !important; }
 
