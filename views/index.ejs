@@ -38,13 +38,13 @@
 
         <!-- D3 Canvas -->
         <svg id="network" style="display: none;"></svg>
+
          <div class="jumbotron vertical-center">
             <!-- Main Page Content -->
             <div id="front-page" class="container text-center">
 
                <!-- Title -->
                <h1 class="card-title h1 text-center animated fadeIn slow">CiteNet</h1>
-
                <!-- Selectize Input -->
                <span id="selectize-span">
                  <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
@@ -56,7 +56,8 @@
                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
             </div>
 
-            <div id="post-layout-buttons" class="fixed-action-btnm" style="display: none;">
+            <!-- FAB -->
+            <div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
               <a class="btnm-floating btnm-large red">
                 <i class="fas fa-bars"></i>
               </a>
@@ -69,7 +70,9 @@
                 </li>
               </ul>
             </div>
+
          </div>
+
 
       </main>
       <!--Main layout-->
@@ -82,15 +85,5 @@
       <!-- Custom script import -->
       <script src="javascript/main-bundle.js"></script>
       <script type="text/javascript" src="javascript/materialize.min.js"></script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        var elems = document.querySelectorAll('.fixed-action-btnm');
-        var instances = M.FloatingActionButton.init(elems, {
-          hoverEnabled: false,
-        });
-        var elems = document.querySelectorAll('.tooltipped');
-        var instances = M.Tooltip.init(elems);
-      });
-      </script>
    </body>
 </html>
