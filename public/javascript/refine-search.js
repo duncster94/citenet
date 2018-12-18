@@ -87,7 +87,7 @@ function process_refined_response(response) {
      */
 
     // Re-enable refine button.
-    $("#refine-button").removeClass("yellow darken-1").addClass("disabled-link grey lighten-1");
+    $("#refine-button").addClass("yellow darken-1").removeClass("disabled-link grey lighten-1");
 
     // Fade in buttons.
     $("#post-layout-buttons").removeClass("fadeOut").addClass("fadeIn");
