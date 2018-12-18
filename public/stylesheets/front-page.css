@@ -36,3 +36,8 @@ svg {
   display: flex;
   align-items: center;
 }
+
+/* https://stackoverflow.com/a/10276157 */
+a.disabled-link {
+    pointer-events: none;
+}
