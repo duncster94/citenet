@@ -35,7 +35,7 @@ function createModal(node, refinedPapers) {
             '<div id="vex-header-div">' +
             '<button id="add-to-refine-button" class="mdc-button" ' +
             'paper=' + id + '>' +
-            '+' +
+            '<i class="fas fa-plus-circle"></i>' +
             '</button>' +
             '<div id="vex-title-div">' +
             title +
