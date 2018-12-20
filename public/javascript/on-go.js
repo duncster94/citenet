@@ -89,11 +89,8 @@ function before_send() {
     */
 
     // Fade out the front page.
-    $("#front-page").fadeOut(600, function() {
-
-        // Fade in the loading screen.
-        console.log("faded out");
-    })
+    $("#front-page").fadeOut(500);
+    $("footer").fadeOut(500);
 }
 
 function process_response(response) {
