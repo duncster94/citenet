@@ -2,6 +2,8 @@
 
 # CiteNet
 
+Please see the wiki for more in-depth details.
+
 ## Usage
 
 To install and run locally
