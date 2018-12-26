@@ -6,7 +6,12 @@ html, body {
     height: 100%;
 
     font-family: 'Montserrat', sans-serif;
+
     background-color: #f7f7f7;
+}
+
+p {
+  font-family: 'Open Sans', sans-serif;
 }
 
 svg {

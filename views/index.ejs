@@ -15,9 +15,10 @@
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.15/css/mdb.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700|Open+Sans:400,600" rel="stylesheet">
     <!-- Custom styles -->
     <link rel="stylesheet" href="stylesheets/front-page.css" />
+    <link rel="stylesheet" href="stylesheets/modals.css" />
     <link rel="stylesheet" href="stylesheets/selectize.css" />
     <link rel="stylesheet" href="stylesheets/selectize-option.css" />
     <link rel="stylesheet" href="stylesheets/mdc.button.css" />
@@ -73,6 +74,40 @@
                     </li>
                 </ul>
             </div>
+
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#basicExampleModal">
+            Launch demo modal
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-frame modal-top" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabel">Brc1-mediated DNA repair and damage tolerance.</h4>
+
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+
+                </div>
+                <div class="modal-body" style="font-family: sans-serif;">
+                  <p class='modal-authors'>Daniel M Sheedy, Dora Dimitrova, Jessica K Rankin, Kirstin L Bass, Karen M Lee, Claudia Tapia-Alveal, Susan H Harvey, Johanne M Murray, Matthew J O'Connell.<p>
+                  <p class='orange-text my-4 font-weight-bold'>Genetics<p>
+                  <p class='modal-published-data font-weight-bold'>Published: Oct 2005<p>
+                  <p>
+                  The structural maintenance of chromosome (SMC) proteins are key elements in controlling chromosome dynamics. In eukaryotic cells, three essential SMC complexes have been defined: cohesin, condensin, and the Smc5/6 complex. The latter is essential for DNA damage responses; in its absence both repair and checkpoint responses fail. In fission yeast, the UV-C and ionizing radiation (IR) sensitivity of a specific hypomorphic allele encoding the Smc6 subunit, rad18-74 (renamed smc6-74), is suppressed by mild overexpression of a six-BRCT-domain protein, Brc1. Deletion of brc1 does not result in a hypersensitivity to UV-C or IR, and thus the function of Brc1 relative to the Smc5/6 complex has remained unclear. Here we show that brc1Delta cells are hypersensitive to a range of radiomimetic drugs that share the feature of creating lesions that are an impediment to the completion of DNA replication. Through a genetic analysis of brc1Delta epistasis and by defining genes required for Brc1 to suppress smc6-74, we find that Brc1 functions to promote recombination through a novel postreplication repair pathway and the structure-specific nucleases Slx1 and Mus81. Activation of this pathway through overproduction of Brc1 bypasses a repair defect in smc6-74, reestablishing resolution of lesions by recombination.
+                  <p>
+                </div>
+                <div class="modal-footer flex-center">
+                  <button type="button" class="btn stylish-color">Publisher's Site <i class="fas fa-external-link-alt"></i></button>
+                  <button type="button" class="btn peach-gradient">Add to search <i class="fas fa-plus-square"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
     </main>
@@ -83,9 +118,25 @@
     </footer>
     <!--Footer-->
 
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.6.0/js/mdb.min.js"></script>
     <!-- Custom script import -->
     <script src="javascript/main-bundle.js"></script>
+    <!-- Materialize core Javascript -->
     <script type="text/javascript" src="javascript/materialize.min.js"></script>
+
+    <script>
+    $(document).ready(function(){
+      $("#basicExampleModal").modal();
+    });
+
+    </script>
 </body>
 
 </html>
