@@ -10,6 +10,7 @@
     "visulization"
   ],
   "dependencies": {
+    "@tensorflow/tfjs-node": "^0.2.1",
     "body-parser": "^1.18.3",
     "browserify": "^16.2.2",
     "d3": "^5.7.0",
