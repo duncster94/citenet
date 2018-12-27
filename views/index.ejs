@@ -1,157 +1,128 @@
+
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>CiteNet</title>
+		<!-- Materialize CSS -->
+		<link rel="stylesheet" href="stylesheets/materialize.css">
+		<!-- Font Awesome -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+		<!-- Bootstrap core CSS -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+		<!-- Material Design Bootstrap -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.15/css/mdb.min.css" rel="stylesheet">
+		<!-- Google Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Poppins:700|Roboto" rel="stylesheet">
+		<!-- Custom styles -->
+		<link rel="stylesheet" href="stylesheets/front-page.css" />
+		<link rel="stylesheet" href="stylesheets/modals.css" />
+		<link rel="stylesheet" href="stylesheets/selectize.css" />
+		<link rel="stylesheet" href="stylesheets/selectize-option.css" />
+		<link rel="stylesheet" href="stylesheets/mdc.button.css" />
+		<link rel="stylesheet" href="stylesheets/tippy-style.css" />
+		<!-- Add support for selectize on IE 9 -->
+		<!--[if lt IE 9]><script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.0.8/es5-shim.min.js"></script><![endif]-->
+	</head>
+	<body>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>CiteNet</title>
-    <!-- Materialize CSS -->
-    <link rel="stylesheet" href="stylesheets/materialize.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
-    <!-- Bootstrap core CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.15/css/mdb.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Poppins:700|Roboto" rel="stylesheet">
-    <!-- Custom styles -->
-    <link rel="stylesheet" href="stylesheets/front-page.css" />
-    <link rel="stylesheet" href="stylesheets/modals.css" />
-    <link rel="stylesheet" href="stylesheets/selectize.css" />
-    <link rel="stylesheet" href="stylesheets/selectize-option.css" />
-    <link rel="stylesheet" href="stylesheets/mdc.button.css" />
-    <link rel="stylesheet" href="stylesheets/tippy-style.css" />
-    <link rel="stylesheet" href="stylesheets/vex.css" />
-    <link rel="stylesheet" href="stylesheets/vex-theme-wireframe.css" />
-    <link rel="stylesheet" href="stylesheets/vex-modal-style.css" />
-    <!-- Add support for selectize on IE 9 -->
-    <!--[if lt IE 9]><script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.0.8/es5-shim.min.js"></script><![endif]-->
-</head>
-
-<body>
     <!--Main Navigation-->
-    <header>
-    </header>
-    <!--Main Navigation-->
+		<header>
+		</header>
+		<!--Main Navigation-->
 
     <!--Main Layout-->
-    <main>
+		<main>
+			<!-- D3 Canvas -->
+			<svg id="network" style="display: none;"></svg>
+			<div class="container">
+				<!-- Main Page Content -->
+				<div id="front-page" class="text-center" style="margin-top:12.5em;">
+					<!-- Title -->
+					<h1 class="card-title h1 text-center animated fadeIn slow">CiteNet</h1>
+					<!-- Selectize Input -->
+					<span id="selectize-span">
+					<input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
+					<button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
+					<i id = "search-icon" class="fas fa-search"></i>
+					</button>
+					</span>
+					<!-- Subtitle -->
+					<p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
+				</div>
+				<!-- FAB -->
+				<div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
+					<a class="btnm-floating btnm-large red">
+					<i class="fas fa-bars"></i>
+					</a>
+					<ul>
+						<li>
+							<a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
+							<i class="fa fa-home"></i></a>
+						</li>
+						<li>
+							<a id="refine-button" class="btnm-floating tooltipped yellow darken-1" data-position="left" data-tooltip="Refine search">
+							<i class="fas fa-sync-alt"></i></a>
+						</li>
+					</ul>
+				</div>
 
-        <!-- D3 Canvas -->
-        <svg id="network" style="display: none;"></svg>
-
-        <div class="container">
-            <!-- Main Page Content -->
-            <div id="front-page" class="text-center" style="margin-top:12.5em;">
-                <!-- Title -->
-                <h1 class="card-title h1 text-center animated fadeIn slow">CiteNet</h1>
-                <!-- Selectize Input -->
-                <span id="selectize-span">
-                 <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
-                 <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
-                   <i id = "search-icon" class="fas fa-search"></i>
-                 </button>
-               </span>
-                <!-- Subtitle -->
-                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
-            </div>
-
-            <!-- FAB -->
-            <div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
-                <a class="btnm-floating btnm-large red">
-                    <i class="fas fa-bars"></i>
-                </a>
-                <ul>
-                    <li>
-                        <a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
-                            <i class="fa fa-home"></i></a>
-                    </li>
-                    <li>
-                        <a id="refine-button" class="btnm-floating tooltipped yellow darken-1" data-position="left" data-tooltip="Refine search">
-                            <i class="fas fa-sync-alt"></i></a>
-                    </li>
-                </ul>
-            </div>
-
-          <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#basicExampleModal">
-            Launch demo modal
-          </button>
-
-          <!-- Modal -->
-          <div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-frame modal-top" role="document">
-              <div class="modal-content">
-                <div class="modal-header stylish-color">
-                  <!-- Modal Title -->
-                  <h3 class="modal-title white-text font-weight-bold py-1">Brc1-mediated DNA repair and damage tolerance.</h3>
-                  <!-- Modal Colour -->
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" class="white-text">&times;</span>
-                  </button>
-
-                </div>
-                <div class="modal-body">
-
-
-
-                  <p class='orange-text font-weight-bold'>Genetics<p>
-                  <p class='modal-published-data text-left'>October 2005<p>
-
-
-
-
-
-
-
-
-                  <h5>Authors</h5>
-                  <p>Daniel M Sheedy, Dora Dimitrova, Jessica K Rankin, Kirstin L Bass, Karen M Lee, Claudia Tapia-Alveal, Susan H Harvey, Johanne M Murray, Matthew J O'Connell.<p>
-
-                  <h5>Abstract</h5>
-                  <p>
-                  The structural maintenance of chromosome (SMC) proteins are key elements in controlling chromosome dynamics. In eukaryotic cells, three essential SMC complexes have been defined: cohesin, condensin, and the Smc5/6 complex. The latter is essential for DNA damage responses; in its absence both repair and checkpoint responses fail. In fission yeast, the UV-C and ionizing radiation (IR) sensitivity of a specific hypomorphic allele encoding the Smc6 subunit, rad18-74 (renamed smc6-74), is suppressed by mild overexpression of a six-BRCT-domain protein, Brc1. Deletion of brc1 does not result in a hypersensitivity to UV-C or IR, and thus the function of Brc1 relative to the Smc5/6 complex has remained unclear. Here we show that brc1Delta cells are hypersensitive to a range of radiomimetic drugs that share the feature of creating lesions that are an impediment to the completion of DNA replication. Through a genetic analysis of brc1Delta epistasis and by defining genes required for Brc1 to suppress smc6-74, we find that Brc1 functions to promote recombination through a novel postreplication repair pathway and the structure-specific nucleases Slx1 and Mus81. Activation of this pathway through overproduction of Brc1 bypasses a repair defect in smc6-74, reestablishing resolution of lesions by recombination.
-                </p>
-                </div>
-                <div class="modal-footer flex-center">
-                  <button type="button" class="btn stylish-color">Publisher's Site  <i class="fas fa-external-link-alt ml-1"></i></button>
-                  <button type="button" class="btn peach-gradient">Add to search  <i class="fas fa-plus-square ml-1"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <!-- Modal -->
+				<div class="modal fade" id="abstract-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg modal-frame modal-top" role="document">
+						<div class="modal-content">
+							<!-- Modal Header -->
+							<div class="modal-header stylish-color">
+								<!-- Modal Title -->
+								<h3 id="modal-title" class="modal-title white-text font-weight-bold py-1"></h3>
+								<!-- Modal Colour -->
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true" class="white-text">&times;</span>
+								</button>
+							</div>
+							<!-- Modal Body -->
+							<div class="modal-body">
+								<!-- Publisher -->
+								<p id="modal-publisher" class='orange-text font-weight-bold'></p>
+								<!-- Date Published -->
+								<p id="modal-published-date" class='modal-published-data text-left'></p>
+								<!-- Authors Name -->
+								<h5>Authors</h5>
+								<p id="modal-authors"></p>
+								<h5>Abstract</h5>
+								<!-- Abstract -->
+								<p id="modal-abstract"></p>
+							</div>
+							<!-- Modal Footer -->
+							<div class="modal-footer flex-center">
+								<!-- Publisher Link Out Button -->
+								<a id="modal-publisher-link-out" href="#" target="_blank">
+								<button type="button" class="btn stylish-color">Publisher's Site<i class="fas fa-external-link-alt ml-1"></i></button>
+								</a>
+								<!-- Add to Search Button -->
+								<button id="add-to-refine-button" type="button" class="btn peach-gradient" data-dismiss="modal">Add to search<i class="fas fa-plus-square ml-1"></i></button>
+							</div>
+						</div>
+					</div>
         </div>
 
-    </main>
-    <!--Main layout-->
+			</div>
+
+		</main>
+		<!--Main layout-->
 
     <!--Footer-->
-    <footer>
-    </footer>
-    <!--Footer-->
+		<footer>
+		</footer>
+		<!--Footer-->
 
     <!-- JQuery -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.6.0/js/mdb.min.js"></script>
-    <!-- Custom script import -->
-    <script src="javascript/main-bundle.js"></script>
-    <!-- Materialize core Javascript -->
-    <script type="text/javascript" src="javascript/materialize.min.js"></script>
-
-    <script>
-    $(document).ready(function(){
-      $("#basicExampleModal").modal();
-    });
-
-    </script>
-</body>
-
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<!-- Custom script import -->
+		<script src="javascript/main-bundle.js"></script>
+		<!-- Materialize core Javascript -->
+		<script type="text/javascript" src="javascript/materialize.min.js"></script>
+	</body>
 </html>
