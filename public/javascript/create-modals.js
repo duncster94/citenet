@@ -32,6 +32,7 @@ function createModal(node, refinedPapers) {
     $("#modal-title").html(title);
     $("#modal-publisher").html(journal);
     $("#modal-published-date").html(pub_date_string);
+    $("#modal-authors").html(author_string);
     $("#modal-abstract").html(abstract);
     // Add href to publisher link out button
     $("#modal-publisher-link-out").attr("href", `https://www.ncbi.nlm.nih.gov/pubmed/?term=${id.toString()}`)
