@@ -42,7 +42,7 @@ function on_refine_click(paperId, node, refinedPapers) {
     }
 
     // Remove click listener
-    $("#add-to-refine-button").off('click');
+    $("#add-to-refine-button").off("click");
 
     console.log(refinedPapers);
     console.log(node);
