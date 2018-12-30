@@ -6,7 +6,7 @@
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<title>CiteNet</title>
 		<!-- Materialize CSS -->
-		<link rel="stylesheet" href="stylesheets/materialize.css">
+		<link rel="stylesheet" href="styles/materialize.css">
 		<!-- Font Awesome -->
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
 		<!-- Bootstrap core CSS -->
@@ -16,11 +16,11 @@
 		<!-- Google Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Poppins:700|Roboto" rel="stylesheet">
 		<!-- Custom styles -->
-		<link rel="stylesheet" href="stylesheets/front-page.css" />
-		<link rel="stylesheet" href="stylesheets/modal.css" />
-		<link rel="stylesheet" href="stylesheets/selectize.css" />
-		<link rel="stylesheet" href="stylesheets/selectize-option.css" />
-		<link rel="stylesheet" href="stylesheets/tippy-style.css" />
+		<link rel="stylesheet" href="styles/front-page.css" />
+		<link rel="stylesheet" href="styles/modal.css" />
+		<link rel="stylesheet" href="styles/selectize.css" />
+		<link rel="stylesheet" href="styles/selectize-option.css" />
+		<link rel="stylesheet" href="styles/tippy-style.css" />
 		<!-- Add support for selectize on IE 9 -->
 		<!--[if lt IE 9]><script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/2.0.8/es5-shim.min.js"></script><![endif]-->
 	</head>
@@ -37,105 +37,85 @@
 			<!-- D3 Canvas -->
 			<svg id="network" style="display: none;"></svg>
 
-			<div class="container">
+      <div class="container">
+          <!-- Main Page Content -->
+          <div id="front-page" class="text-center" style="margin-top:12.5em;">
+              <!-- Logo -->
+							<img class="citenet-logo animated fadeIn slow" src="images/citenet_logo.png" alt="CiteNet Logo.">
+              <!-- Selectize Input -->
+              <span id="selectize-span">
+               <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
+               <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
+                 <i id = "search-icon" class="fas fa-search"></i>
+               </button>
+             </span>
+              <!-- Subtitle -->
+              <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
+          </div>
 
-        <div class="container">
-            <!-- Main Page Content -->
-            <div id="front-page" class="text-center" style="margin-top:12.5em;">
-                <!-- Logo -->
-								<img class="citenet-logo animated fadeIn slow" src="images/citenet_logo.png" alt="CiteNet Logo.">
-                <!-- Selectize Input -->
-                <span id="selectize-span">
-                 <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
-                 <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
-                   <i id = "search-icon" class="fas fa-search"></i>
-                 </button>
-               </span>
-                <!-- Subtitle -->
-                <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
-            </div>
+					<!-- FAB -->
+					<div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
+							<a class="btnm-floating btnm-large red">
+									<i class="fas fa-bars"></i>
+							</a>
+							<ul>
+									<li>
+											<a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
+													<i class="fa fa-home"></i></a>
+									</li>
+									<li>
+											<a id="refine-button" class="btnm-floating tooltipped yellow darken-1" data-position="left" data-tooltip="Refine search">
+													<i class="fas fa-sync-alt"></i></a>
+									</li>
+							</ul>
+					</div>
 
-					<!-- Title -->
-					<h1 class="card-title h1 text-center animated fadeIn slow">CiteNet</h1>
-
-					<!-- Selectize Input -->
-					<span id="selectize-span">
-						<input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
-						<button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
-							<i id = "search-icon" class="fas fa-search"></i>
-						</button>
-					</span>
-
-					<!-- Subtitle -->
-					<p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">
-						A powerfully intuitive way to search the scientific literature
-					</p>
-
-				</div>
-
-				<!-- FAB -->
-				<div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
-					<a class="btnm-floating btnm-large red">
-					<i class="fas fa-bars"></i>
-					</a>
-					<ul>
-						<li>
-							<a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
-							<i class="fa fa-home"></i></a>
-						</li>
-						<li>
-							<a id="refine-button" class="btnm-floating tooltipped yellow darken-1" data-position="left" data-tooltip="Refine search">
-							<i class="fas fa-sync-alt"></i></a>
-						</li>
-					</ul>
-				</div>
-
-				<!-- Modal -->
-				<div class="modal fade" id="abstract-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog modal-lg" role="document">
-						<div class="modal-content">
-							<!-- Modal Header -->
-							<div class="modal-header stylish-color">
-								<!-- Modal Title -->
-								<h4 id="modal-title" class="modal-title white-text font-weight-bold py-1"></h4>
-								<!-- Modal Colour -->
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true" class="white-text">&times;</span>
-								</button>
-							</div>
-							<!-- Modal Body -->
-							<div class="modal-body">
-								<!-- Publisher -->
-								<div class="row" style="padding-bottom: 10px;">
-									<div class="col flush-labels">
-										<h5><span id="modal-publisher" class="badge orange"></h5>
-									</div>
-									<!-- Date Published -->
-									<div class="col flush-labels no-left-padding">
-										<h5><span id="modal-published-date" class="badge stylish-color"></h5>
-									</div>
+					<!-- Modal -->
+					<div class="modal fade" id="abstract-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+								<!-- Modal Header -->
+								<div class="modal-header stylish-color">
+									<!-- Modal Title -->
+									<h4 id="modal-title" class="modal-title white-text font-weight-bold py-1"></h4>
+									<!-- Modal Colour -->
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true" class="white-text">&times;</span>
+									</button>
 								</div>
-								<!-- Authors Name -->
-								<h5>Authors</h5>
-								<p id="modal-authors"></p>
-								<h5>Abstract</h5>
-								<!-- Abstract -->
-								<p id="modal-abstract"></p>
-							</div>
-							<!-- Modal Footer -->
-							<div class="modal-footer flex-center">
-								<!-- Publisher Link Out Button -->
-								<a id="modal-publisher-link-out" href="#" target="_blank">
-									<button type="button" class="btn stylish-color">Publisher's Site<i class="fas fa-external-link-alt ml-2"></i></button>
-								</a>
-								<!-- Add to Search Button -->
-								<button id="add-to-refine-button" type="button" class="btn peach-gradient" data-dismiss="modal">
-									Add to search<i class='fas fa-plus-square ml-2'></i>
-								</button>
+								<!-- Modal Body -->
+								<div class="modal-body">
+									<!-- Publisher -->
+									<div class="row" style="padding-bottom: 10px;">
+										<div class="col flush-labels">
+											<h5><span id="modal-publisher" class="badge orange"></h5>
+										</div>
+										<!-- Date Published -->
+										<div class="col flush-labels no-left-padding">
+											<h5><span id="modal-published-date" class="badge stylish-color"></h5>
+										</div>
+									</div>
+									<!-- Authors Name -->
+									<h5>Authors</h5>
+									<p id="modal-authors"></p>
+									<h5>Abstract</h5>
+									<!-- Abstract -->
+									<p id="modal-abstract"></p>
+								</div>
+								<!-- Modal Footer -->
+								<div class="modal-footer flex-center">
+									<!-- Publisher Link Out Button -->
+									<a id="modal-publisher-link-out" href="#" target="_blank">
+										<button type="button" class="btn stylish-color">Publisher's Site<i class="fas fa-external-link-alt ml-2"></i></button>
+									</a>
+									<!-- Add to Search Button -->
+									<button id="add-to-refine-button" type="button" class="btn peach-gradient" data-dismiss="modal">
+										Add to search<i class='fas fa-plus-square ml-2'></i>
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
 			</div>
 
@@ -148,8 +128,8 @@
 		<!--Footer-->
 
 		<!-- Custom script import -->
-		<script src="javascript/main-bundle.js"></script>
+		<script type="text/javascript" src="scripts/main-bundle.js"></script>
 		<!-- Materialize core Javascript -->
-		<script type="text/javascript" src="javascript/materialize.min.js"></script>
+		<script type="text/javascript" src="scripts/materialize.min.js"></script>
 	</body>
 </html>
