@@ -1,11 +1,10 @@
-const vex = require('vex-js');
-vex.registerPlugin(require('vex-dialog'));
-vex.defaultOptions.className = 'vex-theme-wireframe';
-
+const $ = require("jquery");
 const refine_button = require("./refine-search.js");
+require("bootstrap");
 
 function createModal(node, refinedPapers) {
     /*
+    Creates the modal which appears on node click.
      */
 
     let title = node.title;
@@ -30,41 +29,27 @@ function createModal(node, refinedPapers) {
     // Format author string.
     let author_string = format_authors(authors);
 
-    vexInstance = vex.open({
-        unsafeContent: '<span class="vex-paper-info">' +
-            '<div id="vex-header-div">' +
-            '<button id="add-to-refine-button" class="mdc-button" ' +
-            'paper=' + id + '>' +
-            '<i class="fas fa-plus-circle"></i>' +
-            '</button>' +
-            '<div id="vex-title-div">' +
-            title +
-            '</div>' +
-            '<div id="date-journal-div">' +
-            '<span>' +
-            pub_date_string +
-            '</span>' +
-            '<span id="journal-span">' +
-            journal +
-            '</span>' +
-            '</div>' +
-            '</div>' +
-            '<div id="author-div">' +
-            author_string +
-            '</div>' +
-            '<div id="abstract-div">' +
-            '<p>' +
-            abstract +
-            '</p>' +
-            '</div>' +
-            '<a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=' +
-            id.toString() + '" target="_blank">PubMed' +
-            '</a>' +
-            '</span>'
-    });
+    // Fill in the modal contents for the given node
+    $("#modal-title").html(title);
+    $("#modal-publisher").html(journal);
+    $("#modal-published-date").html(pub_date_string);
+    $("#modal-authors").html(author_string);
+    $("#modal-abstract").html(abstract);
+    // Add href to publisher link out button
+    $("#modal-publisher-link-out").attr("href", `https://www.ncbi.nlm.nih.gov/pubmed/?term=${id.toString()}`);
+    // Action button should say "Add to Search" or "Remove from Search" depending on whether
+    // or not it is queued.
+    if (id in refinedPapers) {
+      $("#add-to-refine-button").html("Remove from Search<i class='fas fa-minus-square ml-2'></i>");
+    } else {
+      $("#add-to-refine-button").html("Add to search<i class='fas fa-plus-square ml-2'></i>");
+    }
 
     // Add a listener to the refine button.
     refine_button.add_refine_button_listener(id, node, refinedPapers);
+
+    // Trigger modal show event
+    $('#abstract-modal').modal("show");
 
 }
 
