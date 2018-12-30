@@ -35,3 +35,9 @@ svg {
 a.disabled-link {
     pointer-events: none;
 }
+
+.citenet-logo {
+  padding-bottom: 20px;
+
+  width: 18em;
+}
