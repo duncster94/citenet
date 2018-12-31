@@ -12,6 +12,8 @@ function add_refine_button_listener(paperId, node, refinedPapers) {
 
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
+        // Remove click listener
+        $("#add-to-refine-button").off("click");
         on_refine_click(paperId, node, refinedPapers);
     })
 }
@@ -40,9 +42,6 @@ function on_refine_click(paperId, node, refinedPapers) {
     } else {
         $("#refine-button").addClass("yellow darken-1").removeClass("disabled-link grey lighten-1");
     }
-
-    // Remove click listener
-    $("#add-to-refine-button").off("click");
 
     console.log(refinedPapers);
     console.log(node);

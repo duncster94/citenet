@@ -35,8 +35,10 @@ function createModal(node, refinedPapers) {
     $("#modal-published-date").html(pub_date_string);
     $("#modal-authors").html(author_string);
     $("#modal-abstract").html(abstract);
+    
     // Add href to publisher link out button
     $("#modal-publisher-link-out").attr("href", `https://www.ncbi.nlm.nih.gov/pubmed/?term=${id.toString()}`);
+    
     // Action button should say "Add to Search" or "Remove from Search" depending on whether
     // or not it is queued.
     if (id in refinedPapers) {
