@@ -12,7 +12,9 @@ function add_refine_button_listener(paperId, node, refinedPapers) {
 
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
-        // Remove click listener
+        console.log('clicked')
+        
+        // Remove click listener to avoid double-clicking.
         $("#add-to-refine-button").off("click");
         on_refine_click(paperId, node, refinedPapers);
     })

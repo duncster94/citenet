@@ -5,7 +5,7 @@ require("bootstrap");
 function createModal(node, refinedPapers) {
     /*
     Creates the modal which appears on node click.
-     */
+    */
 
     let title = node.title;
     let authors = node.authors;
