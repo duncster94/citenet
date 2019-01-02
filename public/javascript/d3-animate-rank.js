@@ -38,7 +38,7 @@ function animateRank(simulation, node) {
             return getForcePositions(d, "Y")
         }))
         .velocityDecay(0.15)
-        .alpha(0.4)
+        .alpha(0.3)
         .restart();
     
     function getForcePositions(d, axis) {
@@ -47,11 +47,11 @@ function animateRank(simulation, node) {
         */
     
         if (axis === "X") {
-            return 0;
+            return (d.rank * 200) % 800;
         }
     
         if (axis === "Y") {
-            return d.rank * 100;
+            return 100 * Math.floor(d.rank/4);
         }
     }
 }
