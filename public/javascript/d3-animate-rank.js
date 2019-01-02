@@ -44,11 +44,11 @@ function animateRank(simulation, node) {
         */
     
         if (axis === "X") {
-            return 0
+            return 0;
         }
     
         if (axis === "Y") {
-            return 3 / d.score
+            return d.rank * 100;
         }
     }
 }

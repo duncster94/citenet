@@ -52,11 +52,12 @@ class ExtractSubnetwork {
         // Perform random walk with restart.
         await this.randomWalk(walks_per_node);
 
-        // Gets the 'n_top' number of results.
-        let top_results = this.getTop();
+        // Get top results object.
+        let topObj = this.getTop();
+
         // console.log('top results', top_results); // Uncomment to see results
 
-        let subgraph = await this.formatResponse(top_results);
+        let subgraph = await this.formatResponse(topObj);
 
         return subgraph;
     }
@@ -228,6 +229,14 @@ class ExtractSubnetwork {
             return kv2.value - kv1.value
         });
 
+        // Create ID to rank number object.
+        let rank = 0;
+        let IDtoRank = {};
+        frequencies_arr.slice(0, this.n_top).forEach(function(obj) {
+            IDtoRank[obj.key] = rank;
+            rank++;
+        });
+
         // Retain the top 'n_top' results and map back to object.
         let top_n_results = frequencies_arr.slice(0, this.n_top)
             .reduce(function(obj, prop) {
@@ -235,28 +244,33 @@ class ExtractSubnetwork {
                 return obj;
             }, {});
 
-        return top_n_results;
+        return {"topN": top_n_results, "IDtoRank": IDtoRank};
     }
 
-    async formatResponse(top_results) {
+    async formatResponse(topResultsObj) {
         /*
         Given a set of top scoring nodes, extract all relevant information
         and format the response.
         */
 
+        let topResults = topResultsObj.topN
+        let IDtoRank = topResultsObj.IDtoRank
+
         // Get an edge-list object containing all edges between nodes in
         // 'top_nodes'.
-        let edge_arr = this.extractEdges(top_results);
+        let edgeArr = this.extractEdges(topResults);
 
         // Get all metadata for the top nodes.
-        let node_data_arr = await this.getMetadata(top_results);
+        let nodeDataArr = await this.getMetadata(topResults, IDtoRank);
 
         // Get an id to title mapping object.
-        let id_to_title = this.getIDtoTitle(node_data_arr);
+        let IDtoTitle = this.getIDtoTitle(nodeDataArr);
 
         // Construct subgraph.
-        let subgraph = {nodes: node_data_arr, links: edge_arr, 
-            mapping: id_to_title};
+        let subgraph = {nodes: nodeDataArr, links: edgeArr, 
+            mapping: IDtoTitle};
+
+        // console.log(subgraph);
 
         return subgraph;
 
@@ -293,7 +307,7 @@ class ExtractSubnetwork {
         return edge_arr;
     }
 
-    async getMetadata(top_results) {
+    async getMetadata(top_results, IDtoRank) {
         /*
         Extract the metadata for all nodes.
         */
@@ -330,28 +344,38 @@ class ExtractSubnetwork {
             // Add node metadata to 'metadata' object.
             metadata.push({id: id, title: title, pub_date: pub_date, 
                 journal: journal, authors: authors, abstract: abstract, 
-                score: score})
+                score: score, rank: IDtoRank[id]})
         }
 
         return metadata;
     }
 
-    getIDtoTitle(node_data_arr) {
+    getIDtoTitle(nodeDataArr) {
         /*
         */
 
         // Object to store id to title mapping.
-        let id_to_title = {};
+        let idToTitle = {};
 
-        // Iterate over 'node_data_obj' and add mappings to 'id_to_title'.
-        for (let metadata of node_data_arr) {
+        // Iterate over 'nodeDataArr' and add mappings to 'idToTitle'.
+        for (let metadata of nodeDataArr) {
             let id = metadata.id;
             let title = metadata.title;
 
-            id_to_title[id] = title;
+            idToTitle[id] = title;
         }
 
-        return id_to_title;
+        return idToTitle;
+    }
+
+    getIDtoRank(nodeDataArr) {
+        /*
+        */
+
+        // Object to store id to rank mapping.
+        let idToRank = {};
+
+        // Get
     }
 }
 
