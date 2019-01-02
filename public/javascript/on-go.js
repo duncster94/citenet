@@ -2,6 +2,7 @@ const $ = require("jquery");
 const d3Layout = require("./d3-layout");
 const createTooltips = require("./create-tooltips.js");
 const createModal = require("./create-modals.js");
+const animateRank = require("./d3-animate-rank.js");
 
 // Object to store refined papers.
 let refinedPapers = {};
@@ -116,11 +117,15 @@ function create_layout(response) {
 
     let layoutObj = d3Layout.d3Layout(response,
         createModal, refinedPapers);
-    let nodeObj = layoutObj.node;
+    let node = layoutObj.node;
     let isDragging = layoutObj.isDragging;
     let simulation = layoutObj.simulation;
 
-    createTooltips.createTooltips(nodeObj, isDragging);
+    // Create tooltips.
+    createTooltips.createTooltips(node, isDragging);
+
+    // Create animations.
+    animateRank.addAnimateRankListener(simulation, node);
 }
 
 module.exports.create_listeners = create_listeners;

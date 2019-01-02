@@ -76,8 +76,8 @@ function d3Layout(response, createModal, refinedPapers) {
     // Add forces and tick behaviour to force simulation.
     simulation
         .force("collide", collision_force)
-        .force("charge_force", charge_force)
-        .force("center_force", center_force)
+        .force("charge", charge_force)
+        .force("center", center_force)
         .force("links", link_force)
         .on("tick", tickActions)
 

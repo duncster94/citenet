@@ -8,7 +8,6 @@ const onStart = require("./on-start.js");
 const selectizeInput = require("./selectize-input.js");
 const onGo = require("./on-go.js");
 const refineSearch = require("./refine-search.js");
-const animateRank = require("./d3-animate-rank.js")
 
 // Called when the document is ready.
 $(document).ready(function() {
@@ -26,4 +25,3 @@ onGo.create_listeners();
 const refinedPapers = onGo.refinedPapers;
 
 refineSearch.add_refineSearch_listener(refinedPapers);
-animateRank.addAnimateRankListener();
