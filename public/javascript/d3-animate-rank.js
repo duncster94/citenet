@@ -31,10 +31,10 @@ function animateRank(simulation, node) {
         .force("links", null)
         .force("charge", null)
         .force("center", null)
-        .force("x", d3.forceX().strength(2).x(function(d) {
+        .force("x", d3.forceX().strength(0.2).x(function(d) {
             return getForcePositions(d, "X")
         }))
-        .force("y", d3.forceY().strength(1).y(function(d) {
+        .force("y", d3.forceY().strength(0.2).y(function(d) {
             return getForcePositions(d, "Y")
         }))
     

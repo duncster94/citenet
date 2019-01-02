@@ -47,21 +47,21 @@ class ExtractSubnetwork {
         console.log('Querying source nodes:', this.source_nodes);
 
         // Split 'n_walks' evenly by the number of source nodes.
-        let walks_per_node = this.compute_walk_number();
+        let walks_per_node = this.computeWalkNumber();
 
         // Perform random walk with restart.
-        await this.random_walk(walks_per_node);
+        await this.randomWalk(walks_per_node);
 
         // Gets the 'n_top' number of results.
-        let top_results = this.get_top();
+        let top_results = this.getTop();
         // console.log('top results', top_results); // Uncomment to see results
 
-        let subgraph = await this.format_response(top_results);
+        let subgraph = await this.formatResponse(top_results);
 
         return subgraph;
     }
 
-    async random_walk(walks_per_node) {
+    async randomWalk(walks_per_node) {
         /*
         The core of the search algorithm. Performs random walk with
         restart over the network.
@@ -89,7 +89,7 @@ class ExtractSubnetwork {
         }
     }
 
-    compute_walk_number() {
+    computeWalkNumber() {
         /*
         Computes the number of walks each source node gets by dividing
         'n_walks' by the number of source nodes and taking the floor
@@ -147,7 +147,7 @@ class ExtractSubnetwork {
         while (!end_walk) {
 
             // Get neighbours of 'current_node'. 
-            let node_neighbours = await this.find_neighbours(current_node)
+            let node_neighbours = await this.findNeighbours(current_node)
 
             // Randomly select neighbour to jump to.
             let rand_index = Math.floor(Math.random() * node_neighbours.length);
@@ -163,7 +163,7 @@ class ExtractSubnetwork {
         return current_node;
     }
 
-    async find_neighbours(node) {
+    async findNeighbours(node) {
         /*
         Queries Elasticsearch and returns the neighbours of the given
         node. (If necessary, this code can be modified to ensure a
@@ -212,7 +212,7 @@ class ExtractSubnetwork {
         return neighbours;
     }
 
-    get_top() {
+    getTop() {
         /*
         Returns the top 'n_top' scoring nodes in the random walk.
         */
@@ -238,7 +238,7 @@ class ExtractSubnetwork {
         return top_n_results;
     }
 
-    async format_response(top_results) {
+    async formatResponse(top_results) {
         /*
         Given a set of top scoring nodes, extract all relevant information
         and format the response.
@@ -246,13 +246,13 @@ class ExtractSubnetwork {
 
         // Get an edge-list object containing all edges between nodes in
         // 'top_nodes'.
-        let edge_arr = this.extract_edges(top_results);
+        let edge_arr = this.extractEdges(top_results);
 
         // Get all metadata for the top nodes.
-        let node_data_arr = await this.get_metadata(top_results);
+        let node_data_arr = await this.getMetadata(top_results);
 
         // Get an id to title mapping object.
-        let id_to_title = this.get_id_to_title(node_data_arr);
+        let id_to_title = this.getIDtoTitle(node_data_arr);
 
         // Construct subgraph.
         let subgraph = {nodes: node_data_arr, links: edge_arr, 
@@ -262,7 +262,7 @@ class ExtractSubnetwork {
 
     }
 
-    extract_edges(top_results) {
+    extractEdges(top_results) {
         /*
         Given the top results, extract all edge relationships between
         these nodes.
@@ -293,7 +293,7 @@ class ExtractSubnetwork {
         return edge_arr;
     }
 
-    async get_metadata(top_results) {
+    async getMetadata(top_results) {
         /*
         Extract the metadata for all nodes.
         */
@@ -336,7 +336,7 @@ class ExtractSubnetwork {
         return metadata;
     }
 
-    get_id_to_title(node_data_arr) {
+    getIDtoTitle(node_data_arr) {
         /*
         */
 
