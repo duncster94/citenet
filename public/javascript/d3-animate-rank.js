@@ -13,7 +13,7 @@ function addAnimateRankListener(simulation, node) {
 
 function animateRank(simulation, node) {
     console.log('clicked');
-    $(".links").fadeOut();
+    $(".links").fadeOut(100);
 
     // Save the current positions of the nodes.
     let nodePositions = getPositions(node);
@@ -37,6 +37,9 @@ function animateRank(simulation, node) {
         .force("y", d3.forceY().strength(0.2).y(function(d) {
             return getForcePositions(d, "Y")
         }))
+        .velocityDecay(0.15)
+        .alpha(0.4)
+        .restart();
     
     function getForcePositions(d, axis) {
         /*
