@@ -37,7 +37,7 @@ function animateRank(simulation, node, zoomHandler) {
     // Spacing between nodes.
     let nodeSpacing = radiusFirst + paddingRadii + radiusSecond;
 
-    $(".everything").attr("transform", "translate(0, 0)");
+    $(".everything").attr("transform", "translate(0, " + (height/2).toString() + ")");
 
     // Remove old forces and add new centering forces to each node
     // based on rank.
@@ -76,7 +76,7 @@ function animateRank(simulation, node, zoomHandler) {
 
     // Track centered node.
     let counter = 0;
-    let currentY = 0;
+    let currentY = height / 2;
 
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
         console.log(d3.event);
@@ -99,10 +99,17 @@ function animateRank(simulation, node, zoomHandler) {
             //     .alpha(0.3)
             //     .restart();
 
-            $(".everything").attr("transform", "translate(0, " + 
-                (-deltaY + currentY).toString() + ")")
+            let newPosition = Math.max(Math.min(currentY - deltaY, height / 2),
+                -59 * nodeSpacing + height / 2);
+            console.log(newPosition)
+            console.log('everything height', $(".everything").height());
+            console.log(59 * nodeSpacing);
 
-            currentY -= deltaY;
+            $(".everything").attr("transform", 
+                "translate(0, " + (newPosition).toString() + ")")
+
+            // Update current Y position.
+            currentY  = newPosition;
         }
 
     });
