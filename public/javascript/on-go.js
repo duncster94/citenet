@@ -120,12 +120,13 @@ function create_layout(response) {
     let node = layoutObj.node;
     let isDragging = layoutObj.isDragging;
     let simulation = layoutObj.simulation;
+    let zoomHandler = layoutObj.zoomHandler;
 
     // Create tooltips.
     createTooltips.createTooltips(node, isDragging);
 
     // Create animations.
-    animateRank.addAnimateRankListener(simulation, node);
+    animateRank.addAnimateRankListener(simulation, node, zoomHandler);
 }
 
 module.exports.create_listeners = create_listeners;

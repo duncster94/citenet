@@ -192,7 +192,7 @@ function d3Layout(response, createModal, refinedPapers) {
     };
 
     //add drag capabilities
-    var dragHandler = d3.drag()
+    let dragHandler = d3.drag()
         .on("start", drag_start)
         .on("drag", drag_drag)
         .on("end", drag_end);
@@ -200,11 +200,11 @@ function d3Layout(response, createModal, refinedPapers) {
     dragHandler(node);
 
     //add zoom capabilities
-    var zoom_handler = d3.zoom()
+    let zoom_handler = d3.zoom()
         .on("zoom", zoom_actions)
         .scaleExtent([0.1, 3])
 
-    zoom_handler(svg);
+    // zoom_handler(svg);
 
     let vis = svg
         .call(zoom_handler)
@@ -272,7 +272,8 @@ function d3Layout(response, createModal, refinedPapers) {
     return {
         "node": node,
         "isDragging": isDragging,
-        "simulation": simulation
+        "simulation": simulation,
+        "zoomHandler": zoom_handler
     };
 }
 
