@@ -15,9 +15,6 @@ function animateRank(simulation, node, zoomHandler) {
     /*
     */
 
-    
-    $(".links").fadeOut(100);
-
     // Save the current positions of the nodes.
     let nodePositions = getPositions(node);
 
@@ -25,7 +22,16 @@ function animateRank(simulation, node, zoomHandler) {
     let width = $("#network").width();
     let height = $("#network").height();
 
-    console.log(width, height);
+    $(".links").fadeOut(100);
+    d3.select("#network")
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", width)
+        .attr("y1", height / 2)
+        .attr("y2", height / 2)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+
     // Get top two largest radii in order to properly space nodes.
     let topRadii = getTopRadii(node);
     let radiusFirst = topRadii.first;
@@ -36,6 +42,12 @@ function animateRank(simulation, node, zoomHandler) {
 
     // Spacing between nodes.
     let nodeSpacing = radiusFirst + paddingRadii + radiusSecond;
+
+    // Create array of node positions.
+    let nodePos = [];
+    for (let pos = 0; pos < 60; pos++) {
+        nodePos.push(pos * nodeSpacing);
+    }
 
     $(".everything").attr("transform", "translate(0, " + (height/2).toString() + ")");
 
@@ -54,7 +66,8 @@ function animateRank(simulation, node, zoomHandler) {
         .velocityDecay(0.15)
         .alpha(0.3)
         .restart();
-    
+
+
     function getForcePositions(d, counter, axis) {
         /*
         Computes the position on screen that a force will be applied to 'd'.
@@ -70,50 +83,74 @@ function animateRank(simulation, node, zoomHandler) {
         }
     
         if (axis === "Y") {
-            return nodeSpacing * d.rank + (counter * nodeSpacing);
+            return nodeSpacing * d.rank + counter;
         }
     }
 
-    // Track centered node.
-    let counter = 0;
+    // Initial position.
     let currentY = height / 2;
 
+    // Scroll damping factor.
+    let dampingFactor = 0.6;
+
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
-        console.log(d3.event);
 
         // Get scroll Y delta.
-        let deltaY = d3.event.deltaY;
+        let deltaY = dampingFactor * d3.event.deltaY;
+        // console.log(deltaY);
 
-        if (Math.abs(deltaY) > 0) {
-            if (deltaY < 0) {
-                counter++;
-            } else {
-                counter--;
-            }
-    
-            // simulation
-            //     .force("y", d3.forceY().strength(0.4).y(function(d) {
-            //         return getForcePositions(d, counter, "Y")
-            //     }))
-            //     .velocityDecay(0.15)
-            //     .alpha(0.3)
-            //     .restart();
+        // if (deltaY >= 0) {
+        //     simulation
+        //         .force("y2", d3.forceY(60 * nodeSpacing).strength(deltaY/10000))
+        //         .force("y3", null)
+        //         .alpha(0.1)
+        //         .restart();
+        // } else {
+        //     simulation
+        //         .force("y2", null)
+        //         .force("y3", d3.forceY(-60 *2 * nodeSpacing).strength(-deltaY/10000))
+        //         .alpha(0.1)
+        //         .restart();
+        // }
+            
+        // console.log('deltaY', deltaY);
+        // console.log('currentY', currentY);
+        // console.log("currentY", currentY);
+        // closestPos = -closest(-currentY, nodePos);
+        // console.log("closestPos", closestPos)
+        // deltaY = deltaY - 0.1 * Math.abs(closestPos - currentY);
+        // console.log(deltaY);
+        // prevDeltaY = deltaY;
+        // prevprevDeltaY = prevDeltaY;
+        // prevprevprevDeltaY = prevprevDeltaY;
 
-            let newPosition = Math.max(Math.min(currentY - deltaY, height / 2),
-                -59 * nodeSpacing + height / 2);
-            console.log(newPosition)
-            console.log('everything height', $(".everything").height());
-            console.log(59 * nodeSpacing);
+        // Specify new position to scroll to, bounded by node collection.
+        let newPosition = Math.max(Math.min(currentY - deltaY, height / 2),
+            -59 * nodeSpacing + height / 2);
+        let closestPos = -closest(-newPosition, nodePos);
+        newPosition = closestPos;
+        console.log(newPosition);
 
-            $(".everything").attr("transform", 
-                "translate(0, " + (newPosition).toString() + ")")
+        // Update node collection position.
+        // $(".everything").attr("transform", 
+            // "translate(0, " + (newPosition).toString() + ")")
+        
+        simulation
+            .force("y", d3.forceY().strength(0.5).y(function(d) {
+                return getForcePositions(d, newPosition, "Y")
+            }))
+            .velocityDecay(0.3)
+            .alpha(0.3)
+            .restart();
 
-            // Update current Y position.
-            currentY  = newPosition;
-        }
-
+        // Update current node collection position.
+        currentY  = newPosition;
     });
 
+    // d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
+    //     simulation
+    //         .force("y", d3.forceY(nodePos).strength(0.4))
+    // });
 
     // // Event listener.
     // zoomHandler.on("start", function() {
@@ -133,6 +170,25 @@ function animateRank(simulation, node, zoomHandler) {
     // zoomHandler.on("end", function() {
     //     console.log("end");
     // })
+
+
+    function closest (num, arr) {
+        var mid;
+        var lo = 0;
+        var hi = arr.length - 1;
+        while (hi - lo > 1) {
+            mid = Math.floor ((lo + hi) / 2);
+            if (arr[mid] < num) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        if (num - arr[lo] <= arr[hi] - num) {
+            return arr[lo];
+        }
+        return arr[hi];
+    }
 }
 
 function getPositions(node) {
