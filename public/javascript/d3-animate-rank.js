@@ -90,51 +90,22 @@ function animateRank(simulation, node, zoomHandler) {
     // Initial position.
     let currentY = height / 2;
 
-    // Scroll damping factor.
-    let dampingFactor = 0.6;
-
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
 
         // Get scroll Y delta.
-        let deltaY = dampingFactor * d3.event.deltaY;
-        // console.log(deltaY);
-
-        // if (deltaY >= 0) {
-        //     simulation
-        //         .force("y2", d3.forceY(60 * nodeSpacing).strength(deltaY/10000))
-        //         .force("y3", null)
-        //         .alpha(0.1)
-        //         .restart();
-        // } else {
-        //     simulation
-        //         .force("y2", null)
-        //         .force("y3", d3.forceY(-60 *2 * nodeSpacing).strength(-deltaY/10000))
-        //         .alpha(0.1)
-        //         .restart();
-        // }
-            
-        // console.log('deltaY', deltaY);
-        // console.log('currentY', currentY);
-        // console.log("currentY", currentY);
-        // closestPos = -closest(-currentY, nodePos);
-        // console.log("closestPos", closestPos)
-        // deltaY = deltaY - 0.1 * Math.abs(closestPos - currentY);
-        // console.log(deltaY);
-        // prevDeltaY = deltaY;
-        // prevprevDeltaY = prevDeltaY;
-        // prevprevprevDeltaY = prevprevDeltaY;
+        let deltaY = d3.event.deltaY;
 
         // Specify new position to scroll to, bounded by node collection.
-        let newPosition = Math.max(Math.min(currentY - deltaY, height / 2),
-            -59 * nodeSpacing + height / 2);
-        let closestPos = -closest(-newPosition, nodePos);
+        let newPosition = Math.max(Math.min(currentY - deltaY, 0),
+            -59 * nodeSpacing);
+
+        // Given the new scroll position, find the closest 'bin' or
+        // discrete position.
+        let closestPos = closest(newPosition);
         newPosition = closestPos;
         console.log(newPosition);
 
-        // Update node collection position.
-        // $(".everything").attr("transform", 
-            // "translate(0, " + (newPosition).toString() + ")")
-        
+        // Change force positions for each node based on scroll.
         simulation
             .force("y", d3.forceY().strength(0.5).y(function(d) {
                 return getForcePositions(d, newPosition, "Y")
@@ -143,51 +114,35 @@ function animateRank(simulation, node, zoomHandler) {
             .alpha(0.3)
             .restart();
 
-        // Update current node collection position.
+        // Update current focused node position.
         currentY  = newPosition;
     });
 
-    // d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
-    //     simulation
-    //         .force("y", d3.forceY(nodePos).strength(0.4))
-    // });
+    function closest(pos) {
+        /*
+        */
 
-    // // Event listener.
-    // zoomHandler.on("start", function() {
+        let posMagnitude = Math.abs(pos)
 
-    //     console.log(d3.event);
-    //     counter++;
+        let positionInt = Math.floor(posMagnitude / nodeSpacing)
+        let lower = positionInt * nodeSpacing;
+        let higher = (positionInt + 1) * nodeSpacing;
 
-    //     simulation
-    //         .force("y", d3.forceY().strength(0.4).y(function(d) {
-    //             return getForcePositions(d, counter, "Y")
-    //         }))
-    //         .velocityDecay(0.15)
-    //         .alpha(0.3)
-    //         .restart();
-    // })
+        console.log(lower, posMagnitude, higher);
 
-    // zoomHandler.on("end", function() {
-    //     console.log("end");
-    // })
+        let magnitude;
 
-
-    function closest (num, arr) {
-        var mid;
-        var lo = 0;
-        var hi = arr.length - 1;
-        while (hi - lo > 1) {
-            mid = Math.floor ((lo + hi) / 2);
-            if (arr[mid] < num) {
-                lo = mid;
-            } else {
-                hi = mid;
-            }
+        if ((posMagnitude - lower) < (higher - posMagnitude)) {
+            magnitude = lower;
+        } else {
+            magnitude = higher;
         }
-        if (num - arr[lo] <= arr[hi] - num) {
-            return arr[lo];
+
+        if (pos <= 0) {
+            return -magnitude
+        } else {
+            return magnitude
         }
-        return arr[hi];
     }
 }
 
