@@ -27,4 +27,6 @@ $ nodemon app.js
 
 To run the unit test suite, call
 
-```npm run test-with-coverage```
+```
+$ npm run test-with-coverage
+```
