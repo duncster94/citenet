@@ -7,6 +7,8 @@ Please see the wiki for more in-depth details.
 
 ## Usage
 
+### Installation
+
 To install and run locally
 
 ```
@@ -20,3 +22,9 @@ optionally, you can run it with `nodemon` so that any changes cause the server t
 $ npm install -g nodemon
 $ nodemon app.js
 ```
+
+### Testing
+
+To run the unit test suite, call
+
+```npm run test-with-coverage```
