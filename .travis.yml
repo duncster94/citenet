@@ -1,0 +1,11 @@
+language: node_js
+
+node_js:
+  - "node"  # Use latest stable Node.js release
+  - "iojs"  # Uselatest stable io.js release
+
+install:
+  - npm install
+
+script:
+  - npm test
