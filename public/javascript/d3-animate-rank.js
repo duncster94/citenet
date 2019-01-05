@@ -90,10 +90,15 @@ function animateRank(simulation, node, zoomHandler) {
     // Initial position.
     let currentY = height / 2;
 
+    // d3.select("body").on("keypress", function() {
+    //     console.log(d3.event.keyCode);
+    // })
+
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
 
         // Get scroll Y delta.
         let deltaY = d3.event.deltaY;
+        console.log(deltaY);
 
         // Specify new position to scroll to, bounded by node collection.
         let newPosition = Math.max(Math.min(currentY - deltaY, 0),
@@ -127,8 +132,6 @@ function animateRank(simulation, node, zoomHandler) {
         let positionInt = Math.floor(posMagnitude / nodeSpacing)
         let lower = positionInt * nodeSpacing;
         let higher = (positionInt + 1) * nodeSpacing;
-
-        console.log(lower, posMagnitude, higher);
 
         let magnitude;
 
