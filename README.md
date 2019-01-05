@@ -28,5 +28,13 @@ $ nodemon app.js
 To run the unit test suite, call
 
 ```
-$ npm run test-with-coverage
+$ npm test
 ```
+
+To run the same test suite with coverage, call
+
+```
+$ npm test-with-coverage
+```
+
+an `html` file with coverage results will be found in `coverage/lcov-report/index.html`.
