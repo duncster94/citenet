@@ -1,0 +1,14 @@
+language: node_js
+
+node_js:
+- node
+
+install:
+- npm install
+
+script:
+- npm run test-with-coverage-submit
+
+env:
+  matrix:
+    secure: PLxLnuaaZt2P8shm6mlLglHiYbguQy2KKc+6yK0K/BQPcFoVNC2H1DM9jUhxBRIMqeS50aVyOOBHlYAQoIxuKnZztbXdQqnF5yJ/8OiCkOluQDQmCOLocs5ofbJsjmYsZ0ZRY39rA7r02DIODWBuDJsRrhgCbSxFZ3fZMmIK6YPXrkP6Do3AKXo/t9brM8u1ET3PiFGCQP610UijYCJU7ivfJFi6Bf67+q0ZFhmLdIUPDCSvKlH2HYFu4JvA0DoP8N0muvNps5k1VM42lNVh/sfRCt+4sFLF/F1Mm4wwEg7OouxCAE1j2JdFmi9Yb5sajrA5eB098hG1vS2WA5kbkm60Klx1KuR9Y6V3zLWAacbJUPWe4baJtiFnvg9PgJwnmwj6LysCOA0brqaWRy5HK4vdP5cyOk4upjUGv1cL7vNHRK9u9HucWBpG+S71Y5vw0UuR2ORy+36vzX6WrgbkBDYDwkpfrXZ721KzR7bX4OW0vDj1lfIU8XqIm7s0oiPxhYmvIXiuVL7HTO3BMOwqzXqBwJMsx5aXg7mLZWLnSfFt9a/We/dPUychLe0zuAUCV+hWsMpnYYGTG08W3mYvBnO2ghCumUbjeWu4t+Tcvx7GFriyqsedZf5QVi4Efj+ZQPP5ya0vDKWYMYLIjWu9Xf/wCD/y2RN45jlSNU2/sHw=

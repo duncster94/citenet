@@ -45,11 +45,11 @@ function createTooltips(nodeObj, isDragging) {
         }
 
         // Create an author string.
-        let author_string;
+        let authorString;
         if (authors.length === 1) {
-            author_string = authors[0].LastName + '   ';
+            authorString = authors[0].LastName + '   ';
         } else {
-            author_string = authors[0].LastName + ' et al.   ';
+            authorString = authors[0].LastName + ' et al.   ';
         }
 
         // Define the node specific tooltip, including it's HTML and
@@ -61,7 +61,7 @@ function createTooltips(nodeObj, isDragging) {
                 title +
                 '</p>' +
                 '<p>' +
-                author_string + pub_year +
+                authorString + pub_year +
                 '</p>' +
                 '</span>' +
                 '</div>',
