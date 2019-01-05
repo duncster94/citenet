@@ -1,4 +1,4 @@
-const $ = require('jquery');
+const $ = require("jquery");
 const refine_button = require("./refine-search.js");
 
 function createModal(node, refinedPapers) {
@@ -12,7 +12,7 @@ function createModal(node, refinedPapers) {
 
     let pub_date = node.pub_date;
     let pub_year = pub_date.Year;
-    let pub_month = '';
+    let pub_month = "";
     if ("Month" in pub_date) {
         pub_month = pub_date.Month.toString();
     }
@@ -26,13 +26,13 @@ function createModal(node, refinedPapers) {
     let id = node.id;
 
     // Format author string.
-    let author_string = formatAuthors(authors);
+    let authorString = formatAuthors(authors);
 
     // Fill in the modal contents for the given node
     $("#modal-title").html(title);
     $("#modal-publisher").html(journal);
     $("#modal-published-date").html(pub_date_string);
-    $("#modal-authors").html(author_string);
+    $("#modal-authors").html(authorString);
     $("#modal-abstract").html(abstract);
 
     // Add href to publisher link out button
@@ -59,20 +59,20 @@ function formatAuthors(authors) {
     Formats author list for use in modal.
     */
 
-    let author_string = '';
+    let authorString = '';
 
-    // Add author names to 'author_string'.
+    // Add author names to 'authorString'.
     for (author of authors) {
         let first_name = author.FirstName;
         let last_name = author.LastName;
 
-        author_string += first_name + ' ' + last_name + ', '
+        authorString += first_name + ' ' + last_name + ', '
     }
 
-    // Remove final comma and space at end of 'author_string'.
-    author_string = author_string.slice(0, -2);
+    // Remove final comma and space at end of 'authorString'.
+    authorString = authorString.slice(0, -2);
 
-    return author_string;
+    return authorString;
 }
 
 function createRefinedButton() {
