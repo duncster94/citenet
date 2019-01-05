@@ -103,16 +103,18 @@ function animateRank(simulation, node, zoomHandler) {
 
             // Specify new position to hop up to, bounded by node collection.
             newPosition = Math.max(
-                Math.min(currentY + nodeSpacing, height / 2),
-                -59 * nodeSpacing + height / 2);
+                Math.min(currentY + nodeSpacing, 0),
+                -59 * nodeSpacing);
         }
 
         if (event.which === 40) {
             // Specify new position to hop down to, bounded by node collection.
             newPosition = Math.max(
-                Math.min(currentY - nodeSpacing, height / 2),
-                -59 * nodeSpacing + height / 2);
+                Math.min(currentY - nodeSpacing, 0),
+                -59 * nodeSpacing);
         }
+
+        console.log(newPosition);
 
         // Transition to 'newPosition'.
         scrollNodes(newPosition);
@@ -128,8 +130,8 @@ function animateRank(simulation, node, zoomHandler) {
         // console.log(deltaY);
 
         // Specify new position to scroll to, bounded by node collection.
-        let newPosition = Math.max(Math.min(currentY - deltaY, height / 2),
-            -59 * nodeSpacing + height / 2);
+        let newPosition = Math.max(Math.min(currentY - deltaY, 0),
+            -59 * nodeSpacing);
         console.log(newPosition);
 
         // Given the new scroll position, find the closest 'bin' or
@@ -150,16 +152,16 @@ function animateRank(simulation, node, zoomHandler) {
             .transition()
             .ease(d3.easeExpOut)
             .duration(500)
-            .attr("transform", "translate(0, " + (newPos).toString() + ")");
+            .attr("transform", "translate(0, " + (newPos + height / 2).toString() + ")");
     }
 
     function closest(pos) {
         /*
         */
 
-        let posMagnitude = Math.abs(pos)
+        let posMagnitude = Math.abs(pos);
 
-        let positionInt = Math.floor(posMagnitude / nodeSpacing)
+        let positionInt = Math.floor(posMagnitude / nodeSpacing);
         let lower = positionInt * nodeSpacing;
         let higher = (positionInt + 1) * nodeSpacing;
 
@@ -172,9 +174,9 @@ function animateRank(simulation, node, zoomHandler) {
         }
 
         if (pos <= 0) {
-            return -magnitude
+            return -magnitude;
         } else {
-            return magnitude
+            return magnitude;
         }
     }
 }
