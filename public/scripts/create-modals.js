@@ -1,6 +1,5 @@
-const $ = require("jquery");
+const $ = require('jquery');
 const refine_button = require("./refine-search.js");
-require("bootstrap");
 
 function createModal(node, refinedPapers) {
     /*
@@ -27,7 +26,7 @@ function createModal(node, refinedPapers) {
     let id = node.id;
 
     // Format author string.
-    let author_string = format_authors(authors);
+    let author_string = formatAuthors(authors);
 
     // Fill in the modal contents for the given node
     $("#modal-title").html(title);
@@ -35,10 +34,10 @@ function createModal(node, refinedPapers) {
     $("#modal-published-date").html(pub_date_string);
     $("#modal-authors").html(author_string);
     $("#modal-abstract").html(abstract);
-    
+
     // Add href to publisher link out button
     $("#modal-publisher-link-out").attr("href", `https://www.ncbi.nlm.nih.gov/pubmed/?term=${id.toString()}`);
-    
+
     // Action button should say "Add to Search" or "Remove from Search" depending on whether
     // or not it is queued.
     if (id in refinedPapers) {
@@ -55,7 +54,7 @@ function createModal(node, refinedPapers) {
 
 }
 
-function format_authors(authors) {
+function formatAuthors(authors) {
     /*
     Formats author list for use in modal.
     */
@@ -76,11 +75,15 @@ function format_authors(authors) {
     return author_string;
 }
 
-function create_refined_button() {
+function createRefinedButton() {
     /*
      */
 
 
 }
 
-module.exports.createModal = createModal;
+module.exports = {
+  createModal: createModal,
+  formatAuthors: formatAuthors,
+  createRefinedButton: createRefinedButton
+};

@@ -4,6 +4,7 @@ and interface with each other. This file is packaged using browserify
 and included in the index HTML page.
 */
 const $ = require("jquery");
+require('bootstrap')
 const onStart = require("./on-start.js");
 const selectizeInput = require("./selectize-input.js");
 const onGo = require("./on-go.js");
