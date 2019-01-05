@@ -49,7 +49,10 @@ function animateRank(simulation, node, zoomHandler) {
         nodePos.push(pos * nodeSpacing);
     }
 
-    $(".everything").attr("transform", "translate(0, " + (height/2).toString() + ")");
+    d3.select(".everything")
+        .transition()
+        .duration(600)
+        .attr("transform", "translate(0, " + (height/2).toString() + ")");
 
     // Remove old forces and add new centering forces to each node
     // based on rank.
@@ -94,15 +97,19 @@ function animateRank(simulation, node, zoomHandler) {
     //     console.log(d3.event.keyCode);
     // })
 
+    // Specify scroll state.
+    let isScrolling = false;
+
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
 
         // Get scroll Y delta.
         let deltaY = d3.event.deltaY;
-        console.log(deltaY);
+        // console.log(deltaY);
 
         // Specify new position to scroll to, bounded by node collection.
-        let newPosition = Math.max(Math.min(currentY - deltaY, 0),
-            -59 * nodeSpacing);
+        let newPosition = Math.max(Math.min(currentY - deltaY, height / 2),
+            -59 * nodeSpacing + height / 2);
+        console.log(newPosition);
 
         // Given the new scroll position, find the closest 'bin' or
         // discrete position.
@@ -110,18 +117,20 @@ function animateRank(simulation, node, zoomHandler) {
         newPosition = closestPos;
         console.log(newPosition);
 
-        // Change force positions for each node based on scroll.
-        simulation
-            .force("y", d3.forceY().strength(0.5).y(function(d) {
-                return getForcePositions(d, newPosition, "Y")
-            }))
-            .velocityDecay(0.3)
-            .alpha(0.3)
-            .restart();
+        scrollNodes(newPosition);
+
 
         // Update current focused node position.
         currentY  = newPosition;
     });
+
+    function scrollNodes(newPos) {
+        d3.select(".everything")
+            .transition()
+            .ease(d3.easeElasticOut)
+            .duration(500)
+            .attr("transform", "translate(0, " + (newPos).toString() + ")");
+    }
 
     function closest(pos) {
         /*

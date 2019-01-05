@@ -83,7 +83,11 @@ function d3Layout(response, createModal, refinedPapers) {
 
     //add encompassing group for the zoom
     var g = svg.append("g")
-        .attr("class", "everything");
+        .attr("class", "everything")
+        // .attr("transition-property", "all")
+        // .attr("transition-property", "translate")
+        // .attr("transition-duration", "3s")
+        .attr("transition", "translate 3s ease");
 
     //draw lines for the links
     var link = g.append("g")
