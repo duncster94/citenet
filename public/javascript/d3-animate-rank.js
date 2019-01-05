@@ -93,12 +93,33 @@ function animateRank(simulation, node, zoomHandler) {
     // Initial position.
     let currentY = height / 2;
 
-    // d3.select("body").on("keypress", function() {
-    //     console.log(d3.event.keyCode);
-    // })
+    // Add arrow up (38) and arrow down (40) listeners.
+    $(document).on("keydown", function(event) {
+        console.log(event.which);
 
-    // Specify scroll state.
-    let isScrolling = false;
+        let newPosition;
+
+        if (event.which === 38) {
+
+            // Specify new position to hop up to, bounded by node collection.
+            newPosition = Math.max(
+                Math.min(currentY + nodeSpacing, height / 2),
+                -59 * nodeSpacing + height / 2);
+        }
+
+        if (event.which === 40) {
+            // Specify new position to hop down to, bounded by node collection.
+            newPosition = Math.max(
+                Math.min(currentY - nodeSpacing, height / 2),
+                -59 * nodeSpacing + height / 2);
+        }
+
+        // Transition to 'newPosition'.
+        scrollNodes(newPosition);
+
+        // Update current focused node position.
+        currentY  = newPosition;
+    })
 
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
 
@@ -117,8 +138,8 @@ function animateRank(simulation, node, zoomHandler) {
         newPosition = closestPos;
         console.log(newPosition);
 
+        // Transition to 'newPosition'.
         scrollNodes(newPosition);
-
 
         // Update current focused node position.
         currentY  = newPosition;
@@ -127,7 +148,7 @@ function animateRank(simulation, node, zoomHandler) {
     function scrollNodes(newPos) {
         d3.select(".everything")
             .transition()
-            .ease(d3.easeElasticOut)
+            .ease(d3.easeExpOut)
             .duration(500)
             .attr("transform", "translate(0, " + (newPos).toString() + ")");
     }
