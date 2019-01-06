@@ -43928,7 +43928,7 @@ function createModal(node, refinedPapers) {
 
     let pub_date_string = "No date available.";
     if (pub_year) {
-        pub_date_string = pub_month + '  ' + pub_year;
+        pub_date_string = `${pub_month}  ${pub_year}`;
     }
 
     let abstract = node.abstract;
@@ -43975,7 +43975,7 @@ function formatAuthors(authors) {
         let first_name = author.FirstName;
         let last_name = author.LastName;
 
-        authorString += first_name + ' ' + last_name + ', '
+        authorString += `${first_name} ${last_name}, `;
     }
 
     // Remove final comma and space at end of 'authorString'.
@@ -43987,8 +43987,6 @@ function formatAuthors(authors) {
 function createRefinedButton() {
     /*
      */
-
-
 }
 
 module.exports = {
@@ -44047,9 +44045,9 @@ function createTooltips(nodeObj, isDragging) {
         // Create an author string.
         let authorString;
         if (authors.length === 1) {
-            authorString = authors[0].LastName + '   ';
+            authorString = `${authors[0].LastName}   `;
         } else {
-            authorString = authors[0].LastName + ' et al.   ';
+            authorString = `${authors[0].LastName} et al.   `;
         }
 
         // Define the node specific tooltip, including it's HTML and
@@ -44150,10 +44148,10 @@ function d3Layout(response, createModal, refinedPapers) {
     let width = $("#network").width();
     let height = $("#network").height();
 
-    // Assign width and height attributes to SVG canvas. 
+    // Assign width and height attributes to SVG canvas.
     // preserveAspectRatio allows for responsive sizing of canvas.
-    svg.attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMidYMid meet");
+    svg.attr("viewBox", `0 0 ${width} ${height}`)
+       .attr("preserveAspectRatio", "xMidYMid meet");
 
     // Define the D3 layout object.
     const simulation = d3.forceSimulation()
@@ -44207,7 +44205,7 @@ function d3Layout(response, createModal, refinedPapers) {
         .enter()
         .append("g")
         .attr("id", function(d) {
-            return "group_" + d.id;
+            return `group_${d.id}`;
         })
         .attr("cx", 0)
         .attr("cy", 0)
@@ -44238,7 +44236,7 @@ function d3Layout(response, createModal, refinedPapers) {
     // Draw circles representing the nodes.
     node.append("circle")
         .attr("id", function(d) {
-            return "circle_" + d.id;
+            return `circle_${d.id}`;
         })
         .attr("r", function(d) {
             return score_to_radius(d);
@@ -44253,7 +44251,7 @@ function d3Layout(response, createModal, refinedPapers) {
     // to the circle.
     node.append("clipPath")
         .attr("id", function(d) {
-            return "clip_" + d.id;
+            return `clip_${d.id}`;
         })
         .append("circle")
         .attr("r", function(d) {
@@ -44273,10 +44271,10 @@ function d3Layout(response, createModal, refinedPapers) {
             return -75;
         })
         .attr("clip-path", function(d) {
-            return "url(#clip_" + d.id + ")";
+            return `url(#clip_${d.id})`;
         })
         .attr("id", function(d) {
-            return "overlay_" + d.id;
+            return `overlay_${d.id}`;
         })
         .style("display", function(d) {
 
@@ -44355,7 +44353,7 @@ function d3Layout(response, createModal, refinedPapers) {
         // Update group (circle and image) positions for each simulation tick.
         node
             .attr("transform", function(d) {
-                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")";
+                return `translate(${d.x.toString()}, ${d.y.toString()})`;
             })
 
         // Update link positions for each simulation tick.
@@ -44420,7 +44418,7 @@ function date_to_colour(node, D_min, D_max, seeds) {
 
     let lightness = m * year + b;
 
-    let colour = "hsla(41,100%," + lightness.toString() + "%,1)";
+    let colour = `hsla(41,100%, ${lightness.toString()}%,1)`;
 
     return colour;
 }
@@ -44653,7 +44651,7 @@ function add_refine_button_listener(paperId, node, refinedPapers) {
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
         console.log('clicked')
-        
+
         // Remove click listener to avoid double-clicking.
         $("#add-to-refine-button").off("click");
         on_refine_click(paperId, node, refinedPapers);
@@ -44670,10 +44668,10 @@ function on_refine_click(paperId, node, refinedPapers) {
     // Add or remove image overlay accordingly.
     if (paperId in refinedPapers) {
         delete refinedPapers[paperId];
-        $("#overlay_" + paperId).hide();
+        $(`#overlay_${paperId}`).hide();
     } else {
         refinedPapers[paperId] = true;
-        $("#overlay_" + paperId).show();
+        $(`#overlay_${paperId}`).show();
     }
 
     // Check if "refinedPapers" is empty.
@@ -44759,8 +44757,7 @@ function instantiate_selectize() {
         create: false,
         labelField: "title",
         searchField: ["title", "authors"], // expand this
-        placeholder: "Enter paper title, author name(s), journal," +
-            " publication date and/or PubMed ID.",
+        placeholder: "Enter paper title, author name(s), journal, publication date and/or PubMed ID.",
         openOnFocus: false,
         highlight: false,
         maxItems: 10,
@@ -44898,8 +44895,7 @@ function format_response(response) {
         // Iterate over authors and format names appropriately.
         for (let author of hit._source.authors) {
 
-            let formatted_author = author["Initials"] + " " +
-                author["LastName"] + ",   ";
+            let formatted_author = `${author["Initials"]} ${author["LastName"]},   `;
 
             authorString += formatted_author
         }

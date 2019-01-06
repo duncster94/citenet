@@ -13,7 +13,7 @@ function add_refine_button_listener(paperId, node, refinedPapers) {
     // Add a click listener to the refine button.
     refine_button.on("click", function() {
         console.log('clicked')
-        
+
         // Remove click listener to avoid double-clicking.
         $("#add-to-refine-button").off("click");
         on_refine_click(paperId, node, refinedPapers);
@@ -30,10 +30,10 @@ function on_refine_click(paperId, node, refinedPapers) {
     // Add or remove image overlay accordingly.
     if (paperId in refinedPapers) {
         delete refinedPapers[paperId];
-        $("#overlay_" + paperId).hide();
+        $(`#overlay_${paperId}`).hide();
     } else {
         refinedPapers[paperId] = true;
-        $("#overlay_" + paperId).show();
+        $(`#overlay_${paperId}`).show();
     }
 
     // Check if "refinedPapers" is empty.
