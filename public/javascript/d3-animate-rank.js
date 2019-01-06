@@ -22,6 +22,7 @@ function animateRank(simulation, node, zoomHandler) {
     let width = $("#network").width();
     let height = $("#network").height();
 
+    // Add a line through center of screen (for debugging purposes).
     $(".links").fadeOut(100);
     d3.select("#network")
         .append("line")
@@ -49,6 +50,7 @@ function animateRank(simulation, node, zoomHandler) {
         nodePos.push(pos * nodeSpacing);
     }
 
+    // Translate node collection 
     d3.select(".everything")
         .transition()
         .duration(600)
@@ -61,60 +63,60 @@ function animateRank(simulation, node, zoomHandler) {
         .force("charge", null)
         .force("center", null)
         .force("x", d3.forceX().strength(0.4).x(function(d) {
-            return getForcePositions(d, 0, "X")
+            return getForcePositions(d, "X")
         }))
         .force("y", d3.forceY().strength(0.4).y(function(d) {
-            return getForcePositions(d, 0, "Y")
+            return getForcePositions(d, "Y")
         }))
         .velocityDecay(0.15)
         .alpha(0.3)
         .restart();
 
 
-    function getForcePositions(d, counter, axis) {
+    function getForcePositions(d, axis) {
         /*
         Computes the position on screen that a force will be applied to 'd'.
         
         d: (object) Data point.
-        counter: (integer) Corresponds to the node that is centered.
         axis: (string) Axis to apply force to. One of 'X' or 'Y'.
         */
     
         if (axis === "X") {
-            // return (d.rank * 600) % 2400;
             return width / 4
         }
     
         if (axis === "Y") {
-            return nodeSpacing * d.rank + counter;
+            return nodeSpacing * d.rank;
         }
     }
+
+    // Get number of nodes in collection.
+    let nNodes = d3.selectAll(".node").size()
 
     // Initial position.
     let currentY = height / 2;
 
     // Add arrow up (38) and arrow down (40) listeners.
     $(document).on("keydown", function(event) {
-        console.log(event.which);
-
+        
         let newPosition;
 
+        // Up arrowkey.
         if (event.which === 38) {
 
             // Specify new position to hop up to, bounded by node collection.
             newPosition = Math.max(
                 Math.min(currentY + nodeSpacing, 0),
-                -59 * nodeSpacing);
+                -(nNodes - 1) * nodeSpacing);
         }
 
+        // Down arrowkey.
         if (event.which === 40) {
             // Specify new position to hop down to, bounded by node collection.
             newPosition = Math.max(
                 Math.min(currentY - nodeSpacing, 0),
-                -59 * nodeSpacing);
+                -(nNodes - 1) * nodeSpacing);
         }
-
-        console.log(newPosition);
 
         // Transition to 'newPosition'.
         scrollNodes(newPosition);
@@ -123,28 +125,65 @@ function animateRank(simulation, node, zoomHandler) {
         currentY  = newPosition;
     })
 
+    // Defines scroll-end timer.
+    let timer;
+
+    function translateTimeout(pos) {
+        /*
+        Waits for the end of a scroll event before computing nearest
+        node to snap to.
+        */
+
+        // Time to wait until the end of a scroll event is detected.
+        let endTime = 150 
+
+        // Waits for 'endTime' after being triggered by scroll event
+        // and snaps nodes to nearest node position.
+        timer = setTimeout(function() {
+
+            // Given the new scroll position, find the closest 'bin' or
+            // discrete position.
+            let closestPos = closest(pos);
+            newPosition = closestPos;
+
+            // Transition to 'newPosition'.
+            scrollNodes(newPosition);
+
+            // Update current focused node position.
+            currentY = newPosition;
+
+        }, endTime);
+    }
+
+    // Add scroll listener.
     d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
+        /*
+        Translates node collection based on scroll strength. 
+        */
+
+        // Removes timer on new scroll event.
+        clearTimeout(timer);
 
         // Get scroll Y delta.
         let deltaY = d3.event.deltaY;
-        // console.log(deltaY);
 
         // Specify new position to scroll to, bounded by node collection.
         let newPosition = Math.max(Math.min(currentY - deltaY, 0),
-            -59 * nodeSpacing);
-        console.log(newPosition);
+            -(nNodes - 1) * nodeSpacing);
 
-        // Given the new scroll position, find the closest 'bin' or
-        // discrete position.
-        let closestPos = closest(newPosition);
-        newPosition = closestPos;
-        console.log(newPosition);
-
-        // Transition to 'newPosition'.
-        scrollNodes(newPosition);
+        // Scroll nodes.
+        d3.select(".everything")
+            .transition()
+            .ease(d3.easeLinear)
+            .duration(50)
+            .attr("transform", "translate(0, " + (newPosition + height / 2).toString() + ")")
 
         // Update current focused node position.
-        currentY  = newPosition;
+        currentY = newPosition;
+
+        // Add scroll-end listener.
+        translateTimeout(newPosition);
+        
     });
 
     function scrollNodes(newPos) {
@@ -157,22 +196,34 @@ function animateRank(simulation, node, zoomHandler) {
 
     function closest(pos) {
         /*
+        Computes the closest scroll snap position to 'pos'.
         */
 
+        // Take magnitude of 'pos'.
         let posMagnitude = Math.abs(pos);
 
+        // Integer corresponding to node rank behind the current
+        // position.
         let positionInt = Math.floor(posMagnitude / nodeSpacing);
+        
+        // Snap position behind current position.
         let lower = positionInt * nodeSpacing;
+
+        // Snap position ahead of current position.
         let higher = (positionInt + 1) * nodeSpacing;
 
+        // Magnitude of new scroll snap position.
         let magnitude;
 
+        // Determine which scroll snap position (lower or higher) is
+        // closest to the current position.
         if ((posMagnitude - lower) < (higher - posMagnitude)) {
             magnitude = lower;
         } else {
             magnitude = higher;
         }
 
+        // Determine sign of scroll snap position.
         if (pos <= 0) {
             return -magnitude;
         } else {
@@ -187,6 +238,7 @@ function getPositions(node) {
 
 function getTopRadii(node) {
     /*
+    Determines the top two radii of the nodes.
     */
 
     // Object to hold top two node radii.
