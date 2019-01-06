@@ -1,11 +1,29 @@
-.selectize-option {
-  padding: 12.5px 0px 2.5px 0px;
-
-  border-bottom: 2.5px solid #eeeeee;
-
-  font-family: Roboto, sans-serif;
+/* Set font for placeholder text and author names in selectize box */
+#selectize-selectized,
+.selectize-option-authors
+ {
+  font-family: 'Roboto', sans-serif;
 }
 
+/* Set font for paper titles in selectize box */
 .selectize-option-title {
   font-family: 'Poppins', sans-serif;
+}
+
+.selectize-option {
+  /* Space out selectize contents properly */
+  padding: 15px 7.5px 2.5px 7.5px;
+  /* horizontal seperator between elements in the selectize dropdown */
+  border-bottom: 3px solid #eeeeee;
+}
+
+/* Make selectize box dropdown larger */
+/* https://stackoverflow.com/a/46613310 */
+.selectize-dropdown, .selectize-dropdown.form-control{
+    height: 30vh;
+}
+
+.selectize-dropdown-content{
+    max-height: 100%;
+    height: 100%;
 }

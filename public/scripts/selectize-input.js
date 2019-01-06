@@ -178,17 +178,17 @@ function render(item, escape) {
     */
 
     let HTML_string =
-    `<div class="container-fluid selectize-option">
-       <div class="row text-center">
+    `<div class="container selectize-option">
+       <div class="row">
           <div class="col"><p class="selectize-option-title">${item.title}</p></div>
        </div>
-      <div class="row">
-        <div class="col-sm text-sm-center text-md-right">
+      <div class="row justify-content-center">
+        <div class="col-sm text-sm-right">
           <h6><span id="modal-publisher" class="badge orange d-inline-block text-truncate max-width-250">
             ${item.journal}
           </h6>
         </div>
-        <div class="col-sm text-sm-center text-md-left">
+        <div class="col-sm text-sm-left">
           <h6><span id="modal-published-date" class="badge stylish-color d-inline-block text-truncate max-width-250">
             ${item.pubDateString}
           </h6>
