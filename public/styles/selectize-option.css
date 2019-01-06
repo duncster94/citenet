@@ -1,14 +1,11 @@
 .selectize-option {
-  border-bottom: 1px solid #eeeeee;
+  padding: 12.5px 0px 2.5px 0px;
+
+  border-bottom: 2.5px solid #eeeeee;
+
+  font-family: Roboto, sans-serif;
 }
 
 .selectize-option-title {
-  font-size: 13px;
-  font-weight: bold;
-  padding: 5px 0px 0px 10px;
-}
-
-.selectize-option-authors {
-  font-size: 11px;
-  padding: 0px 0px 0px 10px;
+  font-family: 'Poppins', sans-serif;
 }

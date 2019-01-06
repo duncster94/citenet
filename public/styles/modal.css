@@ -11,3 +11,7 @@
 .max-width-250 {
   max-width: 250px;
 }
+
+.badge {
+  font-family: 'Poppins', sans-serif;
+}
