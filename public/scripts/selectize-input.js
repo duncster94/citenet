@@ -13,8 +13,7 @@ function instantiate_selectize() {
         create: false,
         labelField: "title",
         searchField: ["title", "authors"], // expand this
-        placeholder: "Enter paper title, author name(s), journal," +
-            " publication date and/or PubMed ID.",
+        placeholder: "Enter paper title, author name(s), journal, publication date and/or PubMed ID.",
         openOnFocus: false,
         highlight: false,
         maxItems: 10,
@@ -152,8 +151,7 @@ function format_response(response) {
         // Iterate over authors and format names appropriately.
         for (let author of hit._source.authors) {
 
-            let formatted_author = author["Initials"] + " " +
-                author["LastName"] + ",   ";
+            let formatted_author = `${author["Initials"]} ${author["LastName"]},   `;
 
             authorString += formatted_author
         }

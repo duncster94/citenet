@@ -19,7 +19,7 @@ function createModal(node, refinedPapers) {
 
     let pub_date_string = "No date available.";
     if (pub_year) {
-        pub_date_string = pub_month + '  ' + pub_year;
+        pub_date_string = `${pub_month}  ${pub_year}`;
     }
 
     let abstract = node.abstract;
@@ -66,7 +66,7 @@ function formatAuthors(authors) {
         let first_name = author.FirstName;
         let last_name = author.LastName;
 
-        authorString += first_name + ' ' + last_name + ', '
+        authorString += `${first_name} ${last_name}, `;
     }
 
     // Remove final comma and space at end of 'authorString'.
@@ -78,8 +78,6 @@ function formatAuthors(authors) {
 function createRefinedButton() {
     /*
      */
-
-
 }
 
 module.exports = {
