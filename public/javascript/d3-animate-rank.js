@@ -94,9 +94,10 @@ function animateRank(simulation, node, zoomHandler) {
     let nNodes = d3.selectAll(".node").size()
 
     // Initial position.
-    let currentY = height / 2;
+    let currentY = 0;
 
-    // Add arrow up (38) and arrow down (40) listeners.
+    // Add arrow up (38) and arrow down (40), page up (33), 
+    // page down (34) and home (36) and end (35) listeners.
     $(document).on("keydown", function(event) {
         
         let newPosition;
@@ -108,22 +109,62 @@ function animateRank(simulation, node, zoomHandler) {
             newPosition = Math.max(
                 Math.min(currentY + nodeSpacing, 0),
                 -(nNodes - 1) * nodeSpacing);
+
+            // Transition to 'newPosition'.
+            scrollNodes(newPosition);
         }
 
         // Down arrowkey.
         if (event.which === 40) {
-            // Specify new position to hop down to, bounded by node collection.
+            
             newPosition = Math.max(
                 Math.min(currentY - nodeSpacing, 0),
                 -(nNodes - 1) * nodeSpacing);
+
+            scrollNodes(newPosition);
         }
 
-        // Transition to 'newPosition'.
-        scrollNodes(newPosition);
+        // Page up.
+        if (event.which === 33) {
+
+            newPosition = Math.max(
+                Math.min(currentY + 5 * nodeSpacing, 0),
+                -(nNodes - 1) * nodeSpacing);
+
+            scrollNodes(newPosition, d3.easeSinOut);
+        }
+
+        // Page down.
+        if (event.which === 34) {
+
+            newPosition = Math.max(
+                Math.min(currentY - 5 * nodeSpacing, 0),
+                -(nNodes - 1) * nodeSpacing);
+
+            scrollNodes(newPosition, d3.easeSinOut);
+        }
+
+        // Home.
+        if (event.which === 36) {
+
+            newPosition = 0;
+
+            scrollNodes(newPosition, d3.easeSinOut);
+        }
+
+        // End.
+        if (event.which === 35) {
+
+            newPosition = -(nNodes - 1) * nodeSpacing;
+
+            scrollNodes(newPosition, d3.easeSinOut);
+        }
 
         // Update current focused node position.
         currentY  = newPosition;
     })
+
+    // Add page up and page down listeners.
 
     // Defines scroll-end timer.
     let timer;
@@ -186,12 +227,16 @@ function animateRank(simulation, node, zoomHandler) {
         
     });
 
-    function scrollNodes(newPos) {
+    function scrollNodes(pos, easing=d3.easeBounce) {
+        /*
+        Translates node collection to a snap position given by 'pos'.
+        */
+
         d3.select(".everything")
             .transition()
-            .ease(d3.easeExpOut)
+            .ease(easing)
             .duration(500)
-            .attr("transform", "translate(0, " + (newPos + height / 2).toString() + ")");
+            .attr("transform", "translate(0, " + (pos + height / 2).toString() + ")");
     }
 
     function closest(pos) {
