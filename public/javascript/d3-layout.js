@@ -48,7 +48,7 @@ function d3Layout(response, createModal, refinedPapers) {
     // Assign width and height attributes to SVG canvas. 
     // preserveAspectRatio allows for responsive sizing of canvas.
     svg.attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMidYMid meet");
+        // .attr("preserveAspectRatio", "xMidYMid meet");
 
     // Define the D3 layout object.
     const simulation = d3.forceSimulation()
@@ -202,15 +202,15 @@ function d3Layout(response, createModal, refinedPapers) {
     dragHandler(node);
 
     //add zoom capabilities
-    let zoom_handler = d3.zoom()
+    let zoomHandler = d3.zoom()
         .on("zoom", zoom_actions)
         .scaleExtent([0.1, 3])
 
-    // zoom_handler(svg);
+    // zoomHandler(svg);
 
     let vis = svg
-        .call(zoom_handler)
-        .call(zoom_handler.transform, d3.zoomIdentity
+        .call(zoomHandler)
+        .call(zoomHandler.transform, d3.zoomIdentity
             .translate(width / 4, height / 4)
             .scale(0.5))
             .on("dblclick.zoom", null); // Disable doubleclick zooming.
@@ -275,7 +275,8 @@ function d3Layout(response, createModal, refinedPapers) {
         "node": node,
         "isDragging": isDragging,
         "simulation": simulation,
-        "zoomHandler": zoom_handler
+        "zoomHandler": zoomHandler,
+        "dragHandler": dragHandler
     };
 }
 

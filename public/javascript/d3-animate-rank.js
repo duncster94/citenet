@@ -1,22 +1,33 @@
 const d3 = require("d3");
 const $ = require("jquery");
 
-function addAnimateRankListener(simulation, node, zoomHandler) {
+function addAnimateRankListener(layoutObj) {
     /*
     Adds a click listener to the 'animate rank' button.
     */
 
     $("#animate-rank-button").on("click", function() {
-        animateRank(simulation, node, zoomHandler);
+        animateRank(layoutObj);
     });
 }
 
-function animateRank(simulation, node, zoomHandler) {
+function animateRank(layoutObj) {
     /*
     */
 
+    let simulation = layoutObj.simulation
+    let node = layoutObj.node
+    let zoomHandler = layoutObj.zoomHandler
+    let dragHandler = layoutObj.dragHandler
+
     // Save the current positions of the nodes.
-    let nodePositions = getPositions(node);
+    let nodePos = savePos(node);
+
+    // Get fixed positions of the nodes.
+    let nodeFixedPos = saveFixedPos(node);
+
+    // Remove any fixed node positions.
+    // TODO: maybe remove fixed positions all together?
 
     // Get window width and height.
     let width = $("#network").width();
@@ -44,13 +55,7 @@ function animateRank(simulation, node, zoomHandler) {
     // Spacing between nodes.
     let nodeSpacing = radiusFirst + paddingRadii + radiusSecond;
 
-    // Create array of node positions.
-    let nodePos = [];
-    for (let pos = 0; pos < 60; pos++) {
-        nodePos.push(pos * nodeSpacing);
-    }
-
-    // Translate node collection 
+    // Translate node collection.
     d3.select(".everything")
         .transition()
         .duration(600)
@@ -72,6 +77,20 @@ function animateRank(simulation, node, zoomHandler) {
         .alpha(0.3)
         .restart();
 
+    // Padding to add between node and paper details.
+    let detailsPadding = 20;
+
+    // Add paper details to right of each node.
+    node.append("foreignObject")
+        .attr("height", 100)
+        .attr("width", "35%")
+        .style("x", radiusFirst + detailsPadding)
+        .style("font-size", 14)
+        .html(function(d) {
+            console.log(d);
+            return d.title
+        })
+
 
     function getForcePositions(d, axis) {
         /*
@@ -82,7 +101,7 @@ function animateRank(simulation, node, zoomHandler) {
         */
     
         if (axis === "X") {
-            return width / 4
+            return width / 8
         }
     
         if (axis === "Y") {
@@ -115,7 +134,7 @@ function animateRank(simulation, node, zoomHandler) {
         }
 
         // Down arrowkey.
-        if (event.which === 40) {
+        else if (event.which === 40) {
             
             newPosition = Math.max(
                 Math.min(currentY - nodeSpacing, 0),
@@ -125,7 +144,7 @@ function animateRank(simulation, node, zoomHandler) {
         }
 
         // Page up.
-        if (event.which === 33) {
+        else if (event.which === 33) {
 
             newPosition = Math.max(
                 Math.min(currentY + 5 * nodeSpacing, 0),
@@ -135,7 +154,7 @@ function animateRank(simulation, node, zoomHandler) {
         }
 
         // Page down.
-        if (event.which === 34) {
+        else if (event.which === 34) {
 
             newPosition = Math.max(
                 Math.min(currentY - 5 * nodeSpacing, 0),
@@ -145,7 +164,7 @@ function animateRank(simulation, node, zoomHandler) {
         }
 
         // Home.
-        if (event.which === 36) {
+        else if (event.which === 36) {
 
             newPosition = 0;
 
@@ -153,18 +172,60 @@ function animateRank(simulation, node, zoomHandler) {
         }
 
         // End.
-        if (event.which === 35) {
+        else if (event.which === 35) {
 
             newPosition = -(nNodes - 1) * nodeSpacing;
 
             scrollNodes(newPosition, d3.easeSinOut);
         }
 
+        // Any other keypress.
+        else {
+            return;
+        }
+
         // Update current focused node position.
-        currentY  = newPosition;
+        currentY = newPosition;
     })
 
-    // Add page up and page down listeners.
+    // Remove node drag behaviour.
+    let nullDrag = d3.drag()
+        .on("start", null)
+        .on("drag", null)
+        .on("end", null)
+
+    nullDrag(node);
+    
+
+    // Add scroll listener.
+    d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
+        /*
+        Translates node collection based on scroll strength. 
+        */
+
+        // Removes timer on new scroll event.
+        clearTimeout(timer);
+
+        // Get scroll Y delta.
+        let deltaY = d3.event.deltaY;
+
+        // Specify new position to scroll to, bounded by node collection.
+        let newPosition = Math.max(Math.min(currentY - deltaY, 0),
+            -(nNodes - 1) * nodeSpacing);
+
+        // Scroll nodes.
+        d3.select(".everything")
+            .transition()
+            .ease(d3.easeLinear)
+            .duration(50)
+            .attr("transform", "translate(0, " + (newPosition + height / 2).toString() + ")")
+
+        // Update current focused node position.
+        currentY = newPosition;
+
+        // Add scroll-end listener.
+        translateTimeout(newPosition);
+    });
 
     // Defines scroll-end timer.
     let timer;
@@ -195,37 +256,6 @@ function animateRank(simulation, node, zoomHandler) {
 
         }, endTime);
     }
-
-    // Add scroll listener.
-    d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
-        /*
-        Translates node collection based on scroll strength. 
-        */
-
-        // Removes timer on new scroll event.
-        clearTimeout(timer);
-
-        // Get scroll Y delta.
-        let deltaY = d3.event.deltaY;
-
-        // Specify new position to scroll to, bounded by node collection.
-        let newPosition = Math.max(Math.min(currentY - deltaY, 0),
-            -(nNodes - 1) * nodeSpacing);
-
-        // Scroll nodes.
-        d3.select(".everything")
-            .transition()
-            .ease(d3.easeLinear)
-            .duration(50)
-            .attr("transform", "translate(0, " + (newPosition + height / 2).toString() + ")")
-
-        // Update current focused node position.
-        currentY = newPosition;
-
-        // Add scroll-end listener.
-        translateTimeout(newPosition);
-        
-    });
 
     function scrollNodes(pos, easing=d3.easeBounce) {
         /*
@@ -277,7 +307,11 @@ function animateRank(simulation, node, zoomHandler) {
     }
 }
 
-function getPositions(node) {
+function savePos(node) {
+
+}
+
+function saveFixedPos(node) {
 
 }
 
