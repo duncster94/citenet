@@ -47,7 +47,7 @@ function d3Layout(response, createModal, refinedPapers) {
 
     // Assign width and height attributes to SVG canvas. 
     // preserveAspectRatio allows for responsive sizing of canvas.
-    svg.attr("viewBox", "0 0 " + width + " " + height)
+    // svg.attr("viewBox", "0 0 " + width + " " + height)
         // .attr("preserveAspectRatio", "xMidYMid meet");
 
     // Define the D3 layout object.

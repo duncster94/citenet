@@ -61,35 +61,54 @@ function animateRank(layoutObj) {
         .duration(600)
         .attr("transform", "translate(0, " + (height/2).toString() + ")");
 
+    
+    // Padding to add between node and paper details.
+    let detailsPadding = 20;
+
+    // Padding to add between left edge of screen and nodes.
+    // TODO: make this 10% of viewport width.
+    let leftPadding = width / 10
+
+    // Width of foreignObject.
+    let foWidth = width - leftPadding
+
     // Remove old forces and add new centering forces to each node
     // based on rank.
+    // TODO: to increase performance, use 'translate' instead of defining
+    // new force centers. Translate can be 'elastic' so the nodes bounce
+    // around the center of 'force'. This can be achieved with D3 easing.
     simulation
         .force("links", null)
         .force("charge", null)
         .force("center", null)
-        .force("x", d3.forceX().strength(0.4).x(function(d) {
-            return getForcePositions(d, "X")
-        }))
-        .force("y", d3.forceY().strength(0.4).y(function(d) {
-            return getForcePositions(d, "Y")
-        }))
-        .velocityDecay(0.15)
-        .alpha(0.3)
-        .restart();
+        .on("tick", null)
+        
 
-    // Padding to add between node and paper details.
-    let detailsPadding = 20;
+    d3.selectAll(".node")
+        .transition()
+        .ease(d3.easeElastic)
+        .duration(1600)
+        .attr("transform", function(d) {
+            console.log(d);
+            return "translate("+ leftPadding + ", " 
+            + getForcePositions(d, "Y").toString() + ")"
+        })
+        
+
+
 
     // Add paper details to right of each node.
-    node.append("foreignObject")
-        .attr("height", 100)
-        .attr("width", "35%")
-        .style("x", radiusFirst + detailsPadding)
-        .style("font-size", 14)
-        .html(function(d) {
-            console.log(d);
-            return d.title
-        })
+    // node.append("foreignObject")
+    //     .attr("height", 100)
+    //     .attr("width", "100%")
+    //     .append("xhtml:div")
+    //     .attr("class", "animate-rank-details")
+    //     // .style("x", radiusFirst + detailsPadding)
+    //     // .style("font-size", 14)
+    //     .html(function(d) {
+    //         // console.log(d);
+    //         return d.title
+    //     })
 
 
     function getForcePositions(d, axis) {
@@ -101,7 +120,7 @@ function animateRank(layoutObj) {
         */
     
         if (axis === "X") {
-            return width / 8
+            return leftPadding
         }
     
         if (axis === "Y") {
