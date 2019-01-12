@@ -1,5 +1,6 @@
 .animate-rank-details {
-    display: inline-block;
+    /* display: inline-block; */
+    font-family: Arial, Helvetica, sans-serif;
     background-color: cyan;
     height: 100%;
     width: 90vw;

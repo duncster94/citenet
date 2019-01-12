@@ -49,16 +49,18 @@ function animateRank(layoutObj) {
     let radiusFirst = topRadii.first;
     let radiusSecond = topRadii.second;
 
-    // Padding between largest two radii.
-    let paddingRadii = 20;
+    // Padding between largest two nodes. This determines overall vertical
+    // node spacing on the screen.
+    let nodePadding = width / 3;
 
     // Spacing between nodes.
-    let nodeSpacing = radiusFirst + paddingRadii + radiusSecond;
+    let nodeSpacing = radiusFirst + 10000/nodePadding + radiusSecond;
 
     // Translate node collection.
     d3.select(".everything")
         .transition()
-        .duration(600)
+        .ease(d3.easeSinOut)
+        .duration(1200)
         .attr("transform", "translate(0, " + (height/2).toString() + ")");
 
     
@@ -66,67 +68,38 @@ function animateRank(layoutObj) {
     let detailsPadding = 20;
 
     // Padding to add between left edge of screen and nodes.
-    // TODO: make this 10% of viewport width.
-    let leftPadding = width / 10
+    let leftPadding = width / 10;
 
     // Width of foreignObject.
-    let foWidth = width - leftPadding
+    let foWidth = width - leftPadding;
 
-    // Remove old forces and add new centering forces to each node
-    // based on rank.
-    // TODO: to increase performance, use 'translate' instead of defining
-    // new force centers. Translate can be 'elastic' so the nodes bounce
-    // around the center of 'force'. This can be achieved with D3 easing.
+    // Remove forces.
     simulation
         .force("links", null)
         .force("charge", null)
         .force("center", null)
         .on("tick", null)
-        
 
+    // Translate each node based on rank.
     d3.selectAll(".node")
         .transition()
         .ease(d3.easeElastic)
         .duration(1600)
         .attr("transform", function(d) {
-            console.log(d);
             return "translate("+ leftPadding + ", " 
-            + getForcePositions(d, "Y").toString() + ")"
+            + nodeSpacing * d.rank + ")"
         })
         
-
-
-
     // Add paper details to right of each node.
-    // node.append("foreignObject")
-    //     .attr("height", 100)
-    //     .attr("width", "100%")
-    //     .append("xhtml:div")
-    //     .attr("class", "animate-rank-details")
-    //     // .style("x", radiusFirst + detailsPadding)
-    //     // .style("font-size", 14)
-    //     .html(function(d) {
-    //         // console.log(d);
-    //         return d.title
-    //     })
+    node.append("foreignObject")
+        .attr("height", 100)
+        .attr("width", "100%")
+        .append("xhtml:div")
+        .attr("class", "animate-rank-details")
+        .html(function(d) {
+            return d.title
+        })
 
-
-    function getForcePositions(d, axis) {
-        /*
-        Computes the position on screen that a force will be applied to 'd'.
-        
-        d: (object) Data point.
-        axis: (string) Axis to apply force to. One of 'X' or 'Y'.
-        */
-    
-        if (axis === "X") {
-            return leftPadding
-        }
-    
-        if (axis === "Y") {
-            return nodeSpacing * d.rank;
-        }
-    }
 
     // Get number of nodes in collection.
     let nNodes = d3.selectAll(".node").size()
@@ -276,15 +249,17 @@ function animateRank(layoutObj) {
         }, endTime);
     }
 
-    function scrollNodes(pos, easing=d3.easeBounce) {
+    function scrollNodes(pos, easing=d3.easeBounce, duration=500) {
         /*
         Translates node collection to a snap position given by 'pos'.
         */
 
+        console.log(pos);
+
         d3.select(".everything")
             .transition()
             .ease(easing)
-            .duration(500)
+            .duration(duration)
             .attr("transform", "translate(0, " + (pos + height / 2).toString() + ")");
     }
 
@@ -324,6 +299,33 @@ function animateRank(layoutObj) {
             return magnitude;
         }
     }
+
+    // On window resize, translate nodes to ensure responsiveness.
+    $(window).resize(function() {
+
+        // Update current window width.
+        width = $(window).width()
+
+        // Compute horizontal padding.
+        nodePadding = width / 3;
+
+        // Compute vertical padding.
+        let resizedNodeSpacing = radiusFirst + 10000/nodePadding + radiusSecond;
+
+        // currentY += (nodeSpacing + resizedNodeSpacing);
+        // d3.select(".everything")
+            // .transition()
+            // .attr("transform", "translate(0, " + Math.abs(nodeSpacing - resizedNodeSpacing).toString() + ")");
+
+        nodeSpacing = resizedNodeSpacing;
+
+        // Translate nodes.
+        d3.selectAll(".node")
+            .attr("transform", function(d) {
+                return "translate("+ width / 10 + ", " 
+                + nodeSpacing * d.rank + ")"
+            })
+    })
 }
 
 function savePos(node) {
