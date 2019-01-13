@@ -312,10 +312,7 @@ function animateRank(layoutObj) {
         // Compute vertical padding.
         let resizedNodeSpacing = radiusFirst + 10000/nodePadding + radiusSecond;
 
-        // currentY += (nodeSpacing + resizedNodeSpacing);
-        // d3.select(".everything")
-            // .transition()
-            // .attr("transform", "translate(0, " + Math.abs(nodeSpacing - resizedNodeSpacing).toString() + ")");
+        let newPos = Math.round(currentY / nodeSpacing) * resizedNodeSpacing
 
         nodeSpacing = resizedNodeSpacing;
 
@@ -325,6 +322,13 @@ function animateRank(layoutObj) {
                 return "translate("+ width / 10 + ", " 
                 + nodeSpacing * d.rank + ")"
             })
+        
+        // scrollNodes(newPos);
+
+        d3.select(".everything")
+            .attr("transform", "translate(0, " + (newPos + height / 2).toString() + ")");
+
+        currentY = newPos;
     })
 }
 
@@ -334,6 +338,15 @@ function savePos(node) {
 
 function saveFixedPos(node) {
 
+}
+
+function posToRank(pos, nodeSpacing) {
+    /*
+    Determines node number (equivalent to rank) given a position
+    and the node spacing.
+    */
+
+    return 
 }
 
 function getTopRadii(node) {
