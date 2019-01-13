@@ -1,7 +1,36 @@
 .animate-rank-details {
-    /* display: inline-block; */
+    position: relative;
+
     font-family: Arial, Helvetica, sans-serif;
-    background-color: cyan;
-    height: 100%;
-    width: 90vw;
+
+    background-color: #f7f7f7bd;
+    border-radius: 10px;
+    
+    border-style: solid;
+    border-width: 1px;
+
+    width: 82.5vw;
+    left: 7.5vw;
+
+    top: -10vh;
+    height: 20vh;
+}
+
+.animate-rank-details-title {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.animate-rank-details-authors {
+    font-size: 12px;
+}
+
+@media (min-width: 576px) {
+    .animate-rank-details-title {
+        font-size: 14px;
+    }
+
+    .animate-rank-details-authors {
+        font-size: 13px;
+    }
 }

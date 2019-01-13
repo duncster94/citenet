@@ -27,7 +27,7 @@ function createTooltips(nodeObj, isDragging) {
 
     // Create an object to store tippy tooltip objects, indexed by paper
     // UUIDs.
-    const tips = {};
+    let tips = {};
 
     // Iterate over each node and create a corresponding tooltip containing
     // relevant metadata about the paper (node).
@@ -98,6 +98,7 @@ function createTooltips(nodeObj, isDragging) {
             isOver = false;
         })
 
+    return tips;
 }
 
 module.exports.createTooltips = createTooltips;

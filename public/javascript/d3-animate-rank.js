@@ -1,12 +1,20 @@
 const d3 = require("d3");
 const $ = require("jquery");
 
-function addAnimateRankListener(layoutObj) {
+function addAnimateRankListener(layoutObj, tips) {
     /*
     Adds a click listener to the 'animate rank' button.
     */
 
     $("#animate-rank-button").on("click", function() {
+
+        // Remove node tooltips.
+        Object.keys(tips).forEach(function(nodeID) {
+            tip = tips[nodeID];
+            tip.destroy();
+        })
+
+        // Add rank animation functionality.
         animateRank(layoutObj);
     });
 }
@@ -53,8 +61,12 @@ function animateRank(layoutObj) {
     // node spacing on the screen.
     let nodePadding = width / 3;
 
+    // Minimum vertical node padding.
+    let minVerticalPadding = 50;
+
     // Spacing between nodes.
-    let nodeSpacing = radiusFirst + 10000/nodePadding + radiusSecond;
+    let nodeSpacing = radiusFirst + 
+        Math.max(10000/nodePadding, minVerticalPadding) + radiusSecond;
 
     // Translate node collection.
     d3.select(".everything")
@@ -92,12 +104,24 @@ function animateRank(layoutObj) {
         
     // Add paper details to right of each node.
     node.append("foreignObject")
-        .attr("height", 100)
+        .attr("height", 1)
         .attr("width", "100%")
         .append("xhtml:div")
         .attr("class", "animate-rank-details")
         .html(function(d) {
-            return d.title
+
+            // Create author string.
+            let authorString = parseAuthors(d.authors, width);
+
+            // NOTE: may need to use 'xhtml:div' instead of 'div'.
+            let htmlString = 
+                "<div class=animate-rank-details-title>" +
+                    d.title +
+                "</div>" + 
+                "<div class=animate-rank-details-authors>" +
+                    authorString +
+                "</div>"
+            return htmlString
         })
 
 
@@ -210,7 +234,8 @@ function animateRank(layoutObj) {
             .transition()
             .ease(d3.easeLinear)
             .duration(50)
-            .attr("transform", "translate(0, " + (newPosition + height / 2).toString() + ")")
+            .attr("transform", "translate(0, " + 
+                (newPosition + height / 2).toString() + ")")
 
         // Update current focused node position.
         currentY = newPosition;
@@ -254,13 +279,12 @@ function animateRank(layoutObj) {
         Translates node collection to a snap position given by 'pos'.
         */
 
-        console.log(pos);
-
         d3.select(".everything")
             .transition()
             .ease(easing)
             .duration(duration)
-            .attr("transform", "translate(0, " + (pos + height / 2).toString() + ")");
+            .attr("transform", "translate(0, " + 
+                (pos + height / 2).toString() + ")");
     }
 
     function closest(pos) {
@@ -310,10 +334,13 @@ function animateRank(layoutObj) {
         nodePadding = width / 3;
 
         // Compute vertical padding.
-        let resizedNodeSpacing = radiusFirst + 10000/nodePadding + radiusSecond;
+        let resizedNodeSpacing = radiusFirst + 
+            Math.max(10000/nodePadding, minVerticalPadding) + radiusSecond;
 
+        // Determine new y position based on 'resizedNodeSpacing'.
         let newPos = Math.round(currentY / nodeSpacing) * resizedNodeSpacing
 
+        // Update 'nodeSpacing'.
         nodeSpacing = resizedNodeSpacing;
 
         // Translate nodes.
@@ -323,11 +350,30 @@ function animateRank(layoutObj) {
                 + nodeSpacing * d.rank + ")"
             })
         
-        // scrollNodes(newPos);
-
+        // Translate node collection to keep selected node centered.
         d3.select(".everything")
             .attr("transform", "translate(0, " + (newPos + height / 2).toString() + ")");
 
+            
+        // Update author string for each node to compensate for new screen size.
+        d3.selectAll(".animate-rank-details")
+            .html(function(d) {
+
+                // Create author string.
+                let authorString = parseAuthors(d.authors, width);
+
+                // NOTE: may need to use 'xhtml:div' instead of 'div'.
+                let htmlString = 
+                    "<div class=animate-rank-details-title>" +
+                        d.title +
+                    "</div>" + 
+                    "<div class=animate-rank-details-authors>" +
+                        authorString +
+                    "</div>"
+                return htmlString
+            })
+
+        // Update y position.
         currentY = newPos;
     })
 }
@@ -338,15 +384,6 @@ function savePos(node) {
 
 function saveFixedPos(node) {
 
-}
-
-function posToRank(pos, nodeSpacing) {
-    /*
-    Determines node number (equivalent to rank) given a position
-    and the node spacing.
-    */
-
-    return 
 }
 
 function getTopRadii(node) {
@@ -374,6 +411,67 @@ function getTopRadii(node) {
     }
 
     return topRadii;
+}
+
+function parseAuthors(authorArr, viewWidth) {
+    /*
+    Creates an author list string, given an array of authors 
+    and the viewport width.
+    */
+
+    let authorString;
+
+    if (authorArr.length === 1) {
+
+        authorString = authorArr[0].LastName;
+
+        return authorString
+    }
+
+    if (viewWidth < 576) {
+            
+        if (authorArr.length === 2) {
+            authorString = authorArr[0].LastName + 
+                " and " + authorArr[1].LastName;
+        } else {
+            authorString = authorArr[0].LastName + 
+                ", ..., " + authorArr[authorArr.length-1].LastName;
+        }
+
+    } else if (viewWidth < 768) {
+
+        if (authorArr.length === 2) {
+            authorString = authorArr[0].LastName + 
+                " and " + authorArr[1].LastName;
+        } else if (authorArr.length <= 6) {
+            authorString = "";
+            authorArr.forEach(function(author) {
+                authorString += author.LastName + ", "
+            });
+            authorString = authorString.slice(0, -2);
+        } else {
+            authorString = authorArr[0].LastName + ", " +
+                authorArr[1].LastName + ", " + authorArr[2].LastName +
+                ", ..., " + authorArr[authorArr.length-3].LastName + ", " +
+                authorArr[authorArr.length-2].LastName + ", " + 
+                authorArr[authorArr.length-1].LastName;
+        }
+
+    } else {
+
+        if (authorArr.length === 2) {
+            authorString = authorArr[0].LastName + 
+                " and " + authorArr[1].LastName;
+        } else {
+            authorString = "";
+            authorArr.forEach(function(author) {
+                authorString += author.LastName + ", "
+            });
+            authorString = authorString.slice(0, -2);
+        }
+    }
+    
+    return authorString;
 }
 
 module.exports.addAnimateRankListener = addAnimateRankListener
