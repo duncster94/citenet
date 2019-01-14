@@ -1858,11 +1858,11 @@ ul.staggered-list li {
   .center-on-small-only {
     text-align: center; } }
 
-.page-footer {
+.page-footer-m {
   padding-top: 20px;
   color: #fff;
   background-color: #ee6e73; }
-  .page-footer .footer-copyright {
+  .page-footer-m .footer-copyright {
     overflow: hidden;
     min-height: 50px;
     display: flex;

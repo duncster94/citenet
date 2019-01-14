@@ -27,6 +27,21 @@ function onStart() {
         // User must click to open the tray on mobile
         hoverEnabled: hoverEnabled,
     });
+
+    instantiateModal();
+}
+
+
+function instantiateModal() {
+    /*
+    Prepares various event listeners for modals.
+    */
+
+    // Add a listener that deletes refine-search-button event listener on modal close.
+    $('#abstract-modal').on('hidden.bs.modal', function () {
+        console.log('here')
+        $("#add-to-refine-button").off("click");
+    })
 }
 
 module.exports.onStart = onStart;

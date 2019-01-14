@@ -13,8 +13,7 @@ function instantiate_selectize() {
         create: false,
         labelField: "title",
         searchField: ["title", "authors"], // expand this
-        placeholder: "Enter paper title, author name(s), journal," +
-            " publication date and/or PubMed ID.",
+        placeholder: "Enter paper title, author name(s), journal, publication date and/or PubMed ID.",
         openOnFocus: false,
         highlight: false,
         maxItems: 10,
@@ -147,25 +146,24 @@ function format_response(response) {
     for (let hit of hits) {
 
         // Store author list in a string.
-        let author_string = "";
+        let authorString = "";
 
         // Iterate over authors and format names appropriately.
         for (let author of hit._source.authors) {
 
-            let formatted_author = author["Initials"] + " " +
-                author["LastName"] + ",   ";
+            let formatted_author = `${author["Initials"]} ${author["LastName"]},   `;
 
-            author_string += formatted_author
+            authorString += formatted_author
         }
 
         // Remove comma and spaces added at the end of the last author.
-        author_string = author_string.slice(0, -4);
+        authorString = authorString.slice(0, -4);
 
         // Add results to "formatted_arr".
         formatted_arr.push({
             value: hit._id,
             title: hit._source.title,
-            authors: author_string
+            authors: authorString
         });
     }
 

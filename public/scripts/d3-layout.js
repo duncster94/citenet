@@ -45,7 +45,7 @@ function d3Layout(response, createModal, refinedPapers) {
     let width = $("#network").width();
     let height = $("#network").height();
 
-    // Assign width and height attributes to SVG canvas. 
+    // Assign width and height attributes to SVG canvas.
     // preserveAspectRatio allows for responsive sizing of canvas.
     // svg.attr("viewBox", "0 0 " + width + " " + height)
         // .attr("preserveAspectRatio", "xMidYMid meet");
@@ -103,7 +103,7 @@ function d3Layout(response, createModal, refinedPapers) {
         .enter()
         .append("g")
         .attr("id", function(d) {
-            return "group_" + d.id;
+            return `group_${d.id}`;
         })
         .attr("class", "node")
         .attr("cx", 0)
@@ -135,7 +135,7 @@ function d3Layout(response, createModal, refinedPapers) {
     // Draw circles representing the nodes.
     node.append("circle")
         .attr("id", function(d) {
-            return "circle_" + d.id;
+            return `circle_${d.id}`;
         })
         .attr("r", function(d) {
             return score_to_radius(d);
@@ -150,7 +150,7 @@ function d3Layout(response, createModal, refinedPapers) {
     // to the circle.
     node.append("clipPath")
         .attr("id", function(d) {
-            return "clip_" + d.id;
+            return `clip_${d.id}`;
         })
         .append("circle")
         .attr("r", function(d) {
@@ -170,10 +170,10 @@ function d3Layout(response, createModal, refinedPapers) {
             return -75;
         })
         .attr("clip-path", function(d) {
-            return "url(#clip_" + d.id + ")";
+            return `url(#clip_${d.id})`;
         })
         .attr("id", function(d) {
-            return "overlay_" + d.id;
+            return `overlay_${d.id}`;
         })
         .style("display", function(d) {
 
@@ -252,7 +252,7 @@ function d3Layout(response, createModal, refinedPapers) {
         // Update group (circle and image) positions for each simulation tick.
         node
             .attr("transform", function(d) {
-                return "translate(" + d.x.toString() + ", " + d.y.toString() + ")";
+                return `translate(${d.x.toString()}, ${d.y.toString()})`;
             })
 
         // Update link positions for each simulation tick.
@@ -319,7 +319,7 @@ function date_to_colour(node, D_min, D_max, seeds) {
 
     let lightness = m * year + b;
 
-    let colour = "hsla(41,100%," + lightness.toString() + "%,1)";
+    let colour = `hsla(41,100%, ${lightness.toString()}%,1)`;
 
     return colour;
 }

@@ -1,0 +1,13 @@
+.modal {
+  /* Enable smooth-scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+.flush-labels {
+  /* I think this is modified by MDB, setting to 0 allows labels to sit side-by-side */
+  flex-grow: 0 !important;
+}
+
+.no-left-padding {
+  padding-left: 0px;
+}
