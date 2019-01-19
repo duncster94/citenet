@@ -23,6 +23,17 @@ function animateRank(layoutObj) {
     /*
     */
 
+    $("#abstract-modal").attr("class", "modal right fade")
+        .attr("data-backdrop", "false")
+        .css("position", "fixed")
+        // .css("z-index", "0");
+        // .show()
+    $("#abstract-modal-dialog").attr("class", "modal-dialog")
+        .css("position", "absolute")
+        .css("right", "2vw")
+        // .css("z-index", "0");
+        // .show()
+
     let simulation = layoutObj.simulation
     let node = layoutObj.node
     let zoomHandler = layoutObj.zoomHandler

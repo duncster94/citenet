@@ -28,6 +28,14 @@ function createModal(node, refinedPapers) {
     // Format author string.
     let authorString = formatAuthors(authors);
 
+    $("#abstract-modal").on("shown.bs.modal", function(event) {
+        console.log('header', $("#modal-header").height());
+        console.log('body', $("#modal-body").height());
+        console.log('footer', $("#modal-footer").height());
+
+        // $("#modal-body").height($(window).height() -  $("#modal-header").height() - $("#modal-footer").height())
+    })
+
     // Fill in the modal contents for the given node
     $("#modal-title").html(title);
     $("#modal-publisher").html(journal);
@@ -50,7 +58,7 @@ function createModal(node, refinedPapers) {
     refine_button.add_refine_button_listener(id, node, refinedPapers);
 
     // Trigger modal show event
-    $('#abstract-modal').modal("show");
+    $("#abstract-modal").modal("show");
 
 }
 

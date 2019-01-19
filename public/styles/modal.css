@@ -3,6 +3,36 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.modal .modal-content {
+  overflow: hidden;
+}
+
+.modal-dialog {
+  height: 98vh;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+}
+
+.modal-content {
+  height: 98vh;
+}
+
+.modal-header {
+  flex: 0 0 auto;
+}
+
+.modal-body {
+  /* how to set modal-body height? */
+  /* max-height: 1000px; */
+  flex: 1 1 auto;
+  overflow-y: scroll;
+}
+
+.modal-footer {
+  height: 100px;
+  /* flex: 0 0 auto; */
+}
+
 .flush-labels {
   /* I think this is modified by MDB, setting to 0 allows labels to sit side-by-side */
   flex-grow: 0 !important;
