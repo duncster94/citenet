@@ -126,7 +126,7 @@ function create_layout(response) {
     let tips = createTooltips.createTooltips(node, isDragging);
 
     // Create animations.
-    animateRank.addAnimateRankListener(layoutObj, tips);
+    animateRank.addAnimateRankListener(layoutObj, tips, refinedPapers);
 }
 
 module.exports.create_listeners = create_listeners;

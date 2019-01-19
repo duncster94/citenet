@@ -8,6 +8,7 @@
 }
 
 .modal-dialog {
+  display: none;
   height: 98vh;
   margin-top: 1vh;
   margin-bottom: 1vh;
@@ -30,6 +31,7 @@
 
 .modal-footer {
   height: auto;
+  /* height: 100px !important; */
   /* flex: 0 0 auto; */
 }
 

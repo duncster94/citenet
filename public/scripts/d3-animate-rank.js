@@ -1,7 +1,8 @@
 const d3 = require("d3");
 const $ = require("jquery");
+const createModal = require("./create-modals.js");
 
-function addAnimateRankListener(layoutObj, tips) {
+function addAnimateRankListener(layoutObj, tips, refinedPapers) {
     /*
     Adds a click listener to the 'animate rank' button.
     */
@@ -15,24 +16,21 @@ function addAnimateRankListener(layoutObj, tips) {
         })
 
         // Add rank animation functionality.
-        animateRank(layoutObj);
+        animateRank(layoutObj, refinedPapers);
     });
 }
 
-function animateRank(layoutObj) {
+function animateRank(layoutObj, refinedPapers) {
     /*
     */
 
-    $("#abstract-modal").attr("class", "modal right fade")
-        .attr("data-backdrop", "false")
+    $("#abstract-modal-dialog")
+        .css("display", "inline-block")
         .css("position", "fixed")
-        // .css("z-index", "0");
-        // .show()
-    $("#abstract-modal-dialog").attr("class", "modal-dialog")
-        .css("position", "absolute")
-        .css("right", "2vw")
-        // .css("z-index", "0");
-        // .show()
+        .css("right", "10px")
+        .attr("class", "modal-dialog");
+
+    $(".modal-button-text").hide();
 
     let simulation = layoutObj.simulation
     let node = layoutObj.node
@@ -103,16 +101,26 @@ function animateRank(layoutObj) {
         .force("center", null)
         .on("tick", null)
 
+    // Object to track rank to node.
+    let rankToNode = {};
+
+    // Track currently focused rank.
+    let currentRank = 0;
+
     // Translate each node based on rank.
     d3.selectAll(".node")
         .transition()
         .ease(d3.easeElastic)
         .duration(1600)
         .attr("transform", function(d) {
+
+            // Update 'rankToNode'.
+            rankToNode[d.rank] = d;
+
             return "translate("+ leftPadding + ", " 
             + nodeSpacing * d.rank + ")"
         })
-        
+
     // Add paper details to right of each node.
     node.append("foreignObject")
         .attr("height", 1)
@@ -225,7 +233,8 @@ function animateRank(layoutObj) {
     
 
     // Add scroll listener.
-    d3.select("#network").call(d3.zoom()).on("wheel.zoom", function() {
+    d3.select("#network")
+        .call(d3.zoom()).on("wheel.zoom", function() {
         /*
         Translates node collection based on scroll strength. 
         */
@@ -296,6 +305,14 @@ function animateRank(layoutObj) {
             .duration(duration)
             .attr("transform", "translate(0, " + 
                 (pos + height / 2).toString() + ")");
+
+        // Update current rank position.
+        currentRank = Math.round(Math.abs(pos / nodeSpacing));
+        console.log(currentRank);
+
+        // Change displayed modal.
+        updateModal();
+
     }
 
     function closest(pos) {
@@ -387,6 +404,24 @@ function animateRank(layoutObj) {
         // Update y position.
         currentY = newPos;
     })
+
+    function updateModal() {
+        /*
+        Modifies the content of the modal to display currently focused
+        node paper information.
+        */
+
+        // Get current node.
+        let currNode = rankToNode[currentRank];
+
+        console.log(currNode);
+
+        // Replace modal fields with 'currNode' fields.
+        createModal.createModal(currNode, refinedPapers);
+
+        $(".modal-button-text").hide();
+
+    }
 }
 
 function savePos(node) {

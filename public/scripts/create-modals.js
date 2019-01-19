@@ -59,8 +59,17 @@ function createModal(node, refinedPapers) {
     // Add a listener to the refine button.
     refine_button.add_refine_button_listener(id, node, refinedPapers);
 
+    // Create click listener for modal close button.
+    $("#modal-close").click(function() {
+        $("#abstract-modal-dialog").hide();
+        console.log("click");
+
+        // Remove click listener after close.
+        $("#modal-close").off("click");
+    })
+
     // Trigger modal show event
-    $("#abstract-modal").modal("show");
+    
 
 }
 
