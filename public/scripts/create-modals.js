@@ -68,9 +68,6 @@ function createModal(node, refinedPapers) {
         $("#modal-close").off("click");
     })
 
-    // Trigger modal show event
-    
-
 }
 
 function formatAuthors(authors) {

@@ -27,8 +27,9 @@ function animateRank(layoutObj, refinedPapers) {
     $("#abstract-modal-dialog")
         .css("display", "inline-block")
         .css("position", "fixed")
-        .css("right", "10px")
-        .attr("class", "modal-dialog");
+        .css("right", "2.5vw")
+        .css("width", "40vw")
+        // .attr("class", "modal-dialog");
 
     $(".modal-button-text").hide();
 
@@ -53,13 +54,12 @@ function animateRank(layoutObj, refinedPapers) {
     // Add a line through center of screen (for debugging purposes).
     $(".links").fadeOut(100);
     d3.select("#network")
-        .append("line")
-        .attr("x1", 0)
-        .attr("x2", width)
-        .attr("y1", height / 2)
-        .attr("y2", height / 2)
-        .attr("stroke", "black")
-        .attr("stroke-width", 2);
+        .append("image")
+        .attr("xlink:href", "images/FocusArrow.svg")
+        .attr("height", "15")
+        .attr("width", "15")
+        .attr("x", "5vw")
+        .attr("y", height / 2 - 7.5);
 
     // Get top two largest radii in order to properly space nodes.
     let topRadii = getTopRadii(node);
@@ -120,6 +120,9 @@ function animateRank(layoutObj, refinedPapers) {
             return "translate("+ leftPadding + ", " 
             + nodeSpacing * d.rank + ")"
         })
+
+    // Set initial modal.
+    updateModal();
 
     // Add paper details to right of each node.
     node.append("foreignObject")
@@ -419,6 +422,7 @@ function animateRank(layoutObj, refinedPapers) {
         // Replace modal fields with 'currNode' fields.
         createModal.createModal(currNode, refinedPapers);
 
+        // Hide button text to save room.
         $(".modal-button-text").hide();
 
     }
