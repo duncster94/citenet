@@ -4,27 +4,34 @@
     font-family: Arial, Helvetica, sans-serif;
 
     background-color: #f7f7f7bd;
-    border-radius: 10px;
-    
-    border-style: solid;
-    border-width: 1px;
+    box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
 
     width: 82.5vw;
     left: 7.5vw;
 
-    /* top: -10vh; */
+    top: -15px;
     height: auto;
 
-    padding: 8px;
 }
 
 .animate-rank-details-title {
+    padding: 8px;
+
     font-size: 13px;
     font-weight: bold;
+    color: #4b515d;
+
+    font-family: 'Poppins', sans-serif;
+
+    /* background-color: #4b515d; */
 }
 
 .animate-rank-details-authors {
     font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+
+    padding: 8px;
 }
 
 @media (min-width: 576px) {
