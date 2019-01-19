@@ -12,8 +12,10 @@
     width: 82.5vw;
     left: 7.5vw;
 
-    top: -10vh;
-    height: 20vh;
+    /* top: -10vh; */
+    height: auto;
+
+    padding: 8px;
 }
 
 .animate-rank-details-title {

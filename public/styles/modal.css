@@ -29,8 +29,24 @@
 }
 
 .modal-footer {
-  height: 100px;
+  height: auto;
   /* flex: 0 0 auto; */
+}
+
+@media (max-width: 575.98px) {
+  .modal-button-text {
+    display: none;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+}
+
+.close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
 }
 
 .flush-labels {

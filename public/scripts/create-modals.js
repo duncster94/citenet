@@ -49,9 +49,11 @@ function createModal(node, refinedPapers) {
     // Action button should say "Add to Search" or "Remove from Search" depending on whether
     // or not it is queued.
     if (id in refinedPapers) {
-      $("#add-to-refine-button").html("Remove from Search<i class='fas fa-minus-square ml-2'></i>");
+      $("#add-to-refine-button")
+        .html("<span class='modal-button-text'>Remove from search</span><i class='fas fa-minus-square ml-2'></i>");
     } else {
-      $("#add-to-refine-button").html("Add to search<i class='fas fa-plus-square ml-2'></i>");
+      $("#add-to-refine-button")
+        .html("<span class='modal-button-text'>Add to search</span><i class='fas fa-plus-square ml-2'></i>");
     }
 
     // Add a listener to the refine button.
