@@ -1,3 +1,5 @@
+/* https://stackoverflow.com/questions/48285666/bootstrap-4-how-to-make-modal-that-doesnt-block-or-affect-background-and-scroll */
+
 .modal {
   /* Enable smooth-scrolling on iOS */
   -webkit-overflow-scrolling: touch;
@@ -35,13 +37,53 @@
   /* flex: 0 0 auto; */
 }
 
+.fade-in {
+  animation: fadeIn 300ms;
+  animation-fill-mode: forwards;
+}
+
+.fade-out {
+  animation: fadeOut 300ms;
+  animation-fill-mode: forwards;
+}
+
+.bounce {
+  animation: bounce 300ms;
+}
+
+@media (max-width: 1199.98px) {
+  .modal-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .modal-button-text {
+    display: none;
+  }
+
+  .modal-title {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .modal-button-text {
+    display: none;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 575.98px) {
   .modal-button-text {
     display: none;
   }
 
   .modal-title {
-    font-size: 20px;
+    font-size: 17px;
   }
 }
 
@@ -58,4 +100,45 @@
 
 .no-left-padding {
   padding-left: 0px;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    visibility: visible;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fades out then in to cleanly change modal text. */
+@keyframes bounce {
+  0% {
+    transform: translateY(0px);
+  }
+
+  33.3% {
+    transform: translateY(2px);
+  }
+
+  66.7% {
+    transform: translateY(-2px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }

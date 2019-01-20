@@ -6,6 +6,9 @@ function createModal(node, refinedPapers) {
     Creates the modal which appears on node click.
     */
 
+    // Remove refine button click listener to avoid duplicate listeners.
+    $("#add-to-refine-button").off("click");
+
     let title = node.title;
     let authors = node.authors;
     let journal = node.journal;
@@ -28,20 +31,14 @@ function createModal(node, refinedPapers) {
     // Format author string.
     let authorString = formatAuthors(authors);
 
-    $("#abstract-modal").on("shown.bs.modal", function(event) {
-        console.log('header', $("#modal-header").height());
-        console.log('body', $("#modal-body").height());
-        console.log('footer', $("#modal-footer").height());
-
-        // $("#modal-body").height($(window).height() -  $("#modal-header").height() - $("#modal-footer").height())
-    })
-
     // Fill in the modal contents for the given node
     $("#modal-title").html(title);
     $("#modal-publisher").html(journal);
     $("#modal-published-date").html(pub_date_string);
     $("#modal-authors").html(authorString);
     $("#modal-abstract").html(abstract);
+
+    // $(".modal-content").addClass("fade-in")
 
     // Add href to publisher link out button
     $("#modal-publisher-link-out").attr("href", `https://www.ncbi.nlm.nih.gov/pubmed/?term=${id.toString()}`);
@@ -61,11 +58,14 @@ function createModal(node, refinedPapers) {
 
     // Create click listener for modal close button.
     $("#modal-close").click(function() {
-        $("#abstract-modal-dialog").hide();
-        console.log("click");
 
-        // Remove click listener after close.
+        // Fade out modal.
+        $("#abstract-modal-dialog").removeClass("fade-in");
+        $("#abstract-modal-dialog").addClass("fade-out");
+
+        // Remove close button click listener after close.
         $("#modal-close").off("click");
+
     })
 
 }

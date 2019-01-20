@@ -119,6 +119,8 @@ function d3Layout(response, createModal, refinedPapers) {
             setTimeout(function() {
                 if (isSingleClick) {
                     createModal.createModal(d, refinedPapers)
+                    $("#abstract-modal-dialog").removeClass("fade-out");
+                    $("#abstract-modal-dialog").addClass("fade-in");
                     $("#abstract-modal-dialog").show();
                 }
             }, 300)

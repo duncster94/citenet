@@ -31,7 +31,7 @@ function animateRank(layoutObj, refinedPapers) {
         .css("width", "40vw")
         // .attr("class", "modal-dialog");
 
-    $(".modal-button-text").hide();
+    // $(".modal-button-text").hide();
 
     let simulation = layoutObj.simulation
     let node = layoutObj.node
@@ -408,6 +408,11 @@ function animateRank(layoutObj, refinedPapers) {
         currentY = newPos;
     })
 
+    // Add a listener to modal to allow retriggering of bounce animation.
+    $("#abstract-modal-dialog").on("animationend", function() {
+        $("#abstract-modal-dialog").removeClass("bounce");
+    })
+
     function updateModal() {
         /*
         Modifies the content of the modal to display currently focused
@@ -417,13 +422,18 @@ function animateRank(layoutObj, refinedPapers) {
         // Get current node.
         let currNode = rankToNode[currentRank];
 
-        console.log(currNode);
+        let modal = $("#abstract-modal-dialog");
+        modal.removeClass("fade-in");
+        modal.removeClass("fade-out");
+
+        // Add bounce animation to modal.
+        modal.addClass("bounce");
 
         // Replace modal fields with 'currNode' fields.
         createModal.createModal(currNode, refinedPapers);
 
-        // Hide button text to save room.
-        $(".modal-button-text").hide();
+        // Hide modal close button.
+        $("#modal-close").hide();
 
     }
 }

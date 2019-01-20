@@ -32,13 +32,3 @@
 
     padding: 8px;
 }
-
-@media (min-width: 576px) {
-    .animate-rank-details-title {
-        font-size: 14px;
-    }
-
-    .animate-rank-details-authors {
-        font-size: 13px;
-    }
-}
