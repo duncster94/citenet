@@ -24,13 +24,6 @@ function animateRank(layoutObj, refinedPapers) {
     /*
     */
 
-    $("#abstract-modal-dialog")
-        .css("display", "inline-block")
-        .css("position", "fixed")
-        .css("right", "2.5vw")
-        .css("width", "40vw")
-        // .attr("class", "modal-dialog");
-
     // $(".modal-button-text").hide();
 
     let simulation = layoutObj.simulation
@@ -50,6 +43,20 @@ function animateRank(layoutObj, refinedPapers) {
     // Get window width and height.
     let width = $("#network").width();
     let height = $("#network").height();
+
+    // Check size of screen to determine if modal size should be
+    // modified. For small devices modal is only shown on click/tap,
+    // so the original modal size is not modified.
+    if (width >= 768) {
+        $("#abstract-modal-dialog")
+        .css("display", "inline-block")
+        .css("position", "fixed")
+        .css("right", "2.5vw")
+        .css("width", "40vw")
+
+        // Hide modal close button.
+        $("#modal-close").hide();
+    }
 
     // Add a line through center of screen (for debugging purposes).
     $(".links").fadeOut(100);
@@ -246,6 +253,21 @@ function animateRank(layoutObj, refinedPapers) {
 
         // Snap to position.
         scrollNodes(pos);
+
+        // If screen is small, display modal.
+        if (width < 767.98) {
+
+            let modal = $("#abstract-modal-dialog");
+            modal.removeClass("fade-out");
+            
+            // Modify modal information to clicked node.
+            createModal.createModal(d, refinedPapers);
+            
+            modal.addClass("fade-in");
+
+            modal.show();
+
+        }
     });
 
     // Add scroll listener.
@@ -387,7 +409,7 @@ function animateRank(layoutObj, refinedPapers) {
     $(window).resize(function() {
 
         // Update current window width.
-        width = $(window).width()
+        width = $(window).width();
 
         // Compute horizontal padding.
         nodePadding = width / 3;
@@ -432,6 +454,28 @@ function animateRank(layoutObj, refinedPapers) {
                 return htmlString
             })
 
+        // Update modal size, position and display.
+        if (width >= 768) {
+            $("#abstract-modal-dialog")
+                .css("display", "inline-block")
+                .css("position", "fixed")
+                .css("right", "2.5vw")
+                .css("width", "40vw")
+
+            // Hide modal close button.
+            $("#modal-close").hide();
+
+            updateModal();
+
+        } else {
+            $("#abstract-modal-dialog")
+                .css("display", "none")
+                .css("width", "auto")
+
+            // Show modal close button.
+            $("#modal-close").show();
+        }
+
         // Update y position.
         currentY = newPos;
     })
@@ -447,22 +491,27 @@ function animateRank(layoutObj, refinedPapers) {
         node paper information.
         */
 
-        // Get current node.
-        let currNode = rankToNode[currentRank];
+       let modal = $("#abstract-modal-dialog");
 
-        let modal = $("#abstract-modal-dialog");
-        modal.removeClass("fade-in");
-        modal.removeClass("fade-out");
+        // If screen width is below tablet width, do not show modal.
+        if (width < 767.98) {
 
-        // Add bounce animation to modal.
-        modal.addClass("bounce");
+            modal.hide();
 
-        // Replace modal fields with 'currNode' fields.
-        createModal.createModal(currNode, refinedPapers);
+        } else {
 
-        // Hide modal close button.
-        $("#modal-close").hide();
+            // Get current node.
+            let currNode = rankToNode[currentRank];
 
+            modal.removeClass("fade-in");
+            modal.removeClass("fade-out");
+
+            // Add bounce animation to modal.
+            modal.addClass("bounce");
+
+            // Replace modal fields with 'currNode' fields.
+            createModal.createModal(currNode, refinedPapers);
+        }
     }
 }
 
@@ -516,7 +565,7 @@ function parseAuthors(authorArr, viewWidth) {
         return authorString
     }
 
-    if (viewWidth < 576) {
+    if (viewWidth < 767.98) {
             
         if (authorArr.length === 2) {
             authorString = authorArr[0].LastName + 
@@ -526,7 +575,7 @@ function parseAuthors(authorArr, viewWidth) {
                 ", ..., " + authorArr[authorArr.length-1].LastName;
         }
 
-    } else if (viewWidth < 768) {
+    } else if (viewWidth < 991.98) {
 
         if (authorArr.length === 2) {
             authorString = authorArr[0].LastName + 

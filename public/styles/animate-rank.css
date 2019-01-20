@@ -32,3 +32,9 @@
 
     padding: 8px;
 }
+
+@media (max-width: 767.98px) {
+    .animate-rank-details {
+        width: 87.5vw;
+    }
+}

@@ -25,16 +25,12 @@
 }
 
 .modal-body {
-  /* how to set modal-body height? */
-  /* max-height: 1000px; */
   flex: 1 1 auto;
   overflow-y: scroll;
 }
 
 .modal-footer {
   height: auto;
-  /* height: 100px !important; */
-  /* flex: 0 0 auto; */
 }
 
 .fade-in {
