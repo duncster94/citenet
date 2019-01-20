@@ -1,14 +1,18 @@
-.selectize-option {
-  border-bottom: 1px solid #eeeeee;
+/* Set font for placeholder text and author names in selectize box */
+#selectize-selectized,
+.selectize-option-authors
+ {
+  font-family: 'Roboto', sans-serif;
 }
 
+/* Set font for paper titles in selectize box */
 .selectize-option-title {
-  font-size: 13px;
-  font-weight: bold;
-  padding: 5px 0px 0px 10px;
+  font-family: 'Poppins', sans-serif;
 }
 
-.selectize-option-authors {
-  font-size: 11px;
-  padding: 0px 0px 0px 10px;
+.selectize-option {
+  /* Space out selectize contents properly */
+  padding: 15px 7.5px 2.5px 7.5px;
+  /* horizontal seperator between elements in the selectize dropdown */
+  border-bottom: 3px solid #eeeeee;
 }
