@@ -83,7 +83,6 @@ function animateRank(layoutObj, refinedPapers) {
         .ease(d3.easeSinOut)
         .duration(1200)
         .attr("transform", "translate(0, " + (height/2).toString() + ")");
-
     
     // Padding to add between node and paper details.
     let detailsPadding = 20;
@@ -234,6 +233,20 @@ function animateRank(layoutObj, refinedPapers) {
 
     nullDrag(node);
     
+    node.on("click", function(d) {
+        /*
+        On node click, snap to clicked node.
+        */
+
+        // Get node position to snap to.
+        let pos = -d.rank * nodeSpacing
+
+        // Update current y position.
+        currentY = pos;
+
+        // Snap to position.
+        scrollNodes(pos);
+    });
 
     // Add scroll listener.
     d3.select("#network")
@@ -247,6 +260,13 @@ function animateRank(layoutObj, refinedPapers) {
 
         // Get scroll Y delta.
         let deltaY = d3.event.deltaY;
+
+        // Avoid retriggering scroll snapping if the user tries scrolling
+        // below minimum or above maximum scroll extent.
+        if ((currentY === 0 && deltaY < 0) || 
+            (currentY + ((nNodes - 1) * nodeSpacing)) < 0.001 && deltaY > 0) {
+            return
+        }
 
         // Specify new position to scroll to, bounded by node collection.
         let newPosition = Math.max(Math.min(currentY - deltaY, 0),
@@ -277,7 +297,16 @@ function animateRank(layoutObj, refinedPapers) {
         */
 
         // Time to wait until the end of a scroll event is detected.
-        let endTime = 150 
+        let endTime;
+
+        // If scrolling goes past top and bottom boundaries, snap to
+        // node immediately. This is to avoid waiting for the end of
+        // an intertial scroll to show modal.
+        if (pos === 0 || (pos + ((nNodes - 1) * nodeSpacing)) < 0.001) {
+            endTime = 0;
+        } else {
+            endTime = 150;
+        }
 
         // Waits for 'endTime' after being triggered by scroll event
         // and snaps nodes to nearest node position.
@@ -302,6 +331,7 @@ function animateRank(layoutObj, refinedPapers) {
         Translates node collection to a snap position given by 'pos'.
         */
 
+        // Translate node collection to snap point.
         d3.select(".everything")
             .transition()
             .ease(easing)
@@ -311,11 +341,9 @@ function animateRank(layoutObj, refinedPapers) {
 
         // Update current rank position.
         currentRank = Math.round(Math.abs(pos / nodeSpacing));
-        console.log(currentRank);
 
         // Change displayed modal.
         updateModal();
-
     }
 
     function closest(pos) {
