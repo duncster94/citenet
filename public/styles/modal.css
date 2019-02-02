@@ -24,6 +24,10 @@
   flex: 0 0 auto;
 }
 
+.modal-title {
+  font-size: 21px;
+}
+
 .modal-body {
   flex: 1 1 auto;
   overflow-y: scroll;

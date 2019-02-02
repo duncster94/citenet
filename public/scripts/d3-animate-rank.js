@@ -9,6 +9,9 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
 
     $("#animate-rank-button").on("click", function() {
 
+        // Remove click behaviour.
+        $("#animate-rank-button").off("click")
+
         // Remove node tooltips.
         Object.keys(tips).forEach(function(nodeID) {
             tip = tips[nodeID];
@@ -17,6 +20,46 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
 
         // Add rank animation functionality.
         animateRank(layoutObj, refinedPapers);
+
+        // Change listener on 'animate-rank' button to display network
+        // if clicked.
+        $("#animate-rank-button").on("click", function() {
+            /*
+            Change the icon on animate button and run the D3 network 
+            layout again on click.
+            */
+
+            // TODO: change button icon.
+
+            // Create tooltips.
+
+            // Add modal on click behaviour.
+            console.log('inside click')
+
+            // Remove foreignObject from nodes.
+            d3.selectAll("foreignObject").remove();
+            // layoutObj.node.remove("foreignObject");
+
+            // Remove all fixed node positions.
+            layoutObj.node
+                .each(function(d) {
+                    // console.log('d.x', d.x);
+                    // console.log('d.y', d.y);
+                    console.log(d);
+                    // d.x = d.fx;
+                    // d.y = d.fy;
+                    d.fx = null;
+                    d.fy = null;
+                })
+
+            // Fade in links.
+            $(".links").fadeIn(300);
+
+            // Restart simulation.
+            layoutObj.simulation
+                .alphaTarget(0.05)
+                .restart()
+        })
     });
 }
 
@@ -31,11 +74,11 @@ function animateRank(layoutObj, refinedPapers) {
     let zoomHandler = layoutObj.zoomHandler
     let dragHandler = layoutObj.dragHandler
 
-    // Save the current positions of the nodes.
-    let nodePos = savePos(node);
+    // // Save the current positions of the nodes.
+    // let nodePos = savePos(node);
 
-    // Get fixed positions of the nodes.
-    let nodeFixedPos = saveFixedPos(node);
+    // // Get fixed positions of the nodes.
+    // let nodeFixedPos = saveFixedPos(node);
 
     // Remove any fixed node positions.
     // TODO: maybe remove fixed positions all together?
@@ -58,7 +101,7 @@ function animateRank(layoutObj, refinedPapers) {
         $("#modal-close").hide();
     }
 
-    // Add a line through center of screen (for debugging purposes).
+    // Add arrow depicting selected node.
     $(".links").fadeOut(100);
     d3.select("#network")
         .append("image")
@@ -101,11 +144,11 @@ function animateRank(layoutObj, refinedPapers) {
     let foWidth = width - leftPadding;
 
     // Remove forces.
-    simulation
-        .force("links", null)
-        .force("charge", null)
-        .force("center", null)
-        .on("tick", null)
+    // simulation
+    //     .force("links", null)
+    //     .force("charge", null)
+    //     .force("center", null)
+    //     .on("tick", null)
 
     // Object to track rank to node.
     let rankToNode = {};
@@ -126,6 +169,20 @@ function animateRank(layoutObj, refinedPapers) {
             return "translate("+ leftPadding + ", " 
             + nodeSpacing * d.rank + ")"
         })
+        .on("end", function(d) {
+
+            // Update positions of nodes.
+            d.x = leftPadding;
+            d.y = nodeSpacing * d.rank;
+
+            // Set fixed positions of nodes. This is set
+            // so that fixed positions can be removed when
+            // the user returns to network view and the force
+            // simulation will be resumed.
+            d.fx = d.x;
+            d.fy = d.y;
+        })
+
 
     // Set initial modal.
     updateModal();
@@ -575,7 +632,7 @@ function parseAuthors(authorArr, viewWidth) {
                 ", ..., " + authorArr[authorArr.length-1].LastName;
         }
 
-    } else if (viewWidth < 991.98) {
+    } else {
 
         if (authorArr.length === 2) {
             authorString = authorArr[0].LastName + 
@@ -594,18 +651,6 @@ function parseAuthors(authorArr, viewWidth) {
                 authorArr[authorArr.length-1].LastName;
         }
 
-    } else {
-
-        if (authorArr.length === 2) {
-            authorString = authorArr[0].LastName + 
-                " and " + authorArr[1].LastName;
-        } else {
-            authorString = "";
-            authorArr.forEach(function(author) {
-                authorString += author.LastName + ", "
-            });
-            authorString = authorString.slice(0, -2);
-        }
     }
     
     return authorString;

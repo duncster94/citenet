@@ -66,6 +66,7 @@ function d3Layout(response, createModal, refinedPapers) {
 
     // Define attrictive center to keep graph in one place.
     const center_force = d3.forceCenter(width / 2, height / 2);
+    // const center_force = d3.forceCenter(0, 0);
 
     // Define collision physics between nodes to avoid overlaps.
     const collision_force = d3.forceCollide()
@@ -276,6 +277,10 @@ function d3Layout(response, createModal, refinedPapers) {
 
     return {
         "node": node,
+        "linkForce": link_force,
+        "chargeForce": charge_force,
+        "centerForce": center_force,
+        "tickActions": tickActions,
         "isDragging": isDragging,
         "simulation": simulation,
         "zoomHandler": zoomHandler,
