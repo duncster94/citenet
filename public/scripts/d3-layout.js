@@ -63,10 +63,9 @@ function d3Layout(response, createModal, refinedPapers) {
     // Define node charge physics.
     const charge_force = d3.forceManyBody()
         .strength(-200);
-
+    
     // Define attrictive center to keep graph in one place.
     const center_force = d3.forceCenter(width / 2, height / 2);
-    // const center_force = d3.forceCenter(0, 0);
 
     // Define collision physics between nodes to avoid overlaps.
     const collision_force = d3.forceCollide()
@@ -81,6 +80,7 @@ function d3Layout(response, createModal, refinedPapers) {
         .force("center", center_force)
         .force("links", link_force)
         .on("tick", tickActions)
+        .alphaTarget(0.03)
 
     //add encompassing group for the zoom
     var g = svg.append("g")
