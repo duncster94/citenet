@@ -1,5 +1,6 @@
 const d3 = require("d3");
 const $ = require("jquery");
+const drag = require("./d3-drag.js");
 
 function d3Layout(response, createModal, refinedPapers) {
     /*
@@ -58,11 +59,11 @@ function d3Layout(response, createModal, refinedPapers) {
     const link_force = d3.forceLink(graph.links)
         .id(function(d) {
             return d.id;
-        });
+        }).strength(0.4);
 
     // Define node charge physics.
     const charge_force = d3.forceManyBody()
-        .strength(-200);
+        .strength(-350);
     
     // Define attrictive center to keep graph in one place.
     const center_force = d3.forceCenter(width / 2, height / 2);
@@ -111,29 +112,11 @@ function d3Layout(response, createModal, refinedPapers) {
         .attr("cy", 0)
         .on("click", function(d) {
 
-            // Set click variable to true.
-            isSingleClick = true;
-
-            // Set a timeout. If the click event is still a
-            // single click at the end of the timeout, create
-            // the modal.
-            setTimeout(function() {
-                if (isSingleClick) {
-                    createModal.createModal(d, refinedPapers)
-                    $("#abstract-modal-dialog").removeClass("fade-out");
-                    $("#abstract-modal-dialog").addClass("fade-in");
-                    $("#abstract-modal-dialog").show();
-                }
-            }, 300)
-        })
-        .on("dblclick", function(d) {
-
-            // Set click variable to false.
-            isSingleClick = false;
-
-            // Set fixed positions of node to null.
-            d.fx = null;
-            d.fy = null;
+            createModal.createModal(d, refinedPapers)
+            $("#abstract-modal-dialog")
+                .removeClass("fade-out")
+                .addClass("fade-in")
+                .show();
         })
 
     // Draw circles representing the nodes.
@@ -190,20 +173,8 @@ function d3Layout(response, createModal, refinedPapers) {
             }
         })
 
-    // Object specifying whether dragging is currently happening. This
-    // gets passed to "create-tooltips" and ensures tooltips do not
-    // display during drag.
-    let isDragging = {
-        "state": false
-    };
-
-    //add drag capabilities
-    let dragHandler = d3.drag()
-        .on("start", drag_start)
-        .on("drag", drag_drag)
-        .on("end", drag_end);
-
-    dragHandler(node);
+    
+    drag.dragHandler(node);
 
     //add zoom capabilities
     let zoomHandler = d3.zoom()
@@ -220,32 +191,6 @@ function d3Layout(response, createModal, refinedPapers) {
             .on("dblclick.zoom", null); // Disable doubleclick zooming.
 
     /** Functions **/
-
-    //Drag functions
-    //d is the node
-    function drag_start(d) {
-        isDragging.state = true;
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-    }
-
-    //make sure you can't drag the circle outside the box
-    function drag_drag(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    }
-
-    function drag_end(d) {
-        isDragging.state = false;
-        if (!d3.event.active) simulation.alphaTarget(0);
-        // d.fx = null;
-        // d.fy = null;
-
-        // Set fixed position of node to where user dragged it.
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    }
 
     //Zoom functions
     function zoom_actions() {
@@ -281,10 +226,10 @@ function d3Layout(response, createModal, refinedPapers) {
         "chargeForce": charge_force,
         "centerForce": center_force,
         "tickActions": tickActions,
-        "isDragging": isDragging,
+        "isDragging": drag.isDragging,
         "simulation": simulation,
         "zoomHandler": zoomHandler,
-        "dragHandler": dragHandler
+        "dragHandler": drag.dragHandler
     };
 }
 

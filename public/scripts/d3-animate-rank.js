@@ -1,6 +1,8 @@
 const d3 = require("d3");
 const $ = require("jquery");
 const createModal = require("./create-modals.js");
+const createTooltips = require("./create-tooltips.js");
+const drag = require("./d3-drag.js");
 
 function addAnimateRankListener(layoutObj, tips, refinedPapers) {
     /*
@@ -40,10 +42,6 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
 
             // TODO: change button icon.
 
-            // Create tooltips.
-
-            // Add modal on click behaviour.
-
             $(window).off("resize");
             
             // Remove all fixed node positions.
@@ -60,7 +58,40 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
             $(".rank-arrow").fadeOut(300);
 
             // Fade modal.
-            $("#abstract-modal-dialog").fadeOut(300);
+            $("#abstract-modal-dialog")
+                .removeClass("fade-in")
+                .addClass("fade-out")
+
+            // Remove rank-view from modal after fadeout.
+            setTimeout(function() {
+                $("#abstract-modal-dialog")
+                    .removeClass("modal-rank-view");
+                $("#modal-close").show();
+            }, 300)
+                
+            // Add show modal click listener to node.
+            layoutObj.node
+                .on("click", function(d) {
+
+                    createModal.createModal(d, refinedPapers)
+                    $("#abstract-modal-dialog")
+                        .removeClass("fade-out")
+                        .addClass("fade-in")
+                        .show();
+                })
+
+            // Add tooltips.
+            createTooltips.createTooltips(layoutObj.node, layoutObj.isDragging);
+
+            // Add zoom listener.
+            d3.select("#network")
+                .call(d3.zoom().on("zoom", function() {
+                    $(".everything").attr("transform", d3.event.transform);
+                })
+                    .scaleExtent([0.1, 3]))
+
+            // Add drag behaviour.
+            drag.dragHandler(layoutObj.node);
 
             function centerForce(x, y, strength) {
                 /*
@@ -197,10 +228,7 @@ function animateRank(layoutObj, refinedPapers) {
     // so the original modal size is not modified.
     if (width >= 768) {
         $("#abstract-modal-dialog")
-        .css("display", "inline-block")
-        .css("position", "fixed")
-        .css("right", "2.5vw")
-        .css("width", "40vw")
+            .addClass("modal-rank-view")
 
         // Hide modal close button.
         $("#modal-close").hide();

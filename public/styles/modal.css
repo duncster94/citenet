@@ -16,6 +16,13 @@
   margin-bottom: 1vh;
 }
 
+.modal-rank-view {
+  display: inline-block;
+  position: fixed;
+  right: 2.5vw;
+  width: 40vw;
+}
+
 .modal-content {
   height: 98vh;
 }
