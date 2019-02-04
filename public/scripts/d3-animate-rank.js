@@ -9,47 +9,46 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
     Adds a click listener to the 'animate rank' button.
     */
 
-    $(".animate-rank-button").on("click", function() {
+    let animateButton = $("#animate-rank-button");
 
-        // Remove click behaviour.
-        $(".animate-rank-button").off("click")
+    animateButton.on("click", function() {
+        if (animateButton.hasClass("animate-rank-button")) {
 
-        // Change class of button.
-        $(".animate-rank-button")
+            // Change class of button.
+            $(".animate-rank-button")
             .removeClass("animate-rank-button")
             .addClass("animate-network-button")
 
-        // Disable button (renabled when animation completes).
-        $(".animate-network-button")
-            .attr("disabled", true)
+            // Disable button (renabled when animation completes).
+            $(".animate-network-button")
+                .attr("disabled", true)
 
-        // Remove node tooltips.
-        Object.keys(tips).forEach(function(nodeID) {
-            tip = tips[nodeID];
-            tip.destroy();
-        })
+            // Remove node tooltips.
+            Object.keys(tips).forEach(function(nodeID) {
+                tip = tips[nodeID];
+                tip.destroy();
+            })
 
-        // Add rank animation functionality.
-        animateRank(layoutObj, refinedPapers);
+            // Add rank animation functionality.
+            animateRank(layoutObj, refinedPapers);
 
-        // Change listener on 'animate-rank' button to display network
-        // if clicked.
-        $(".animate-network-button").on("click", function() {
-            /*
-            Change the icon on animate button and run the D3 network 
-            layout again on click.
-            */
+        } else {
+
+            // Change class of button.
+            $(".animate-network-button")
+            .removeClass("animate-network-button")
+            .addClass("animate-rank-button")
 
             // TODO: change button icon.
 
             $(window).off("resize");
-            
+
             // Remove all fixed node positions.
             layoutObj.node
-                .each(function(d) {
-                    d.fx = null;
-                    d.fy = null;
-                })
+            .each(function(d) {
+                d.fx = null;
+                d.fy = null;
+            })
 
             let width = $(window).width();
             let height = $(window).height();
@@ -59,86 +58,87 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
 
             // Fade modal.
             $("#abstract-modal-dialog")
-                .removeClass("fade-in")
-                .addClass("fade-out")
+            .removeClass("fade-in")
+            .addClass("fade-out")
 
             // Remove rank-view from modal after fadeout.
             setTimeout(function() {
-                $("#abstract-modal-dialog")
-                    .removeClass("modal-rank-view");
-                $("#modal-close").show();
+            $("#abstract-modal-dialog")
+                .removeClass("modal-rank-view");
+            $("#modal-close").show();
             }, 300)
-                
+
             // Add show modal click listener to node.
             layoutObj.node
-                .on("click", function(d) {
+            .on("click", function(d) {
 
-                    createModal.createModal(d, refinedPapers)
-                    $("#abstract-modal-dialog")
-                        .removeClass("fade-out")
-                        .addClass("fade-in")
-                        .show();
-                })
+                createModal.createModal(d, refinedPapers)
+                $("#abstract-modal-dialog")
+                    .removeClass("fade-out")
+                    .addClass("fade-in")
+                    .show();
+            })
 
             // Add tooltips.
-            createTooltips.createTooltips(layoutObj.node, layoutObj.isDragging);
+            tips = createTooltips.createTooltips(layoutObj.node, layoutObj.isDragging);
 
             // Add zoom listener.
             d3.select("#network")
-                .call(d3.zoom().on("zoom", function() {
-                    $(".everything").attr("transform", d3.event.transform);
-                })
-                    .scaleExtent([0.1, 3]))
+            .call(d3.zoom().on("zoom", function() {
+                $(".everything").attr("transform", d3.event.transform);
+            })
+                .scaleExtent([0.1, 3]))
 
             // Add drag behaviour.
             drag.dragHandler(layoutObj.node);
 
             function centerForce(x, y, strength) {
-                /*
-                Centering force that is identical to 'd3.forceCenter' except it
-                has a strength parameter which determines how quickly node
-                collection is forced into center of mass specified by 'x' and 'y'.
-                The strength parameter is added to allow for smooth inclusion
-                of a centering force to ensure no violent animations.
-                */
-                let nodes;
-              
-                if (x == null) x = 0;
-                if (y == null) y = 0;
-              
-                function force() {
-                  let i,
-                      n = nodes.length,
-                      node,
-                      sx = 0,
-                      sy = 0;
-              
-                  for (i = 0; i < n; ++i) {
-                    node = nodes[i], sx += node.x, sy += node.y;
-                  }
-              
-                  for (sx = sx / n - x, sy = sy / n - y, i = 0; i < n; ++i) {
-                    node = nodes[i], node.x -= strength * sx, node.y -= strength * sy;
-                  }
+            /*
+            Centering force that is identical to 'd3.forceCenter' except it
+            has a strength parameter which determines how quickly node
+            collection is forced into center of mass specified by 'x' and 'y'.
+            The strength parameter is added to allow for smooth inclusion
+            of a centering force to ensure no violent animations when switching
+            to network view.
+            */
+            let nodes;
+
+            if (x == null) x = 0;
+            if (y == null) y = 0;
+
+            function force() {
+                let i,
+                    n = nodes.length,
+                    node,
+                    sx = 0,
+                    sy = 0;
+
+                for (i = 0; i < n; ++i) {
+                node = nodes[i], sx += node.x, sy += node.y;
                 }
-              
-                force.initialize = function(_) {
-                  nodes = _;
-                };
-              
-                force.x = function(_) {
-                  return arguments.length ? (x = +_, force) : x;
-                };
-              
-                force.y = function(_) {
-                  return arguments.length ? (y = +_, force) : y;
-                };
-              
-                force.strength = function(_) {
-                  return arguments.length ? (strength = +_, force) : strength;
-                };
-              
-                return force;
+
+                for (sx = sx / n - x, sy = sy / n - y, i = 0; i < n; ++i) {
+                node = nodes[i], node.x -= strength * sx, node.y -= strength * sy;
+                }
+            }
+
+            force.initialize = function(_) {
+                nodes = _;
+            };
+
+            force.x = function(_) {
+                return arguments.length ? (x = +_, force) : x;
+            };
+
+            force.y = function(_) {
+                return arguments.length ? (y = +_, force) : y;
+            };
+
+            force.strength = function(_) {
+                return arguments.length ? (strength = +_, force) : strength;
+            };
+
+            return force;
             }
 
             // Time in ms that it takes to translate node collection to
@@ -148,63 +148,85 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
             // Translate node collection to top so that animation can proceed
             // without problems.
             d3.select(".everything")
-                .transition()
-                .ease(d3.easeSinOut)
-                .duration(shiftDuration)
-                .attr("transform", "translate(0, " + 
-                    (height / 2).toString() + ")")
+            .transition()
+            .ease(d3.easeSinOut)
+            .duration(shiftDuration)
+            .attr("transform", "translate(0, " + 
+                (height / 2).toString() + ")")
 
             // Wait for reset animation to finish before executing network 
             // animation logic.
             setTimeout(function() {
 
-                // Remove foreignObject from nodes.
-                d3.selectAll("foreignObject").remove();
+            // Remove foreignObject from nodes.
+            d3.selectAll("foreignObject").remove();
 
-                // Add centering force with low strength for smooth animation.
-                layoutObj.simulation
-                    .force("center", centerForce(width / 2, height / 2, 0.08))
-                    .alpha(0.8)
-                    .alphaTarget(0.03)
-                    .restart()
+            // Add centering force with low strength for smooth animation.
+            layoutObj.simulation
+                .force("center", centerForce(width / 2, height / 2, 0.08))
+                .alpha(0.8)
+                .alphaTarget(0.03)
+                .restart()
 
-                // Translate node collection to reset scale.
-                d3.select(".everything")
-                    .transition()
-                    .ease(d3.easeSinOut)
-                    .duration(1200)
-                    .attr("transform", `translate(${width/4}, ${height/4}) scale(0.5)`);
+            // Translate node collection to reset scale.
+            d3.select(".everything")
+                .transition()
+                .ease(d3.easeSinOut)
+                .duration(1200)
+                .attr("transform", `translate(${width/4}, ${height/4}) scale(0.5)`);
 
-                // Fade in links.
-                $(".links").fadeIn(300);
+            // Fade in links.
+            $(".links").fadeIn(300);
 
             }, shiftDuration + 5)
 
             // Modify the center force strength to adjust back to 1.0.
             setTimeout(function() {
 
-                // Initial center force strength.
-                let centerStrength = 0.08;
+            // Initial center force strength.
+            let centerStrength = 0.08;
 
-                // Set interval over which to update center force strength.
-                let centerInterval = setInterval(function() {
+            // Set interval over which to update center force strength.
+            let centerInterval = setInterval(function() {
 
-                    // Clear interval if center force has reached 1.0.
-                    if (centerStrength >= 1.0) {
-                        clearInterval(centerInterval);
-                    }
+                // Clear interval if center force has reached 1.0.
+                if (centerStrength >= 1.0) {
+                    clearInterval(centerInterval);
+                }
 
-                    centerStrength += 0.01
+                centerStrength += 0.01
 
-                    // Reassign centering force with updated strength.
-                    layoutObj.simulation
-                        .force("center", centerForce(width / 2, height / 2, centerStrength))
-                }, 25);
+                // Reassign centering force with updated strength.
+                layoutObj.simulation
+                    .force("center", centerForce(width / 2, height / 2, centerStrength))
+            }, 25);
 
             }, shiftDuration + 100);
 
-        });
-    });
+        }
+    })
+
+    // $(".animate-rank-button").on("click", function() {
+
+    //     // Remove click behaviour.
+    //     // $(".animate-rank-button").off("click")
+
+
+    // })
+
+    // // Change listener on 'animate-rank' button to display network
+    // // if clicked.
+    // $(".animate-network-button").on("click", function() {
+    //     /*
+    //     Change the icon on animate button and run the D3 network 
+    //     layout again on click.
+    //     */
+        
+    //     // Remove click behaviour.
+    //     // $(".animate-network-button").off("click")
+
+        
+    // });
 
 }
 
