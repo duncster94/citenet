@@ -7,13 +7,25 @@ class View {
         let self = this;
 
         self.response = response;
-        self.nodesVal;
+        self.nodesVal; // Suffixed with "Val" in order to have getters/setters
         self.edgesVal;
 
         // Process server response and update nodes and edges.
         self._loadD3();
 
+        // Set current node drag state. Used to hide tooltips on drag.
+        self.isDragging = {
+            "state": false
+        }
+
         self.currentViewVal = currentView;
+        if (self.currentViewVal === "network") {
+            self._initNetwork();
+        } else if (self.currentViewVal === "rank") {
+            self._initRank();
+        } else {
+            throw `View ${self.currentViewVal} is not a valid view.`
+        }
     }
 
     get nodes() {
@@ -28,9 +40,9 @@ class View {
         return self.currentViewVal;
     }
 
-    set currentView(view) {
-        self.currentViewVal = view;
-    }
+    // set currentView(view) {
+    //     self.currentViewVal = view;
+    // }
 
     _loadD3() {
         /*
@@ -204,6 +216,141 @@ class View {
         let colour = `hsla(41,100%, ${lightness.toString()}%,1)`;
 
         return colour;
+    }
+
+    _initNetwork() {
+        /*
+        Initializes view as network.
+        */
+
+        let width = $("#network").width()
+        let height = $("#network").height()
+        let graph = self.response.subgraph;
+        
+        // Update current view.
+        self.currentViewVal = "network";
+
+        // Create force simulation.
+        let simulation = d3.forceSimulation()
+            .nodes(graph.nodes);
+
+        // Define forces.
+        let collisionForce = d3.forceCollide()
+            .radius(function(d) {
+                return self._scoreToRadius(d) + 3;
+            });
+
+        let chargeForce = d3.forceManyBody()
+            .strength(-350);
+
+        let centerForce = d3.forceCenter(width / 2, height / 2);
+
+        let linkForce = d3.forceLink(graph.links)
+            .id(function(d) {
+                return d.id;
+            })
+            .strength(0.5);
+
+        // Add forces and tick behaviour.
+        simulation
+            .force("collide", collisionForce)
+            .force("charge", chargeForce)
+            .force("center", centerForce)
+            .force("links", linkForce)
+            .on("tick", self._networkTickActions)
+            .alphaTarget(0.03)
+
+        // Add drag behaviour.
+        let dragHandler = d3.drag()
+            .on("start", _networkDragStart)
+            .on("drag", _networkDragDrag)
+            .on("end", _networkDragEnd)
+
+        dragHandler(self.nodesVal)
+
+        // Add zoom behaviour.
+        let zoomHandler = d3.zoom()
+            .on("zoom", self._networkZoomActions)
+            .scaleExtent([0.1, 3])
+
+        $("#network")
+            .call(zoomHandler)
+            .call(zoomHandler.transform, d3.zoomIdentity
+                .translate(width / 4, height / 4)
+                .scale(0.5))
+                .on("dblclick.zoom", null); // Disable doubleclick zooming.
+    }
+
+    _networkTickActions() {
+        /*
+        Defines the tick behaviour for the network view force simulation.
+        */
+
+        // Update group (circle and image) positions for each simulation tick.
+        self.nodesVal
+            .attr("transform", function(d) {
+                return `translate(${d.x.toString()}, ${d.y.toString()})`;
+            })
+
+        // Update link positions for each simulation tick.
+        self.edgesVal
+            .attr("x1", function(d) {
+                return d.source.x;
+            })
+            .attr("y1", function(d) {
+                return d.source.y;
+            })
+            .attr("x2", function(d) {
+                return d.target.x;
+            })
+            .attr("y2", function(d) {
+                return d.target.y;
+            });
+    }
+
+    _networkDragStart(d) {
+        /*
+        Defines starting drag actions for network view.
+        */
+
+        self.isDragging.state = true;
+
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    _networkDragDrag(d) {
+        /*
+        Defines during-drag actions for network view.
+        */
+
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    _networkDragEnd(d) {
+        /*
+        Defines ending drag actions for network view.
+        */
+
+        self.isDragging.state = false;
+
+        d.fx = null;
+        d.fy = null;
+    }
+
+    _networkZoomActions() {
+        /*
+        Defines zoom actions for network view.
+        */
+
+        $(".everything").attr("transform", d3.event.transform);
+    }
+
+    _initRank() {
+        /*
+        Initializes view as ranked list.
+        */
     }
 
     toRank() {
