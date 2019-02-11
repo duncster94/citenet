@@ -33,7 +33,7 @@ function d3Layout(response, createModal, refinedPapers) {
 
         // Make sure publication year is defined.
         if (pub_year) {
-            dates.push(node.pub_date.Year);
+            dates.push(pub_year);
         }
     });
     let min_date = Math.min(...dates);
@@ -59,7 +59,7 @@ function d3Layout(response, createModal, refinedPapers) {
     const link_force = d3.forceLink(graph.links)
         .id(function(d) {
             return d.id;
-        }).strength(0.4);
+        }).strength(0.5);
 
     // Define node charge physics.
     const charge_force = d3.forceManyBody()
@@ -86,7 +86,7 @@ function d3Layout(response, createModal, refinedPapers) {
     //add encompassing group for the zoom
     var g = svg.append("g")
         .attr("class", "everything")
-        .attr("transition", "translate 3s ease");
+        // .attr("transition", "translate 3s ease");
 
     //draw lines for the links
     var link = g.append("g")
@@ -173,7 +173,7 @@ function d3Layout(response, createModal, refinedPapers) {
             }
         })
 
-    
+    // Add drag behaviour.
     drag.dragHandler(node);
 
     //add zoom capabilities

@@ -39,7 +39,9 @@ function addAnimateRankListener(layoutObj, tips, refinedPapers) {
             .removeClass("animate-network-button")
             .addClass("animate-rank-button")
 
-            // TODO: change button icon.
+            // TODO: change button icon and button tooltip text.
+
+            // switchToNetworkView(); // add this
 
             $(window).off("resize");
 
