@@ -1,53 +1,57 @@
 const d3 = require("d3");
 const $ = require("jquery");
+const createTooltips = require("./create-tooltips.js");
+const createModal = require("./create-modals.js");
 
 class View {
 
-    constructor(response, currentView) {
-        let self = this;
+    constructor(response, currentView, refinedPapers) {
 
-        self.response = response;
-        self.nodesVal; // Suffixed with "Val" in order to have getters/setters
-        self.edgesVal;
+        this.response = response;
+        this.refinedPapers = refinedPapers;
+        this.nodesVal; // Suffixed with "Val" in order to have getters/setters
+        this.edgesVal;
 
         // Process server response and update nodes and edges.
-        self._loadD3();
+        this._loadD3();
 
         // Set current node drag state. Used to hide tooltips on drag.
-        self.isDragging = {
+        this.isDragging = {
             "state": false
         }
 
-        self.currentViewVal = currentView;
-        if (self.currentViewVal === "network") {
-            self._initNetwork();
-        } else if (self.currentViewVal === "rank") {
-            self._initRank();
+        this.currentViewVal = currentView;
+        if (this.currentViewVal === "network") {
+            this._initNetwork();
+        } else if (this.currentViewVal === "rank") {
+            this._initRank();
         } else {
-            throw `View ${self.currentViewVal} is not a valid view.`
+            throw `View ${this.currentViewVal} is not a valid view.`
         }
     }
 
     get nodes() {
-        return self.nodesVal;
+        return this.nodesVal;
     }
 
     get edges() {
-        return self.edgesVal;
+        return this.edgesVal;
     }
 
     get currentView() {
-        return self.currentViewVal;
+        return this.currentViewVal;
     }
 
     // set currentView(view) {
-    //     self.currentViewVal = view;
+    //     this.currentViewVal = view;
     // }
 
     _loadD3() {
         /*
         Loads the server response into D3.
         */
+
+       let self = this;
 
         // Display parameters.
         let linkStrokeWidth = "5px";
@@ -57,11 +61,11 @@ class View {
         let nodeStrokeColour = "#fff";
 
         // Get subgraph and seed nodes from response.
-        let graph = self.response.subgraph;
-        let seeds = self.response.seeds;
+        let graph = this.response.subgraph;
+        let seeds = this.response.seeds;
 
         // Get min and max publication years.
-        let [minDate, maxDate] = self._minMaxPubYears(graph);
+        let [minDate, maxDate] = this._minMaxPubYears(graph);
 
         // Add a group to svg canvas to contain nodes and edges.
         let g = d3.select("#network")
@@ -98,10 +102,10 @@ class View {
                 return `circle_${d.id}`;
             })
             .attr("r", function(d) {
-                return _scoreToRadius(d);
+                return self._scoreToRadius(d);
             })
             .attr("fill", function(d) {
-                return _dateToColour(d, minDate, maxDate, seeds);
+                return self._dateToColour(d, minDate, maxDate, seeds);
             })
             .attr("stroke", nodeStrokeColour)
             .attr("stroke-width", nodeStrokeWidth);
@@ -114,7 +118,7 @@ class View {
             })
             .append("circle")
             .attr("r", function(d) {
-                return _scoreToRadius(d) - nodeStrokeWidthNum / 2;
+                return self._scoreToRadius(d) - nodeStrokeWidthNum / 2;
             })
 
         // Add image overlay for refined search papers.
@@ -146,9 +150,12 @@ class View {
                 }
             })
 
+        this.nodesVal = node;
+        this.edgesVal = link;
+
         // Once the data has been loaded, delete the response.
         // TODO: test this works.
-        // delete self.response;
+        // delete this.response;
     }
 
     _minMaxPubYears(graph) {
@@ -223,12 +230,16 @@ class View {
         Initializes view as network.
         */
 
+        let self = this;
+
+        console.log('here', this.nodesVal);
+
         let width = $("#network").width()
         let height = $("#network").height()
-        let graph = self.response.subgraph;
+        let graph = this.response.subgraph;
         
         // Update current view.
-        self.currentViewVal = "network";
+        this.currentViewVal = "network";
 
         // Create force simulation.
         let simulation = d3.forceSimulation()
@@ -257,14 +268,20 @@ class View {
             .force("charge", chargeForce)
             .force("center", centerForce)
             .force("links", linkForce)
-            .on("tick", self._networkTickActions)
+            .on("tick", _networkTickActions)
             .alphaTarget(0.03)
 
         // Add drag behaviour.
         let dragHandler = d3.drag()
-            .on("start", _networkDragStart)
-            .on("drag", _networkDragDrag)
-            .on("end", _networkDragEnd)
+            .on("start", function(d) {
+                self.isDragging = true;
+                return self._networkDragStart(d)
+            })
+            .on("drag", self._networkDragDrag)
+            .on("end", function(d) {
+                self.isDragging = false;
+                return self._networkDragEnd(d)
+            })
 
         dragHandler(self.nodesVal)
 
@@ -273,47 +290,59 @@ class View {
             .on("zoom", self._networkZoomActions)
             .scaleExtent([0.1, 3])
 
-        $("#network")
+        d3.select("#network")
             .call(zoomHandler)
             .call(zoomHandler.transform, d3.zoomIdentity
                 .translate(width / 4, height / 4)
                 .scale(0.5))
                 .on("dblclick.zoom", null); // Disable doubleclick zooming.
-    }
 
-    _networkTickActions() {
-        /*
-        Defines the tick behaviour for the network view force simulation.
-        */
+        // Add tooltips on hover.
+        createTooltips.createTooltips(this.nodesVal, this.isDragging);
 
-        // Update group (circle and image) positions for each simulation tick.
-        self.nodesVal
-            .attr("transform", function(d) {
-                return `translate(${d.x.toString()}, ${d.y.toString()})`;
-            })
+        // Add modals on click.
+        this.nodesVal.on("click", function(d) {
 
-        // Update link positions for each simulation tick.
-        self.edgesVal
-            .attr("x1", function(d) {
-                return d.source.x;
-            })
-            .attr("y1", function(d) {
-                return d.source.y;
-            })
-            .attr("x2", function(d) {
-                return d.target.x;
-            })
-            .attr("y2", function(d) {
-                return d.target.y;
-            });
+            createModal.createModal(d, self.refinedPapers)
+
+            $("#abstract-modal-dialog")
+                .removeClass("fade-out")
+                .addClass("fade-in")
+                .show();
+        });
+
+        function _networkTickActions() {
+            /*
+            Defines the tick behaviour for the network view force simulation.
+            */
+
+            // Update group (circle and image) positions for each simulation tick.
+            self.nodesVal
+                .attr("transform", function(d) {
+                    return `translate(${d.x.toString()}, ${d.y.toString()})`;
+                })
+
+            // Update link positions for each simulation tick.
+            self.edgesVal
+                .attr("x1", function(d) {
+                    return d.source.x;
+                })
+                .attr("y1", function(d) {
+                    return d.source.y;
+                })
+                .attr("x2", function(d) {
+                    return d.target.x;
+                })
+                .attr("y2", function(d) {
+                    return d.target.y;
+                });
+        }
     }
 
     _networkDragStart(d) {
         /*
         Defines starting drag actions for network view.
         */
-
-        self.isDragging.state = true;
 
         d.fx = d.x;
         d.fy = d.y;
@@ -332,8 +361,6 @@ class View {
         /*
         Defines ending drag actions for network view.
         */
-
-        self.isDragging.state = false;
 
         d.fx = null;
         d.fy = null;
@@ -359,7 +386,7 @@ class View {
         */
 
         // Update current view.
-        self.currentViewVal = "rank";
+        this.currentViewVal = "rank";
     }
 
     toNetwork() {
@@ -368,6 +395,8 @@ class View {
         */
 
         // Update current view.
-        self.currentViewVal = "network";
+        this.currentViewVal = "network";
     }
 }
+
+module.exports.View = View

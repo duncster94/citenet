@@ -3,6 +3,7 @@ const d3Layout = require("./d3-layout");
 const createTooltips = require("./create-tooltips.js");
 const createModal = require("./create-modals.js");
 const animateRank = require("./d3-animate-rank.js");
+const View = require("./view.js");
 
 // Object to store refined papers.
 let refinedPapers = {};
@@ -115,18 +116,20 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let layoutObj = d3Layout.d3Layout(response,
-        createModal, refinedPapers);
-    let node = layoutObj.node;
-    let isDragging = layoutObj.isDragging;
-    let simulation = layoutObj.simulation;
-    let zoomHandler = layoutObj.zoomHandler;
+    let view = new View.View(response, "network", refinedPapers);
 
-    // Create tooltips.
-    let tips = createTooltips.createTooltips(node, isDragging);
+    // let layoutObj = d3Layout.d3Layout(response,
+    //     createModal, refinedPapers);
+    // let node = layoutObj.node;
+    // let isDragging = layoutObj.isDragging;
+    // let simulation = layoutObj.simulation;
+    // let zoomHandler = layoutObj.zoomHandler;
 
-    // Create animations.
-    animateRank.addAnimateRankListener(layoutObj, tips, refinedPapers);
+    // // Create tooltips.
+    // let tips = createTooltips.createTooltips(node, isDragging);
+
+    // // Create animations.
+    // animateRank.addAnimateRankListener(layoutObj, tips, refinedPapers);
 }
 
 module.exports.create_listeners = create_listeners;
