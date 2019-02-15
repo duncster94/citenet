@@ -12,6 +12,10 @@ class View {
         this.nodesVal; // Suffixed with "Val" in order to have getters/setters
         this.edgesVal;
 
+        // Height and width of view.
+        this.height;
+        this.width;
+
         // Process server response and update nodes and edges.
         this._loadD3();
 
@@ -19,6 +23,12 @@ class View {
         this.isDragging = {
             "state": false
         }
+
+        // Object containing rank, node pairs for rank view.
+        this.rankToNode = {};
+
+        // Node identifier for rank view scroller.
+        this.currentRank = 0;
 
         this.currentViewVal = currentView;
         if (this.currentViewVal === "network") {
@@ -232,8 +242,6 @@ class View {
 
         let self = this;
 
-        console.log('here', this.nodesVal);
-
         let width = $("#network").width()
         let height = $("#network").height()
         let graph = this.response.subgraph;
@@ -378,6 +386,549 @@ class View {
         /*
         Initializes view as ranked list.
         */
+
+        let self = this;
+
+        // let width = $("#network").width()
+        // let height = $("#network").height()
+
+        this.width = $("#network").width()
+        this.height = $("#network").height()
+       
+        // Check size of screen to determine if modal size should be
+        // modified. For small devices modal is only shown on click/tap,
+        // so the original modal size is not modified.
+        if (this.width >= 768) {
+            $("#abstract-modal-dialog")
+                .addClass("modal-rank-view")
+
+            // Hide modal close button.
+            $("#modal-close").hide();
+        }
+
+        // Add a listener to modal to allow retriggering of bounce animation.
+        $("#abstract-modal-dialog").on("animationend", function() {
+            $("#abstract-modal-dialog").removeClass("bounce");
+        });
+
+        // Add arrow depicting selected node.
+        d3.select("#network")
+            .append("image")
+            .attr("xlink:href", "images/FocusArrow.svg")
+            .attr("height", "15")
+            .attr("width", "15")
+            .attr("x", "5vw")
+            .attr("y", this.height / 2 - 7.5)
+            .attr("class", "rank-arrow");
+
+        // Get top two largest radii in order to properly space nodes.
+        let [radiusFirst, radiusSecond] = this._getTopRadii();
+
+        // Padding between largest two nodes. This determines overall vertical
+        // node spacing on the screen.
+        let nodePadding = this.width / 3;
+
+        // Minimum vertical node padding.
+        let minVerticalPadding = 50;
+
+        // Spacing between nodes.
+        let nodeSpacing = radiusFirst + 
+            Math.max(10000/nodePadding, minVerticalPadding) + radiusSecond;
+
+        console.log('spacing padding', nodePadding, nodeSpacing);
+
+        // Translate node collection.
+        d3.select(".everything")
+            .transition()
+            .ease(d3.easeSinOut)
+            .duration(1200)
+            .attr("transform", "translate(0, " + (this.height/2).toString() + ")");
+
+
+        // Padding to add between left edge of screen and nodes.
+        let leftPadding = this.width / 10;
+
+        // Translate each node based on rank.
+        this.nodesVal
+            .transition()
+            .ease(d3.easeElastic)
+            .duration(1600)
+            .attr("transform", function(d) {
+
+                // Update 'rankToNode'.
+                self.rankToNode[d.rank] = d;
+
+                return `translate(${leftPadding}, ${nodeSpacing * d.rank})`
+            })
+            .on("end", function(d) {
+
+                // Update positions of nodes.
+                d.fx = leftPadding;
+                d.fy = (nodeSpacing * d.rank) / 2;
+
+                // Set fixed positions of nodes. This is set
+                // so that fixed positions can be removed when
+                // the user returns to network view and the force
+                // simulation will be resumed.
+                d.x = d.fx;
+                d.y = d.fy;
+
+                // Reenable animate network button.
+                // $(".animate-network-button")
+                    // .attr("disabled", false)
+            })
+
+        // Set initial modal.
+        this._rankUpdateModal();
+
+        // Add paper details to right of each node.
+        this.nodesVal
+            .append("foreignObject")
+            .attr("height", 1)
+            .attr("width", "100%")
+            .append("xhtml:div")
+            .attr("class", "animate-rank-details")
+            .html(function(d) {
+
+                // Create author string.
+                let authorString = self._rankParseAuthors(d.authors);
+
+                // NOTE: may need to use 'xhtml:div' instead of 'div'.
+                let htmlString = 
+                    "<div class=animate-rank-details-title>" +
+                        d.title +
+                    "</div>" + 
+                    "<div class=animate-rank-details-authors>" +
+                        authorString +
+                    "</div>"
+                return htmlString
+            })
+
+        // Get number of nodes in collection.
+        let nNodes = this.nodesVal.size();
+
+        // Initial position of scroller.
+        let currentY = 0;
+
+        // Add arrow up (38) and arrow down (40), page up (33), 
+        // page down (34) and home (36) and end (35) listeners.
+        $(document).on("keydown", function(event) {
+            
+            let newPosition;
+
+            // Up arrowkey.
+            if (event.which === 38) {
+
+                // Specify new position to hop up to, bounded by node collection.
+                newPosition = Math.max(
+                    Math.min(currentY + nodeSpacing, 0),
+                    -(nNodes - 1) * nodeSpacing);
+
+                // Transition to 'newPosition'.
+                self._rankScrollNodes(newPosition, nodeSpacing);
+            }
+
+            // Down arrowkey.
+            else if (event.which === 40) {
+                
+                newPosition = Math.max(
+                    Math.min(currentY - nodeSpacing, 0),
+                    -(nNodes - 1) * nodeSpacing);
+
+                self._rankScrollNodes(newPosition, nodeSpacing);
+            }
+
+            // Page up.
+            else if (event.which === 33) {
+
+                newPosition = Math.max(
+                    Math.min(currentY + 5 * nodeSpacing, 0),
+                    -(nNodes - 1) * nodeSpacing);
+
+                self._rankScrollNodes(newPosition, nodeSpacing, d3.easeSinOut);
+            }
+
+            // Page down.
+            else if (event.which === 34) {
+
+                newPosition = Math.max(
+                    Math.min(currentY - 5 * nodeSpacing, 0),
+                    -(nNodes - 1) * nodeSpacing);
+
+                self._rankScrollNodes(newPosition, nodeSpacing, d3.easeSinOut);
+            }
+
+            // Home.
+            else if (event.which === 36) {
+
+                newPosition = 0;
+
+                self._rankScrollNodes(newPosition, nodeSpacing, d3.easeSinOut);
+            }
+
+            // End.
+            else if (event.which === 35) {
+
+                newPosition = -(nNodes - 1) * nodeSpacing;
+
+                self._rankScrollNodes(newPosition, nodeSpacing, d3.easeSinOut);
+            }
+
+            // Any other keypress.
+            else {
+                return;
+            }
+
+            // Update current focused node position.
+            currentY = newPosition;
+        });
+
+        this.nodesVal
+            .on("click", function(d) {
+            /*
+            On node click, snap to clicked node.
+            */
+    
+            // Get node position to snap to.
+            let pos = -d.rank * nodeSpacing
+    
+            // Update current y position.
+            currentY = pos;
+    
+            // Snap to position.
+            self._rankScrollNodes(pos, nodeSpacing);
+    
+            // If screen is small, display modal.
+            if (self.width < 767.98) {
+    
+                let modal = $("#abstract-modal-dialog");
+                modal.removeClass("fade-out");
+                
+                // Modify modal information to clicked node.
+                createModal.createModal(d, self.refinedPapers);
+                
+                modal.addClass("fade-in");
+    
+                modal.show();
+    
+            }
+        });
+
+        // Add scroll listener.
+        d3.select("#network")
+            .call(d3.zoom()).on("wheel.zoom", function() {
+            /*
+            Translates node collection based on scroll strength. 
+            */
+
+            // Removes timer on new scroll event.
+            clearTimeout(timer);
+
+            // Get scroll Y delta.
+            let deltaY = d3.event.deltaY;
+
+            // Avoid retriggering scroll snapping if the user tries scrolling
+            // below minimum or above maximum scroll extent.
+            if ((currentY === 0 && deltaY < 0) || 
+                (currentY + ((nNodes - 1) * nodeSpacing)) < 0.001 && deltaY > 0) {
+                return
+            }
+
+            // Specify new position to scroll to, bounded by node collection.
+            let newPosition = Math.max(Math.min(currentY - deltaY, 0),
+                -(nNodes - 1) * nodeSpacing);
+
+            // Scroll nodes.
+            d3.select(".everything")
+                .transition()
+                .ease(d3.easeLinear)
+                .duration(50)
+                .attr("transform", "translate(0, " + 
+                    (newPosition + self.height / 2).toString() + ")")
+
+            // Update current focused node position.
+            currentY = newPosition;
+
+            // Add scroll-end listener.
+            translateTimeout(newPosition);
+        });
+
+        // Defines scroll-end timer.
+        let timer;
+
+        function translateTimeout(pos) {
+            /*
+            Waits for the end of a scroll event before computing nearest
+            node to snap to.
+            */
+
+            // Time to wait until the end of a scroll event is detected.
+            let endTime;
+
+            // If scrolling goes past top and bottom boundaries, snap to
+            // node immediately. This is to avoid waiting for the end of
+            // an intertial scroll to show modal.
+            if (pos === 0 || (pos + ((nNodes - 1) * nodeSpacing)) < 0.001) {
+                endTime = 0;
+            } else {
+                endTime = 150;
+            }
+
+            // Waits for 'endTime' after being triggered by scroll event
+            // and snaps nodes to nearest node position.
+            timer = setTimeout(function() {
+
+                // Given the new scroll position, find the closest 'bin' or
+                // discrete position.
+                let closestPos = self._rankClosest(pos, nodeSpacing);
+                let newPosition = closestPos;
+                console.log(newPosition);
+
+                // Transition to 'newPosition'.
+                self._rankScrollNodes(newPosition, nodeSpacing);
+
+                // Update current focused node position.
+                currentY = newPosition;
+
+            }, endTime);
+        }
+
+        // On window resize, translate nodes to ensure responsiveness.
+        $(window).resize(function() {
+
+            console.log('resized');
+
+            // Update current window width.
+            self.width = $(window).width();
+
+            // Compute horizontal padding.
+            nodePadding = self.width / 3;
+
+            // Compute vertical padding.
+            let resizedNodeSpacing = radiusFirst + 
+                Math.max(10000/nodePadding, minVerticalPadding) + radiusSecond;
+
+            // Determine new y position based on 'resizedNodeSpacing'.
+            let newPos = Math.round(currentY / nodeSpacing) * resizedNodeSpacing
+
+            // Update 'nodeSpacing'.
+            nodeSpacing = resizedNodeSpacing;
+
+            // Translate nodes.
+            self.nodesVal
+                .attr("transform", function(d) {
+                    return `translate(${self.width/10}, ${nodeSpacing*d.rank})`
+                })
+            
+            // Translate node collection to keep selected node centered.
+            d3.select(".everything")
+                .attr("transform", `translate(0, ${newPos + self.height/2})`);
+                
+            // Update author string for each node to compensate for new screen size.
+            d3.selectAll(".animate-rank-details")
+                .html(function(d) {
+
+                    // Create author string.
+                    let authorString = self._rankParseAuthors(d.authors);
+
+                    // NOTE: may need to use 'xhtml:div' instead of 'div'.
+                    let htmlString = 
+                        "<div class=animate-rank-details-title>" +
+                            d.title +
+                        "</div>" + 
+                        "<div class=animate-rank-details-authors>" +
+                            authorString +
+                        "</div>"
+                    return htmlString
+                })
+
+            // Update modal size, position and display.
+            if (self.width >= 768) {
+                $("#abstract-modal-dialog")
+                    .css("display", "inline-block")
+                    .css("position", "fixed")
+                    .css("right", "2.5vw")
+                    .css("width", "40vw")
+
+                // Hide modal close button.
+                $("#modal-close").hide();
+
+                self._rankUpdateModal();
+
+            } else {
+                $("#abstract-modal-dialog")
+                    .css("display", "none")
+                    .css("width", "auto")
+
+                // Show modal close button.
+                $("#modal-close").show();
+            }
+
+            // Update y position.
+            currentY = newPos;
+        });
+
+    }
+
+    _getTopRadii() {
+        /*
+        Returns the top two largest radii in 'nodesVal'.
+        */
+
+        let self = this;
+
+        // Object to hold top two node radii.
+        let topRadii = [0, 0];
+
+        // Get radii of top two scoring nodes.
+        self.nodesVal.data().forEach(function(d) {
+            if (d.rank === 0) {
+                topRadii[0] = self._scoreToRadius(d);
+            }
+
+            if (d.rank === 1) {
+                topRadii[1] = self._scoreToRadius(d);
+            }
+        });
+
+        return topRadii;
+    }
+
+    _rankUpdateModal() {
+        /*
+        Modifies the content of the modal to display currently focused
+        node paper information.
+        */
+       
+        // let width = $("#network").width();
+
+        let modal = $("#abstract-modal-dialog");
+
+        // If screen width is below tablet width, do not show modal.
+        if (this.width < 767.98) {
+
+            modal.hide();
+
+        } else {
+
+            // Get current node.
+            let currNode = this.rankToNode[this.currentRank];
+
+            modal.removeClass("fade-in");
+            modal.removeClass("fade-out");
+
+            // Add bounce animation to modal.
+            modal.addClass("bounce");
+
+            // Replace modal fields with 'currNode' fields.
+            createModal.createModal(currNode, this.refinedPapers);
+        }
+    }
+
+    _rankParseAuthors(authorArr) {
+        /*
+        Creates an author list string, given an array of authors 
+        and the viewport width.
+        */
+
+        let authorString;
+
+        if (authorArr.length === 1) {
+
+            authorString = authorArr[0].LastName;
+
+            return authorString
+        }
+
+        if (this.width < 767.98) {
+                
+            if (authorArr.length === 2) {
+                authorString = authorArr[0].LastName + 
+                    " and " + authorArr[1].LastName;
+            } else {
+                authorString = authorArr[0].LastName + 
+                    ", ..., " + authorArr[authorArr.length-1].LastName;
+            }
+
+        } else {
+
+            if (authorArr.length === 2) {
+                authorString = authorArr[0].LastName + 
+                    " and " + authorArr[1].LastName;
+            } else if (authorArr.length <= 6) {
+                authorString = "";
+                authorArr.forEach(function(author) {
+                    authorString += author.LastName + ", "
+                });
+                authorString = authorString.slice(0, -2);
+            } else {
+                authorString = authorArr[0].LastName + ", " +
+                    authorArr[1].LastName + ", " + authorArr[2].LastName +
+                    ", ..., " + authorArr[authorArr.length-3].LastName + ", " +
+                    authorArr[authorArr.length-2].LastName + ", " + 
+                    authorArr[authorArr.length-1].LastName;
+            }
+
+        }
+        
+        return authorString; 
+    }
+
+    _rankScrollNodes(pos, nodeSpacing, easing=d3.easeBounce, duration=500) {
+        /*
+        Translates node collection to a snap position given by 'pos'.
+        */
+
+        // Translate node collection to snap point.
+        d3.select(".everything")
+            .transition()
+            .ease(easing)
+            .duration(duration)
+            .attr("transform", "translate(0, " + 
+                (pos + this.height / 2).toString() + ")");
+
+        // Update current rank position.
+        this.currentRank = Math.round(Math.abs(pos / nodeSpacing));
+
+        // Change displayed modal.
+        this._rankUpdateModal();
+    }
+
+    _rankClosest(pos, nodeSpacing) {
+        /*
+        Computes the closest scroll snap position to 'pos'.
+        */
+
+        // Take magnitude of 'pos'.
+        let posMagnitude = Math.abs(pos);
+
+        // Integer corresponding to node rank behind the current
+        // position.
+        let positionInt = Math.floor(posMagnitude / nodeSpacing);
+        
+        // Snap position behind current position.
+        let lower = positionInt * nodeSpacing;
+
+        // Snap position ahead of current position.
+        let higher = (positionInt + 1) * nodeSpacing;
+
+        // Magnitude of new scroll snap position.
+        let magnitude;
+
+        // Determine which scroll snap position (lower or higher) is
+        // closest to the current position.
+        if ((posMagnitude - lower) < (higher - posMagnitude)) {
+            magnitude = lower;
+        } else {
+            magnitude = higher;
+        }
+
+        // Determine sign of scroll snap position.
+        if (pos <= 0) {
+            return -magnitude;
+        } else {
+            return magnitude;
+        }
     }
 
     toRank() {

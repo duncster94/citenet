@@ -116,7 +116,7 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let view = new View.View(response, "network", refinedPapers);
+    let view = new View.View(response, "rank", refinedPapers);
 
     // let layoutObj = d3Layout.d3Layout(response,
     //     createModal, refinedPapers);
