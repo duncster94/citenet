@@ -41,3 +41,26 @@ a.disabled-link {
 
   width: 18em;
 }
+
+.selectize-input {
+  width: 95% !important;
+  float: left !important;
+}
+
+.dropdown-selected {
+  background-color: #666;
+}
+
+#viewDropdown {
+  background-color: #ccc !important;
+  color: #f7f7f7;
+  padding: 0 0 0 0;
+  margin: 0;
+  width: 5%;
+  height: 35.6px;
+  box-shadow: 0 0 0 0;
+}
+
+#selectize-go-button {
+  margin-top: 3px;
+}

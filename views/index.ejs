@@ -47,7 +47,18 @@
               <!-- Selectize Input -->
               <span id="selectize-span">
                <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
-               <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
+			   
+				<!-- View Dropdown -->
+				<span class="dropdown">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="viewDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					</button>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item dropdown-selected" id="rank-dropdown-item">Ranked List</a>
+						<a class="dropdown-item" id="network-dropdown-item">Network</a>
+					</div>
+				</span>
+			 
+			   <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
                  <i id = "search-icon" class="fas fa-search"></i>
                </button>
              </span>

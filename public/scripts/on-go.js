@@ -116,7 +116,16 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let view = new View.View(response, "rank", refinedPapers);
+    let view;
+
+    // Determine which view option is selected and render that view.
+    if ($("#rank-dropdown-item").hasClass("dropdown-selected")) {
+        view = new View.View(response, "rank", refinedPapers);
+    } else {
+        view = new View.View(response, "network", refinedPapers);
+    }
+
+    
 
     // let layoutObj = d3Layout.d3Layout(response,
     //     createModal, refinedPapers);

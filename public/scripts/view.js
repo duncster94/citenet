@@ -682,7 +682,6 @@ class View {
                 // discrete position.
                 let closestPos = self._rankClosest(pos, nodeSpacing);
                 let newPosition = closestPos;
-                console.log(newPosition);
 
                 // Transition to 'newPosition'.
                 self._rankScrollNodes(newPosition, nodeSpacing);
