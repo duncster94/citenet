@@ -120,12 +120,22 @@ function create_layout(response) {
 
     // Determine which view option is selected and render that view.
     if ($("#rank-dropdown-item").hasClass("dropdown-selected")) {
+        
+        // Instantiate view.
         view = new View.View(response, "rank", refinedPapers);
-    } else {
-        view = new View.View(response, "network", refinedPapers);
-    }
+        
+        $("#animate-button").on("click", function() {
+            view.toNetwork();
+        })
 
-    
+    } else {
+
+        view = new View.View(response, "network", refinedPapers);
+
+        $("#animate-button").on("click", function() {
+            view.toRank();
+        })
+    }
 
     // let layoutObj = d3Layout.d3Layout(response,
     //     createModal, refinedPapers);

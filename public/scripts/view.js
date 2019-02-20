@@ -16,6 +16,9 @@ class View {
         this.height;
         this.width;
 
+        // Tooltips.
+        this.tips;
+
         // Process server response and update nodes and edges.
         this._loadD3();
 
@@ -306,7 +309,7 @@ class View {
                 .on("dblclick.zoom", null); // Disable doubleclick zooming.
 
         // Add tooltips on hover.
-        createTooltips.createTooltips(this.nodesVal, this.isDragging);
+        this.tips = createTooltips.createTooltips(this.nodesVal, this.isDragging);
 
         // Add modals on click.
         this.nodesVal.on("click", function(d) {
@@ -442,7 +445,7 @@ class View {
             .transition()
             .ease(d3.easeSinOut)
             .duration(1200)
-            .attr("transform", "translate(0, " + (this.height/2).toString() + ")");
+            .attr("transform", `translate(0, ${this.height/2})`);
 
 
         // Padding to add between left edge of screen and nodes.
@@ -462,9 +465,10 @@ class View {
             })
             .on("end", function(d) {
 
+                console.log('ended');
                 // Update positions of nodes.
                 d.fx = leftPadding;
-                d.fy = (nodeSpacing * d.rank) / 2;
+                d.fy = (nodeSpacing * d.rank);
 
                 // Set fixed positions of nodes. This is set
                 // so that fixed positions can be removed when
@@ -485,7 +489,8 @@ class View {
         this.nodesVal
             .append("foreignObject")
             .attr("height", 1)
-            .attr("width", "100%")
+            .attr("width", 1)
+            .attr("overflow", "visible")
             .append("xhtml:div")
             .attr("class", "animate-rank-details")
             .html(function(d) {
@@ -935,8 +940,39 @@ class View {
         Converts current view to rank view.
         */
 
+        let self = this;
+
+        // Get current view.
+        let currView = this.currentViewVal;
+
         // Update current view.
         this.currentViewVal = "rank";
+
+        if (currView === "rank") {
+            throw "Rank view is already active."
+        } else {
+
+            // Remove node tooltips.
+            Object.keys(self.tips).forEach(function(nodeID) {
+                let tip = self.tips[nodeID];
+                tip.destroy();
+            })
+
+            // Remove node edges.
+            $(".links").hide();
+
+            // Remove node click behaviour.
+            this.nodesVal.on("click", null);
+
+            // Remove node drag behaviour.
+            let nullDrag = d3.drag()
+                .on("start", null)
+                .on("drag", null)
+                .on("end", null)
+            nullDrag(this.nodesVal)
+
+            this._initRank();
+        }
     }
 
     toNetwork() {
