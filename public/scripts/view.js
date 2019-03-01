@@ -19,6 +19,9 @@ class View {
         // Tooltips.
         this.tips;
 
+        // Get 'change view' button.
+        this.viewButton = $("#animate-button");
+
         // Process server response and update nodes and edges.
         this._loadD3();
 
@@ -348,6 +351,10 @@ class View {
                     return d.target.y;
                 });
         }
+
+        this.viewButton.on("click", function() {
+            self.toRank();
+        })
     }
 
     _networkDragStart(d) {
@@ -395,8 +402,8 @@ class View {
         // let width = $("#network").width()
         // let height = $("#network").height()
 
-        this.width = $("#network").width()
-        this.height = $("#network").height()
+        this.width = $(window).width()
+        this.height = $(window).height()
        
         // Check size of screen to determine if modal size should be
         // modified. For small devices modal is only shown on click/tap,
@@ -488,9 +495,10 @@ class View {
         // Add paper details to right of each node.
         this.nodesVal
             .append("foreignObject")
+            .attr("class", "animate-rank-details-fo")
             .attr("height", 1)
             .attr("width", 1)
-            .attr("overflow", "visible")
+            // .attr("overflow", "visible")
             .append("xhtml:div")
             .attr("class", "animate-rank-details")
             .html(function(d) {
@@ -508,6 +516,8 @@ class View {
                     "</div>"
                 return htmlString
             })
+
+        // $(".animate-rank-details").width(0.45 * this.width);
 
         // Get number of nodes in collection.
         let nNodes = this.nodesVal.size();
@@ -648,8 +658,7 @@ class View {
                 .transition()
                 .ease(d3.easeLinear)
                 .duration(50)
-                .attr("transform", "translate(0, " + 
-                    (newPosition + self.height / 2).toString() + ")")
+                .attr("transform", `translate(0, ${newPosition+self.height/2})`);
 
             // Update current focused node position.
             currentY = newPosition;
@@ -772,6 +781,10 @@ class View {
             currentY = newPos;
         });
 
+        this.viewButton.on("click", function() {
+            self.toNetwork();
+        })
+
     }
 
     _getTopRadii() {
@@ -888,8 +901,7 @@ class View {
             .transition()
             .ease(easing)
             .duration(duration)
-            .attr("transform", "translate(0, " + 
-                (pos + this.height / 2).toString() + ")");
+            .attr("transform", `translate(0, ${pos+this.height/2})`);
 
         // Update current rank position.
         this.currentRank = Math.round(Math.abs(pos / nodeSpacing));
@@ -941,6 +953,9 @@ class View {
         */
 
         let self = this;
+
+        // Remove button click listner.
+        this.viewButton.on("click", null);
 
         // Get current view.
         let currView = this.currentViewVal;
