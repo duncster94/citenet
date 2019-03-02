@@ -427,7 +427,7 @@ class View {
             .attr("xlink:href", "images/FocusArrow.svg")
             .attr("height", "15")
             .attr("width", "15")
-            .attr("x", "5vw")
+            .attr("x", this.width * 0.05)
             .attr("y", this.height / 2 - 7.5)
             .attr("class", "rank-arrow");
 
@@ -496,9 +496,9 @@ class View {
         this.nodesVal
             .append("foreignObject")
             .attr("class", "animate-rank-details-fo")
-            .attr("height", 1)
-            .attr("width", 1)
-            // .attr("overflow", "visible")
+            .attr("height", "100%")
+            .attr("width", "100%")
+            .attr("overflow", "visible")
             .append("xhtml:div")
             .attr("class", "animate-rank-details")
             .html(function(d) {
@@ -516,8 +516,6 @@ class View {
                     "</div>"
                 return htmlString
             })
-
-        // $(".animate-rank-details").width(0.45 * this.width);
 
         // Get number of nodes in collection.
         let nNodes = this.nodesVal.size();
@@ -997,6 +995,8 @@ class View {
 
         // Update current view.
         this.currentViewVal = "network";
+
+        this._initNetwork();
     }
 }
 
