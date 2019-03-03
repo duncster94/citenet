@@ -253,7 +253,7 @@ class View {
         let graph = this.response.subgraph;
         
         // Update current view.
-        this.currentViewVal = "network";
+        // this.currentViewVal = "network";
 
         // Create force simulation.
         let simulation = d3.forceSimulation()
@@ -352,9 +352,10 @@ class View {
                 });
         }
 
+        this.viewButton.off("click");
         this.viewButton.on("click", function() {
             self.toRank();
-        })
+        });
     }
 
     _networkDragStart(d) {
@@ -398,6 +399,11 @@ class View {
         */
 
         let self = this;
+
+        // Disable view button to avoid changing view before
+        // animation is complete.
+        this.viewButton
+            .attr("disabled", true)
 
         // let width = $("#network").width()
         // let height = $("#network").height()
@@ -484,9 +490,9 @@ class View {
                 d.x = d.fx;
                 d.y = d.fy;
 
-                // Reenable animate network button.
-                // $(".animate-network-button")
-                    // .attr("disabled", false)
+                // Reenable animate button.
+                self.viewButton
+                    .attr("disabled", false)
             })
 
         // Set initial modal.
@@ -779,6 +785,7 @@ class View {
             currentY = newPos;
         });
 
+        this.viewButton.off("click");
         this.viewButton.on("click", function() {
             self.toNetwork();
         })
@@ -958,12 +965,12 @@ class View {
         // Get current view.
         let currView = this.currentViewVal;
 
-        // Update current view.
-        this.currentViewVal = "rank";
-
         if (currView === "rank") {
             throw "Rank view is already active."
         } else {
+
+            // Update current view.
+            this.currentViewVal = "rank";
 
             // Remove node tooltips.
             Object.keys(self.tips).forEach(function(nodeID) {
@@ -993,10 +1000,50 @@ class View {
         Converts current view to network view.
         */
 
-        // Update current view.
-        this.currentViewVal = "network";
+        let self = this;
 
-        this._initNetwork();
+        // Get current view.
+        let currView = this.currentViewVal;
+
+        if (currView === "network") {
+            throw "Network view is already active."
+        } else {
+
+            // Update current view.
+            this.currentViewVal = "network";
+
+            // Remove fixed node positions.
+            this.nodesVal
+                .each(function(d) {
+                    d.fx = null;
+                    d.fy = null;
+                });
+
+            // Show edges.
+            $(".links").show();
+
+            // Drop foreignObjects.
+            d3.selectAll("foreignObject").remove();
+
+            // Remove arrow.
+            d3.select(".rank-arrow").remove();
+
+            // Remove rank view class from modal.
+            $("#abstract-modal-dialog")
+                .removeClass("modal-rank-view");
+
+            // Show modal close icon.
+            $("#modal-close").show();
+
+            // Remove resize behaviour.
+            $(window).off("resize");
+
+            this._initNetwork();
+        }
+
+        // this.viewButton.on("click", function() {
+        //     self.toRank();
+        // });
     }
 }
 
