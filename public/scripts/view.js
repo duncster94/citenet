@@ -266,7 +266,7 @@ class View {
             });
 
         let chargeForce = d3.forceManyBody()
-            .strength(-350);
+            .strength(-500);
 
         let centerForce = d3.forceCenter(width / 2, height / 2);
 
@@ -274,7 +274,7 @@ class View {
             .id(function(d) {
                 return d.id;
             })
-            .strength(0.5);
+            .strength(0.4);
 
         // Add forces and tick behaviour.
         simulation
@@ -283,7 +283,7 @@ class View {
             .force("center", centerForce)
             .force("links", linkForce)
             .on("tick", _networkTickActions)
-            .alphaTarget(0.03)
+            .alphaTarget(0.01)
 
         // Add drag behaviour.
         let dragHandler = d3.drag()
@@ -633,9 +633,23 @@ class View {
             }
         });
 
+        // Add touch-scroll listener.
+        // d3.select("#network")
+        //     .call(d3.zoom()).on("touchmove.zoom", function() {
+        //         console.log('touchzoom')
+        //     })
+
+        // // Add zoom behaviour.
+        // let zoomHandler = d3.zoom()
+        //     .on("zoom", self._networkZoomActions)
+        //     .scaleExtent([0.1, 3])
+
+        // d3.select("#network")
+        //     .call(zoomHandler)
+
         // Add scroll listener.
         d3.select("#network")
-            .call(d3.zoom()).on("wheel.zoom", function() {
+            .call(d3.zoom().on("zoom", function() {
             /*
             Translates node collection based on scroll strength. 
             */
@@ -644,7 +658,24 @@ class View {
             clearTimeout(timer);
 
             // Get scroll Y delta.
-            let deltaY = d3.event.deltaY;
+            // console.log(d3.event.sourceEvent)
+            let event = d3.event;
+            let deltaY;
+
+            if ("deltaY" in event.sourceEvent) {
+                deltaY = d3.event.sourceEvent.deltaY;
+                wheelScroll(deltaY);
+            } else {
+                console.log(event);
+                touchScroll(event.transform.y);
+            }
+        }));
+
+        function wheelScroll(deltaY) {
+            /*
+            Handles scroll behaviour when the device is a mousewheel
+            or trackpad.
+            */
 
             // Avoid retriggering scroll snapping if the user tries scrolling
             // below minimum or above maximum scroll extent.
@@ -657,6 +688,41 @@ class View {
             let newPosition = Math.max(Math.min(currentY - deltaY, 0),
                 -(nNodes - 1) * nodeSpacing);
 
+            coreScroll(newPosition)
+            // // Scroll nodes.
+            // d3.select(".everything")
+            //     .transition()
+            //     .ease(d3.easeLinear)
+            //     .duration(50)
+            //     .attr("transform", `translate(0, ${newPosition+self.height/2})`);
+
+            // Add scroll-end listener.
+            translateTimeout(newPosition);
+        }
+
+        function touchScroll(deltaY) {
+            /*
+            Handles scroll behaviour if device is a touchscreen.
+            */
+
+            // Avoid retriggering scroll snapping if the user tries scrolling
+            // below minimum or above maximum scroll extent.
+            if ((currentY === 0 && deltaY < 0) || 
+                (currentY + ((nNodes - 1) * nodeSpacing)) < 0.001 && deltaY > 0) {
+                return
+            }
+
+            // let newPosition = touch;
+            coreScroll(newPosition)
+
+        }
+
+        function coreScroll(newPosition) {
+            /*
+            Implements main scroll functionality, irrespective of scroll
+            type.
+            */
+
             // Scroll nodes.
             d3.select(".everything")
                 .transition()
@@ -665,11 +731,8 @@ class View {
                 .attr("transform", `translate(0, ${newPosition+self.height/2})`);
 
             // Update current focused node position.
-            currentY = newPosition;
-
-            // Add scroll-end listener.
-            translateTimeout(newPosition);
-        });
+            currentY = newPosition;          
+        }
 
         // Defines scroll-end timer.
         let timer;
