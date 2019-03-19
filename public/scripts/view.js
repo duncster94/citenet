@@ -496,6 +496,7 @@ class View {
             })
 
         // Set initial modal.
+        this.currentRank = 0;
         this._rankUpdateModal();
 
         // Add paper details to right of each node.
@@ -633,20 +634,6 @@ class View {
             }
         });
 
-        // Add touch-scroll listener.
-        // d3.select("#network")
-        //     .call(d3.zoom()).on("touchmove.zoom", function() {
-        //         console.log('touchzoom')
-        //     })
-
-        // // Add zoom behaviour.
-        // let zoomHandler = d3.zoom()
-        //     .on("zoom", self._networkZoomActions)
-        //     .scaleExtent([0.1, 3])
-
-        // d3.select("#network")
-        //     .call(zoomHandler)
-
         // Add scroll listener.
         d3.select("#network")
             .call(d3.zoom().on("zoom", function() {
@@ -666,8 +653,8 @@ class View {
                 deltaY = d3.event.sourceEvent.deltaY;
                 wheelScroll(deltaY);
             } else {
-                console.log(event);
-                touchScroll(event.transform.y);
+                // console.log(event);
+                touchScroll(event.transform);
             }
         }));
 
@@ -688,32 +675,37 @@ class View {
             let newPosition = Math.max(Math.min(currentY - deltaY, 0),
                 -(nNodes - 1) * nodeSpacing);
 
-            coreScroll(newPosition)
-            // // Scroll nodes.
-            // d3.select(".everything")
-            //     .transition()
-            //     .ease(d3.easeLinear)
-            //     .duration(50)
-            //     .attr("transform", `translate(0, ${newPosition+self.height/2})`);
+            coreScroll(newPosition);
 
             // Add scroll-end listener.
             translateTimeout(newPosition);
         }
 
-        function touchScroll(deltaY) {
+        function touchScroll(event) {
             /*
             Handles scroll behaviour if device is a touchscreen.
+            TODO: add momentum scrolling.
             */
+
+            let touchY = event.y;
 
             // Avoid retriggering scroll snapping if the user tries scrolling
             // below minimum or above maximum scroll extent.
-            if ((currentY === 0 && deltaY < 0) || 
-                (currentY + ((nNodes - 1) * nodeSpacing)) < 0.001 && deltaY > 0) {
-                return
+            if (touchY > 0) {
+                event.y = 0;
+                touchY = 0;
+                // return;
+            } else if (touchY < -(nNodes - 1) * nodeSpacing) {
+                event.y = currentY;
+                touchY = 0;
+                // return;
             }
 
             // let newPosition = touch;
-            coreScroll(newPosition)
+            coreScroll(touchY);
+
+            // Add scroll-end listener.
+            translateTimeout(touchY);
 
         }
 
@@ -778,8 +770,9 @@ class View {
 
             console.log('resized');
 
-            // Update current window width.
-            self.width = $(window).width();
+            // Update current window width and height.
+            self.width = $("#network").width();
+            self.height = $("#network").height();
 
             // Compute horizontal padding.
             nodePadding = self.width / 3;
@@ -803,7 +796,12 @@ class View {
             // Translate node collection to keep selected node centered.
             d3.select(".everything")
                 .attr("transform", `translate(0, ${newPos + self.height/2})`);
-                
+
+            // Translate arrow.
+            d3.select(".rank-arrow")
+                .attr("x", self.width * 0.05)    
+                .attr("y", self.height / 2 - 7.5)
+                    
             // Update author string for each node to compensate for new screen size.
             d3.selectAll(".animate-rank-details")
                 .html(function(d) {
@@ -825,10 +823,11 @@ class View {
             // Update modal size, position and display.
             if (self.width >= 768) {
                 $("#abstract-modal-dialog")
-                    .css("display", "inline-block")
-                    .css("position", "fixed")
-                    .css("right", "2.5vw")
-                    .css("width", "40vw")
+                    // .css("display", "inline-block")
+                    // .css("position", "fixed")
+                    // .css("right", "2.5vw")
+                    // .css("width", "40vw")
+                    .addClass("modal-rank-view")
 
                 // Hide modal close button.
                 $("#modal-close").hide();
@@ -837,8 +836,9 @@ class View {
 
             } else {
                 $("#abstract-modal-dialog")
-                    .css("display", "none")
-                    .css("width", "auto")
+                    // .css("display", "none")
+                    // .css("width", "auto")
+                    .removeClass("modal-rank-view")
 
                 // Show modal close button.
                 $("#modal-close").show();
@@ -906,6 +906,7 @@ class View {
             modal.addClass("bounce");
 
             // Replace modal fields with 'currNode' fields.
+            console.log('called create modal');
             createModal.createModal(currNode, this.refinedPapers);
         }
     }
@@ -1082,6 +1083,9 @@ class View {
                     d.fy = null;
                 });
 
+            // Remove resize behaviour.
+            $(window).off("resize");
+
             // Show edges.
             $(".links").show();
 
@@ -1095,11 +1099,12 @@ class View {
             $("#abstract-modal-dialog")
                 .removeClass("modal-rank-view");
 
+            // TODO: figure out an alternative to this.
+            $("#abstract-modal-dialog")
+                .addClass("fade-out");
+
             // Show modal close icon.
             $("#modal-close").show();
-
-            // Remove resize behaviour.
-            $(window).off("resize");
 
             this._initNetwork();
         }
