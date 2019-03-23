@@ -1,3 +1,8 @@
+.animate-rank-details-fo {
+    overflow: visible;
+    pointer-events: none;
+}
+
 .animate-rank-details {
     position: relative;
 

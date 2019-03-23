@@ -19,6 +19,9 @@ class View {
         // Tooltips.
         this.tips;
 
+        // Get 'change view' button.
+        this.viewButton = $("#animate-button");
+
         // Process server response and update nodes and edges.
         this._loadD3();
 
@@ -250,7 +253,7 @@ class View {
         let graph = this.response.subgraph;
         
         // Update current view.
-        this.currentViewVal = "network";
+        // this.currentViewVal = "network";
 
         // Create force simulation.
         let simulation = d3.forceSimulation()
@@ -263,7 +266,7 @@ class View {
             });
 
         let chargeForce = d3.forceManyBody()
-            .strength(-350);
+            .strength(-500);
 
         let centerForce = d3.forceCenter(width / 2, height / 2);
 
@@ -271,7 +274,7 @@ class View {
             .id(function(d) {
                 return d.id;
             })
-            .strength(0.5);
+            .strength(0.4);
 
         // Add forces and tick behaviour.
         simulation
@@ -280,7 +283,7 @@ class View {
             .force("center", centerForce)
             .force("links", linkForce)
             .on("tick", _networkTickActions)
-            .alphaTarget(0.03)
+            .alphaTarget(0.01)
 
         // Add drag behaviour.
         let dragHandler = d3.drag()
@@ -348,6 +351,11 @@ class View {
                     return d.target.y;
                 });
         }
+
+        this.viewButton.off("click");
+        this.viewButton.on("click", function() {
+            self.toRank();
+        });
     }
 
     _networkDragStart(d) {
@@ -392,11 +400,16 @@ class View {
 
         let self = this;
 
+        // Disable view button to avoid changing view before
+        // animation is complete.
+        this.viewButton
+            .attr("disabled", true)
+
         // let width = $("#network").width()
         // let height = $("#network").height()
 
-        this.width = $("#network").width()
-        this.height = $("#network").height()
+        this.width = $(window).width()
+        this.height = $(window).height()
        
         // Check size of screen to determine if modal size should be
         // modified. For small devices modal is only shown on click/tap,
@@ -420,7 +433,7 @@ class View {
             .attr("xlink:href", "images/FocusArrow.svg")
             .attr("height", "15")
             .attr("width", "15")
-            .attr("x", "5vw")
+            .attr("x", this.width * 0.05)
             .attr("y", this.height / 2 - 7.5)
             .attr("class", "rank-arrow");
 
@@ -477,19 +490,21 @@ class View {
                 d.x = d.fx;
                 d.y = d.fy;
 
-                // Reenable animate network button.
-                // $(".animate-network-button")
-                    // .attr("disabled", false)
+                // Reenable animate button.
+                self.viewButton
+                    .attr("disabled", false)
             })
 
         // Set initial modal.
+        this.currentRank = 0;
         this._rankUpdateModal();
 
         // Add paper details to right of each node.
         this.nodesVal
             .append("foreignObject")
-            .attr("height", 1)
-            .attr("width", 1)
+            .attr("class", "animate-rank-details-fo")
+            .attr("height", "100%")
+            .attr("width", "100%")
             .attr("overflow", "visible")
             .append("xhtml:div")
             .attr("class", "animate-rank-details")
@@ -621,7 +636,7 @@ class View {
 
         // Add scroll listener.
         d3.select("#network")
-            .call(d3.zoom()).on("wheel.zoom", function() {
+            .call(d3.zoom().on("zoom", function() {
             /*
             Translates node collection based on scroll strength. 
             */
@@ -630,7 +645,24 @@ class View {
             clearTimeout(timer);
 
             // Get scroll Y delta.
-            let deltaY = d3.event.deltaY;
+            // console.log(d3.event.sourceEvent)
+            let event = d3.event;
+            let deltaY;
+
+            if ("deltaY" in event.sourceEvent) {
+                deltaY = d3.event.sourceEvent.deltaY;
+                wheelScroll(deltaY);
+            } else {
+                // console.log(event);
+                touchScroll(event.transform);
+            }
+        }));
+
+        function wheelScroll(deltaY) {
+            /*
+            Handles scroll behaviour when the device is a mousewheel
+            or trackpad.
+            */
 
             // Avoid retriggering scroll snapping if the user tries scrolling
             // below minimum or above maximum scroll extent.
@@ -643,20 +675,56 @@ class View {
             let newPosition = Math.max(Math.min(currentY - deltaY, 0),
                 -(nNodes - 1) * nodeSpacing);
 
+            coreScroll(newPosition);
+
+            // Add scroll-end listener.
+            translateTimeout(newPosition);
+        }
+
+        function touchScroll(event) {
+            /*
+            Handles scroll behaviour if device is a touchscreen.
+            TODO: add momentum scrolling.
+            */
+
+            let touchY = event.y;
+
+            // Avoid retriggering scroll snapping if the user tries scrolling
+            // below minimum or above maximum scroll extent.
+            if (touchY > 0) {
+                event.y = 0;
+                touchY = 0;
+                // return;
+            } else if (touchY < -(nNodes - 1) * nodeSpacing) {
+                event.y = currentY;
+                touchY = 0;
+                // return;
+            }
+
+            // let newPosition = touch;
+            coreScroll(touchY);
+
+            // Add scroll-end listener.
+            translateTimeout(touchY);
+
+        }
+
+        function coreScroll(newPosition) {
+            /*
+            Implements main scroll functionality, irrespective of scroll
+            type.
+            */
+
             // Scroll nodes.
             d3.select(".everything")
                 .transition()
                 .ease(d3.easeLinear)
                 .duration(50)
-                .attr("transform", "translate(0, " + 
-                    (newPosition + self.height / 2).toString() + ")")
+                .attr("transform", `translate(0, ${newPosition+self.height/2})`);
 
             // Update current focused node position.
-            currentY = newPosition;
-
-            // Add scroll-end listener.
-            translateTimeout(newPosition);
-        });
+            currentY = newPosition;          
+        }
 
         // Defines scroll-end timer.
         let timer;
@@ -702,8 +770,9 @@ class View {
 
             console.log('resized');
 
-            // Update current window width.
-            self.width = $(window).width();
+            // Update current window width and height.
+            self.width = $("#network").width();
+            self.height = $("#network").height();
 
             // Compute horizontal padding.
             nodePadding = self.width / 3;
@@ -727,7 +796,12 @@ class View {
             // Translate node collection to keep selected node centered.
             d3.select(".everything")
                 .attr("transform", `translate(0, ${newPos + self.height/2})`);
-                
+
+            // Translate arrow.
+            d3.select(".rank-arrow")
+                .attr("x", self.width * 0.05)    
+                .attr("y", self.height / 2 - 7.5)
+                    
             // Update author string for each node to compensate for new screen size.
             d3.selectAll(".animate-rank-details")
                 .html(function(d) {
@@ -749,10 +823,11 @@ class View {
             // Update modal size, position and display.
             if (self.width >= 768) {
                 $("#abstract-modal-dialog")
-                    .css("display", "inline-block")
-                    .css("position", "fixed")
-                    .css("right", "2.5vw")
-                    .css("width", "40vw")
+                    // .css("display", "inline-block")
+                    // .css("position", "fixed")
+                    // .css("right", "2.5vw")
+                    // .css("width", "40vw")
+                    .addClass("modal-rank-view")
 
                 // Hide modal close button.
                 $("#modal-close").hide();
@@ -761,8 +836,9 @@ class View {
 
             } else {
                 $("#abstract-modal-dialog")
-                    .css("display", "none")
-                    .css("width", "auto")
+                    // .css("display", "none")
+                    // .css("width", "auto")
+                    .removeClass("modal-rank-view")
 
                 // Show modal close button.
                 $("#modal-close").show();
@@ -771,6 +847,11 @@ class View {
             // Update y position.
             currentY = newPos;
         });
+
+        this.viewButton.off("click");
+        this.viewButton.on("click", function() {
+            self.toNetwork();
+        })
 
     }
 
@@ -825,6 +906,7 @@ class View {
             modal.addClass("bounce");
 
             // Replace modal fields with 'currNode' fields.
+            console.log('called create modal');
             createModal.createModal(currNode, this.refinedPapers);
         }
     }
@@ -888,8 +970,7 @@ class View {
             .transition()
             .ease(easing)
             .duration(duration)
-            .attr("transform", "translate(0, " + 
-                (pos + this.height / 2).toString() + ")");
+            .attr("transform", `translate(0, ${pos+this.height/2})`);
 
         // Update current rank position.
         this.currentRank = Math.round(Math.abs(pos / nodeSpacing));
@@ -942,15 +1023,18 @@ class View {
 
         let self = this;
 
+        // Remove button click listner.
+        this.viewButton.on("click", null);
+
         // Get current view.
         let currView = this.currentViewVal;
-
-        // Update current view.
-        this.currentViewVal = "rank";
 
         if (currView === "rank") {
             throw "Rank view is already active."
         } else {
+
+            // Update current view.
+            this.currentViewVal = "rank";
 
             // Remove node tooltips.
             Object.keys(self.tips).forEach(function(nodeID) {
@@ -980,8 +1064,54 @@ class View {
         Converts current view to network view.
         */
 
-        // Update current view.
-        this.currentViewVal = "network";
+        let self = this;
+
+        // Get current view.
+        let currView = this.currentViewVal;
+
+        if (currView === "network") {
+            throw "Network view is already active."
+        } else {
+
+            // Update current view.
+            this.currentViewVal = "network";
+
+            // Remove fixed node positions.
+            this.nodesVal
+                .each(function(d) {
+                    d.fx = null;
+                    d.fy = null;
+                });
+
+            // Remove resize behaviour.
+            $(window).off("resize");
+
+            // Show edges.
+            $(".links").show();
+
+            // Drop foreignObjects.
+            d3.selectAll("foreignObject").remove();
+
+            // Remove arrow.
+            d3.select(".rank-arrow").remove();
+
+            // Remove rank view class from modal.
+            $("#abstract-modal-dialog")
+                .removeClass("modal-rank-view");
+
+            // TODO: figure out an alternative to this.
+            $("#abstract-modal-dialog")
+                .addClass("fade-out");
+
+            // Show modal close icon.
+            $("#modal-close").show();
+
+            this._initNetwork();
+        }
+
+        // this.viewButton.on("click", function() {
+        //     self.toRank();
+        // });
     }
 }
 

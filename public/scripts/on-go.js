@@ -124,17 +124,18 @@ function create_layout(response) {
         // Instantiate view.
         view = new View.View(response, "rank", refinedPapers);
         
-        $("#animate-button").on("click", function() {
-            view.toNetwork();
-        })
+        // TODO: incorporate button listener in view object.
+        // $("#animate-button").on("click", function() {
+        //     view.toNetwork();
+        // })
 
     } else {
 
         view = new View.View(response, "network", refinedPapers);
 
-        $("#animate-button").on("click", function() {
-            view.toRank();
-        })
+        // $("#animate-button").on("click", function() {
+        //     view.toRank();
+        // })
     }
 
     // let layoutObj = d3Layout.d3Layout(response,
