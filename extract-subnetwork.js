@@ -10,7 +10,7 @@ const es = new elasticsearch.Client({
 });
 
 class ExtractSubnetwork {
-    
+
     constructor(source_nodes, n_walks, restart_prob, n_top, es_client, es_index) {
         this.source_nodes = source_nodes;
         this.n_walks = n_walks;
@@ -30,21 +30,21 @@ class ExtractSubnetwork {
         Wrapper function that calls functions to extract a
         subnetwork relevant to the user's query.
 
-            1. First walks are split evenly across source nodes. 
-            2. The random walk with restart is executed. 
-            3. The top n resulting nodes are then extracted. 
-            4. Edge relationships between these nodes are extracted. 
-            5. Finally, subgraph results are formatted appropriately 
+            1. First walks are split evenly across source nodes.
+            2. The random walk with restart is executed.
+            3. The top n resulting nodes are then extracted.
+            4. Edge relationships between these nodes are extracted.
+            5. Finally, subgraph results are formatted appropriately
                and returned to the master process.
 
-        params: 
+        params:
             None
 
         returns:
             null
         */
 
-        console.log('Querying source nodes:', this.source_nodes);
+        console.log("Querying source nodes:", this.source_nodes);
 
         // Split 'n_walks' evenly by the number of source nodes.
         let walks_per_node = this.computeWalkNumber();
@@ -70,9 +70,9 @@ class ExtractSubnetwork {
             1. Iterate over each source node, allocating 'walks_per_node'
                to be executed.
             2. Iterate through 'walks_per_node'.
-            3. Step randomly through node neighbours. Each walk ends 
+            3. Step randomly through node neighbours. Each walk ends
                with probability 'restart_prob'.
-            4. When a walk ends, increment the termination node in 
+            4. When a walk ends, increment the termination node in
                'frequencies'.
 
         params:
@@ -86,7 +86,7 @@ class ExtractSubnetwork {
         // Iterate over source nodes and perform walks, tracking walk
         // terminations in 'frequencies'.
         for (let node of this.source_nodes) {
-            await this.walk(node, walks_per_node)
+            await this.walk(node, walks_per_node);
         }
     }
 
@@ -103,10 +103,10 @@ class ExtractSubnetwork {
         let walks_per_node = Math.floor(
                 this.n_walks / source_nodes_length
             );
-        
+
         this.n_walks = walks_per_node * source_nodes_length
 
-        return walks_per_node
+        return walks_per_node;
     }
 
     async walk(node, walks_per_node) {
@@ -147,7 +147,7 @@ class ExtractSubnetwork {
         // Step until walk randomly ends.
         while (!end_walk) {
 
-            // Get neighbours of 'current_node'. 
+            // Get neighbours of 'current_node'.
             let node_neighbours = await this.findNeighbours(current_node)
 
             // Randomly select neighbour to jump to.
@@ -168,11 +168,11 @@ class ExtractSubnetwork {
         /*
         Queries Elasticsearch and returns the neighbours of the given
         node. (If necessary, this code can be modified to ensure a
-        neighbour dictionary is maintained to prevent duplicate ES 
+        neighbour dictionary is maintained to prevent duplicate ES
         queries)
         */
 
-        // First check if 'node' neighbours have been added to 
+        // First check if 'node' neighbours have been added to
         // 'stored_neighbours'. If so, simply use these neighbours
         // instead of querying Elasticsearch and incurring latency.
         if (this.stored_neighbours[node]) {
@@ -182,7 +182,7 @@ class ExtractSubnetwork {
         // Query Elasticsearch for the 'cited' and 'cited_by'
         // relationships of 'node'.
         let es_query = await this.es_client.search({
-            _source: ['cites', 'cited_by'],
+            _source: ["cites", "cited_by"],
             index: this.es_index,
             body: {
                 query: {
@@ -191,7 +191,7 @@ class ExtractSubnetwork {
                         values: [node]
                     }
                 }
-            }   
+            }
         });
 
         // Extract 'cites' and 'cited_by' relationships.
@@ -267,7 +267,7 @@ class ExtractSubnetwork {
         let IDtoTitle = this.getIDtoTitle(nodeDataArr);
 
         // Construct subgraph.
-        let subgraph = {nodes: nodeDataArr, links: edgeArr, 
+        let subgraph = {nodes: nodeDataArr, links: edgeArr,
             mapping: IDtoTitle};
 
         // console.log(subgraph);
@@ -295,7 +295,7 @@ class ExtractSubnetwork {
             // Ensure 'node_neighbours' exists.
             if (node_neighbours) {
 
-                // Iterate over node neighbours and add any edge 
+                // Iterate over node neighbours and add any edge
                 // relationships with nodes that are in 'top_results'.
                 for (let neighbour of node_neighbours) {
                     if (top_results[neighbour]) {
@@ -324,7 +324,7 @@ class ExtractSubnetwork {
                         values: Object.keys(top_results)
                     }
                 }
-            }   
+            }
         });
 
         // Array containing parsed metadata.
@@ -342,8 +342,8 @@ class ExtractSubnetwork {
             let score = top_results[id];
 
             // Add node metadata to 'metadata' object.
-            metadata.push({id: id, title: title, pub_date: pub_date, 
-                journal: journal, authors: authors, abstract: abstract, 
+            metadata.push({id: id, title: title, pub_date: pub_date,
+                journal: journal, authors: authors, abstract: abstract,
                 score: score, rank: IDtoRank[id]})
         }
 
@@ -386,7 +386,7 @@ process.on("message", function(message) {
     let index_name = message.index_name;
 
     // Create new 'ExtractSubnetwork' object.
-    extSub = new ExtractSubnetwork(seeds, 10000, 
+    extSub = new ExtractSubnetwork(seeds, 10000,
         0.25, 60, es, index_name);
 
     // Pass 'extSub' to function to await subgraph computation and send

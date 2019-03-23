@@ -43,7 +43,7 @@ function instantiateModal() {
     // Add a listener that deletes refine-search-button event listener on modal close.
     $("#abstract-modal").on("hidden.bs.modal", function() {
         $("#add-to-refine-button").off("click");
-    })
+    });
 }
 
 

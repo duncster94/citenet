@@ -1,5 +1,5 @@
 const express = require("express");
-const { fork } = require('child_process');
+const { fork } = require("child_process");
 const path = require("path");
 const bodyParser = require("body-parser");
 const elasticsearch = require("elasticsearch");
@@ -15,7 +15,7 @@ const es = new elasticsearch.Client({
 const port = 8001;
 
 // Elasticsearch index.
-const index_name = 'gisample';
+const index_name = "gisample";
 
 // Boilerplate
 app.set("view engine", "ejs");
