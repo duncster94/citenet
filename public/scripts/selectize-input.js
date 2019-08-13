@@ -163,7 +163,9 @@ function format_response(response) {
         formatted_arr.push({
             value: hit._id,
             title: hit._source.title,
-            authors: authorString
+            authors: authorString,
+            journal: hit._source.journal,
+            pubDateString: `${hit._source.pub_date.Month} ${hit._source.pub_date.Year}`
         });
     }
 
@@ -176,14 +178,28 @@ function render(item, escape) {
     */
 
     let HTML_string =
-        '<div class="selectize-option">' +
-        '<p class="selectize-option-title">' +
-        escape(item.title) +
-        '</p>' +
-        '<p class="selectize-option-authors">' +
-        escape(item.authors) +
-        '</p>' +
-        '</div>';
+    `<div class="container selectize-option">
+       <div class="row">
+          <div class="col"><p class="selectize-option-title">${item.title}</p></div>
+       </div>
+      <div class="row justify-content-center">
+        <div class="col-sm text-sm-right">
+          <h6><span id="modal-publisher" class="badge orange d-inline-block text-truncate max-width-250">
+            ${item.journal}
+          </h6>
+        </div>
+        <div class="col-sm text-sm-left">
+          <h6><span id="modal-published-date" class="badge stylish-color d-inline-block text-truncate max-width-250">
+            ${item.pubDateString}
+          </h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col text-center">
+          <p class="selectize-option-authors">${item.authors}</p>
+        </div>
+      </div>
+    </div>`;
 
     return (HTML_string);
 }
