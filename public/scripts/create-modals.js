@@ -6,6 +6,9 @@ function createModal(node, refinedPapers) {
     Creates the modal which appears on node click.
     */
 
+    // Remove refine button click listener to avoid duplicate listeners.
+    $("#add-to-refine-button").off("click");
+
     let title = node.title;
     let authors = node.authors;
     let journal = node.journal;
@@ -35,22 +38,35 @@ function createModal(node, refinedPapers) {
     $("#modal-authors").html(authorString);
     $("#modal-abstract").html(abstract);
 
+    // $(".modal-content").addClass("fade-in")
+
     // Add href to publisher link out button
     $("#modal-publisher-link-out").attr("href", `https://www.ncbi.nlm.nih.gov/pubmed/?term=${id.toString()}`);
 
     // Action button should say "Add to Search" or "Remove from Search" depending on whether
     // or not it is queued.
     if (id in refinedPapers) {
-      $("#add-to-refine-button").html("Remove from Search<i class='fas fa-minus-square ml-2'></i>");
+      $("#add-to-refine-button")
+        .html("<span class='modal-button-text'>Remove from search</span><i class='fas fa-minus-square ml-2'></i>");
     } else {
-      $("#add-to-refine-button").html("Add to search<i class='fas fa-plus-square ml-2'></i>");
+      $("#add-to-refine-button")
+        .html("<span class='modal-button-text'>Add to search</span><i class='fas fa-plus-square ml-2'></i>");
     }
 
     // Add a listener to the refine button.
     refine_button.add_refine_button_listener(id, node, refinedPapers);
 
-    // Trigger modal show event
-    $('#abstract-modal').modal("show");
+    // Create click listener for modal close button.
+    $("#modal-close").click(function() {
+
+        // Fade out modal.
+        $("#abstract-modal-dialog").removeClass("fade-in");
+        $("#abstract-modal-dialog").addClass("fade-out");
+
+        // Remove close button click listener after close.
+        $("#modal-close").off("click");
+
+    })
 
 }
 

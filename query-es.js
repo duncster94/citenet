@@ -5,7 +5,7 @@ function query_es(query, index_name, es) {
     */
 
     // Fields to query.
-    let fields = ["title", "authors.FirstName", "authors.LastName", "_id"]
+    let fields = ["title", "authors.FirstName", "authors.LastName", "_id"];
 
     // Query Elasticsearch.
     let es_query = es.search({
@@ -20,7 +20,7 @@ function query_es(query, index_name, es) {
                 }
             }
         }
-    })
+    });
 
     return es_query;
 }

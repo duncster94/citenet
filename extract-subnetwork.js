@@ -10,7 +10,7 @@ const es = new elasticsearch.Client({
 });
 
 class ExtractSubnetwork {
-    
+
     constructor(source_nodes, n_walks, restart_prob, n_top, es_client, es_index) {
         this.source_nodes = source_nodes;
         this.n_walks = n_walks;
@@ -30,38 +30,39 @@ class ExtractSubnetwork {
         Wrapper function that calls functions to extract a
         subnetwork relevant to the user's query.
 
-            1. First walks are split evenly across source nodes. 
-            2. The random walk with restart is executed. 
-            3. The top n resulting nodes are then extracted. 
-            4. Edge relationships between these nodes are extracted. 
-            5. Finally, subgraph results are formatted appropriately 
+            1. First walks are split evenly across source nodes.
+            2. The random walk with restart is executed.
+            3. The top n resulting nodes are then extracted.
+            4. Edge relationships between these nodes are extracted.
+            5. Finally, subgraph results are formatted appropriately
                and returned to the master process.
 
-        params: 
+        params:
             None
 
         returns:
             null
         */
 
-        console.log('Querying source nodes:', this.source_nodes);
+        console.log("Querying source nodes:", this.source_nodes);
 
         // Split 'n_walks' evenly by the number of source nodes.
-        let walks_per_node = this.compute_walk_number();
+        let walks_per_node = this.computeWalkNumber();
 
         // Perform random walk with restart.
-        await this.random_walk(walks_per_node);
+        await this.randomWalk(walks_per_node);
 
-        // Gets the 'n_top' number of results.
-        let top_results = this.get_top();
+        // Get top results object.
+        let topObj = this.getTop();
+
         // console.log('top results', top_results); // Uncomment to see results
 
-        let subgraph = await this.format_response(top_results);
+        let subgraph = await this.formatResponse(topObj);
 
         return subgraph;
     }
 
-    async random_walk(walks_per_node) {
+    async randomWalk(walks_per_node) {
         /*
         The core of the search algorithm. Performs random walk with
         restart over the network.
@@ -69,9 +70,9 @@ class ExtractSubnetwork {
             1. Iterate over each source node, allocating 'walks_per_node'
                to be executed.
             2. Iterate through 'walks_per_node'.
-            3. Step randomly through node neighbours. Each walk ends 
+            3. Step randomly through node neighbours. Each walk ends
                with probability 'restart_prob'.
-            4. When a walk ends, increment the termination node in 
+            4. When a walk ends, increment the termination node in
                'frequencies'.
 
         params:
@@ -85,11 +86,11 @@ class ExtractSubnetwork {
         // Iterate over source nodes and perform walks, tracking walk
         // terminations in 'frequencies'.
         for (let node of this.source_nodes) {
-            await this.walk(node, walks_per_node)
+            await this.walk(node, walks_per_node);
         }
     }
 
-    compute_walk_number() {
+    computeWalkNumber() {
         /*
         Computes the number of walks each source node gets by dividing
         'n_walks' by the number of source nodes and taking the floor
@@ -102,10 +103,10 @@ class ExtractSubnetwork {
         let walks_per_node = Math.floor(
                 this.n_walks / source_nodes_length
             );
-        
+
         this.n_walks = walks_per_node * source_nodes_length
 
-        return walks_per_node
+        return walks_per_node;
     }
 
     async walk(node, walks_per_node) {
@@ -146,8 +147,8 @@ class ExtractSubnetwork {
         // Step until walk randomly ends.
         while (!end_walk) {
 
-            // Get neighbours of 'current_node'. 
-            let node_neighbours = await this.find_neighbours(current_node)
+            // Get neighbours of 'current_node'.
+            let node_neighbours = await this.findNeighbours(current_node)
 
             // Randomly select neighbour to jump to.
             let rand_index = Math.floor(Math.random() * node_neighbours.length);
@@ -163,15 +164,15 @@ class ExtractSubnetwork {
         return current_node;
     }
 
-    async find_neighbours(node) {
+    async findNeighbours(node) {
         /*
         Queries Elasticsearch and returns the neighbours of the given
         node. (If necessary, this code can be modified to ensure a
-        neighbour dictionary is maintained to prevent duplicate ES 
+        neighbour dictionary is maintained to prevent duplicate ES
         queries)
         */
 
-        // First check if 'node' neighbours have been added to 
+        // First check if 'node' neighbours have been added to
         // 'stored_neighbours'. If so, simply use these neighbours
         // instead of querying Elasticsearch and incurring latency.
         if (this.stored_neighbours[node]) {
@@ -181,7 +182,7 @@ class ExtractSubnetwork {
         // Query Elasticsearch for the 'cited' and 'cited_by'
         // relationships of 'node'.
         let es_query = await this.es_client.search({
-            _source: ['cites', 'cited_by'],
+            _source: ["cites", "cited_by"],
             index: this.es_index,
             body: {
                 query: {
@@ -190,7 +191,7 @@ class ExtractSubnetwork {
                         values: [node]
                     }
                 }
-            }   
+            }
         });
 
         // Extract 'cites' and 'cited_by' relationships.
@@ -212,7 +213,7 @@ class ExtractSubnetwork {
         return neighbours;
     }
 
-    get_top() {
+    getTop() {
         /*
         Returns the top 'n_top' scoring nodes in the random walk.
         */
@@ -228,6 +229,14 @@ class ExtractSubnetwork {
             return kv2.value - kv1.value
         });
 
+        // Create ID to rank number object.
+        let rank = 0;
+        let IDtoRank = {};
+        frequencies_arr.slice(0, this.n_top).forEach(function(obj) {
+            IDtoRank[obj.key] = rank;
+            rank++;
+        });
+
         // Retain the top 'n_top' results and map back to object.
         let top_n_results = frequencies_arr.slice(0, this.n_top)
             .reduce(function(obj, prop) {
@@ -235,34 +244,39 @@ class ExtractSubnetwork {
                 return obj;
             }, {});
 
-        return top_n_results;
+        return {"topN": top_n_results, "IDtoRank": IDtoRank};
     }
 
-    async format_response(top_results) {
+    async formatResponse(topResultsObj) {
         /*
         Given a set of top scoring nodes, extract all relevant information
         and format the response.
         */
 
+        let topResults = topResultsObj.topN
+        let IDtoRank = topResultsObj.IDtoRank
+
         // Get an edge-list object containing all edges between nodes in
         // 'top_nodes'.
-        let edge_arr = this.extract_edges(top_results);
+        let edgeArr = this.extractEdges(topResults);
 
         // Get all metadata for the top nodes.
-        let node_data_arr = await this.get_metadata(top_results);
+        let nodeDataArr = await this.getMetadata(topResults, IDtoRank);
 
         // Get an id to title mapping object.
-        let id_to_title = this.get_id_to_title(node_data_arr);
+        let IDtoTitle = this.getIDtoTitle(nodeDataArr);
 
         // Construct subgraph.
-        let subgraph = {nodes: node_data_arr, links: edge_arr, 
-            mapping: id_to_title};
+        let subgraph = {nodes: nodeDataArr, links: edgeArr,
+            mapping: IDtoTitle};
+
+        // console.log(subgraph);
 
         return subgraph;
 
     }
 
-    extract_edges(top_results) {
+    extractEdges(top_results) {
         /*
         Given the top results, extract all edge relationships between
         these nodes.
@@ -281,7 +295,7 @@ class ExtractSubnetwork {
             // Ensure 'node_neighbours' exists.
             if (node_neighbours) {
 
-                // Iterate over node neighbours and add any edge 
+                // Iterate over node neighbours and add any edge
                 // relationships with nodes that are in 'top_results'.
                 for (let neighbour of node_neighbours) {
                     if (top_results[neighbour]) {
@@ -293,7 +307,7 @@ class ExtractSubnetwork {
         return edge_arr;
     }
 
-    async get_metadata(top_results) {
+    async getMetadata(top_results, IDtoRank) {
         /*
         Extract the metadata for all nodes.
         */
@@ -310,7 +324,7 @@ class ExtractSubnetwork {
                         values: Object.keys(top_results)
                     }
                 }
-            }   
+            }
         });
 
         // Array containing parsed metadata.
@@ -328,30 +342,40 @@ class ExtractSubnetwork {
             let score = top_results[id];
 
             // Add node metadata to 'metadata' object.
-            metadata.push({id: id, title: title, pub_date: pub_date, 
-                journal: journal, authors: authors, abstract: abstract, 
-                score: score})
+            metadata.push({id: id, title: title, pub_date: pub_date,
+                journal: journal, authors: authors, abstract: abstract,
+                score: score, rank: IDtoRank[id]})
         }
 
         return metadata;
     }
 
-    get_id_to_title(node_data_arr) {
+    getIDtoTitle(nodeDataArr) {
         /*
         */
 
         // Object to store id to title mapping.
-        let id_to_title = {};
+        let idToTitle = {};
 
-        // Iterate over 'node_data_obj' and add mappings to 'id_to_title'.
-        for (let metadata of node_data_arr) {
+        // Iterate over 'nodeDataArr' and add mappings to 'idToTitle'.
+        for (let metadata of nodeDataArr) {
             let id = metadata.id;
             let title = metadata.title;
 
-            id_to_title[id] = title;
+            idToTitle[id] = title;
         }
 
-        return id_to_title;
+        return idToTitle;
+    }
+
+    getIDtoRank(nodeDataArr) {
+        /*
+        */
+
+        // Object to store id to rank mapping.
+        let idToRank = {};
+
+        // Get
     }
 }
 
@@ -362,7 +386,7 @@ process.on("message", function(message) {
     let index_name = message.index_name;
 
     // Create new 'ExtractSubnetwork' object.
-    extSub = new ExtractSubnetwork(seeds, 10000, 
+    extSub = new ExtractSubnetwork(seeds, 10000,
         0.25, 60, es, index_name);
 
     // Pass 'extSub' to function to await subgraph computation and send

@@ -16,6 +16,7 @@
 		<!-- Google Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Poppins:700|Roboto" rel="stylesheet">
 		<!-- Custom styles -->
+		<link rel="stylesheet" href="styles/animate-rank.css" />
 		<link rel="stylesheet" href="styles/front-page.css" />
 		<link rel="stylesheet" href="styles/modal.css" />
 		<link rel="stylesheet" href="styles/badges.css" />
@@ -35,9 +36,10 @@
 		<!--Main Layout-->
 		<main>
 
-			<!-- D3 Canvas -->
-			<svg id="network" style="display: none;"></svg>
-
+        <!-- D3 Canvas -->
+        <div id="network-container">
+            <svg id="network" style="display: none;"></svg>
+        </div>
       <div class="container">
           <!-- Main Page Content -->
           <div id="front-page" class="text-center" style="margin-top:12.5em;">
@@ -46,7 +48,18 @@
               <!-- Selectize Input -->
               <span id="selectize-span">
                <input id="selectize" type="text" name="selectize-form-input" aria-label="Search" required>
-               <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
+			   
+				<!-- View Dropdown -->
+				<span class="dropdown">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="viewDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					</button>
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item dropdown-selected" id="rank-dropdown-item">Ranked List</a>
+						<a class="dropdown-item" id="network-dropdown-item">Network</a>
+					</div>
+				</span>
+			 
+			   <button id="selectize-go-button" type="text" class="btn peach-gradient btn-block" disabled>
                  <i id = "search-icon" class="fas fa-search"></i>
                </button>
              </span>
@@ -54,71 +67,76 @@
               <p class="orange-text my-4 font-weight-bold text-center animated fadeIn delay-1s">A powerfully intuitive way to search the scientific literature</p>
           </div>
 
-					<!-- FAB -->
-					<div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
-							<a class="btnm-floating btnm-large red">
-									<i class="fas fa-bars"></i>
-							</a>
-							<ul>
-									<li>
-											<a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
-													<i class="fa fa-home"></i></a>
-									</li>
-									<li>
-											<a id="refine-button" class="btnm-floating tooltipped yellow darken-1" data-position="left" data-tooltip="Refine search">
-													<i class="fas fa-sync-alt"></i></a>
-									</li>
-							</ul>
-					</div>
-
-					<!-- Modal -->
-					<div class="modal fade" id="abstract-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-						<div class="modal-dialog modal-lg" role="document">
-							<div class="modal-content">
-								<!-- Modal Header -->
-								<div class="modal-header stylish-color">
-									<!-- Modal Title -->
-									<h4 id="modal-title" class="modal-title white-text font-weight-bold py-1"></h4>
-									<!-- Modal Colour -->
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true" class="white-text">&times;</span>
-									</button>
-								</div>
-								<!-- Modal Body -->
-								<div class="modal-body">
-									<!-- Publisher -->
-									<div class="row text-left" style="padding: 7.5px 0px 5px 0px;">
-										<div class="col-sm flush-labels">
-											<h5><span id="modal-publisher" class="badge orange d-inline-block text-truncate max-width-250"></h5>
-										</div>
-										<!-- Date Published -->
-										<div class="col-sm flush-labels">
-											<h5><span id="modal-published-date" class="badge stylish-color d-inline-block text-truncate max-width-250"></h5>
-										</div>
-									</div>
-									<!-- Authors Name -->
-									<h5>Authors</h5>
-									<p id="modal-authors"></p>
-									<h5>Abstract</h5>
-									<!-- Abstract -->
-									<p id="modal-abstract"></p>
-								</div>
-								<!-- Modal Footer -->
-								<div class="modal-footer flex-center">
-									<!-- Publisher Link Out Button -->
-									<a id="modal-publisher-link-out" href="#" target="_blank">
-										<button type="button" class="btn stylish-color">Publisher's Site<i class="fas fa-external-link-alt ml-2"></i></button>
-									</a>
-									<!-- Add to Search Button -->
-									<button id="add-to-refine-button" type="button" class="btn peach-gradient" data-dismiss="modal">
-										Add to search<i class='fas fa-plus-square ml-2'></i>
-									</button>
-								</div>
-							</div>
+            <!-- FAB -->
+            <div id="post-layout-buttons" class="fixed-action-btnm click-to-toggle" style="display: none;">
+                <a class="btnm-floating btnm-large red">
+                    <i class="fas fa-bars"></i>
+                </a>
+                <ul>
+                    <li>
+                        <a id="home-button" class="btnm-floating tooltipped yellow darken-4" data-position="left" data-tooltip="Go home">
+                            <i class="fa fa-home"></i></a>
+                    </li>
+                    <li>
+                        <a id="refine-button" class="btnm-floating tooltipped yellow darken-3" data-position="left" data-tooltip="Refine search">
+                            <i class="fas fa-sync-alt"></i></a>
+                    </li>
+                    <li>
+                        <a id="animate-button" class="animate-button btnm-floating tooltipped yellow darken-2" data-position="left">
+                            <i class="fas fa-list"></i></a>
+                    </li>
+                </ul>
+            </div>
+		</div>
+		
+		<!-- Modal -->
+		<div class="modal-dialog modal-lg" id="abstract-modal-dialog" role="document">
+			<div class="modal-content">
+				<!-- Modal Header -->
+				<div class="modal-header stylish-color" id="modal-header">
+					<!-- Modal Title -->
+					<h4 id="modal-title" class="modal-title white-text font-weight-bold py-1"></h4>
+					<!-- Modal Colour -->
+					<button type="button" id="modal-close" class="close" aria-label="Close">
+					<span aria-hidden="true" class="white-text">&times;</span>
+					</button>
+				</div>
+				<!-- Modal Body -->
+				<div class="modal-body" id="modal-body">
+					<!-- Publisher -->
+					<div class="row" style="padding-bottom: 10px;">
+						<div class="col flush-labels">
+							<h5><span id="modal-publisher" class="badge orange"></h5>
+						</div>
+						<!-- Date Published -->
+						<div class="col flush-labels no-left-padding">
+							<h5><span id="modal-published-date" class="badge stylish-color"></h5>
 						</div>
 					</div>
-
+					<!-- Authors Name -->
+					<h5>Authors</h5>
+					<p id="modal-authors"></p>
+					<h5>Abstract</h5>
+					<!-- Abstract -->
+					<p id="modal-abstract"></p>
+				</div>
+				<!-- Modal Footer -->
+				<div class="modal-footer flex-center" id="modal-footer">
+					<!-- Publisher Link Out Button -->
+					<a id="modal-publisher-link-out" href="#" target="_blank">
+						<button type="button" class="btn stylish-color">
+							<span class="modal-button-text">Publisher's Site</span>
+							<i class="fas fa-external-link-alt ml-2"></i>
+						</button>
+					</a>
+					<!-- Add to Search Button -->
+					<button id="add-to-refine-button" type="button" class="btn peach-gradient" data-dismiss="modal">
+						<span class="modal-button-text">Add to search</span>
+						<i class='fas fa-plus-square ml-2'></i>
+					</button>
+				</div>
 			</div>
+		</div>
 
 		</main>
 		<!--Main layout-->

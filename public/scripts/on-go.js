@@ -2,6 +2,8 @@ const $ = require("jquery");
 const d3Layout = require("./d3-layout");
 const createTooltips = require("./create-tooltips.js");
 const createModal = require("./create-modals.js");
+const animateRank = require("./d3-animate-rank.js");
+const View = require("./view.js");
 
 // Object to store refined papers.
 let refinedPapers = {};
@@ -114,13 +116,40 @@ function create_layout(response) {
     Creates D3 layout in addition to tooltips and modals.
     */
 
-    let layoutObj = d3Layout.d3Layout(response,
-        createModal, refinedPapers);
-    let nodeObj = layoutObj.node;
-    let isDragging = layoutObj.isDragging;
-    let simulation = layoutObj.simulation;
+    let view;
 
-    createTooltips.createTooltips(nodeObj, isDragging);
+    // Determine which view option is selected and render that view.
+    if ($("#rank-dropdown-item").hasClass("dropdown-selected")) {
+        
+        // Instantiate view.
+        view = new View.View(response, "rank", refinedPapers);
+        
+        // TODO: incorporate button listener in view object.
+        // $("#animate-button").on("click", function() {
+        //     view.toNetwork();
+        // })
+
+    } else {
+
+        view = new View.View(response, "network", refinedPapers);
+
+        // $("#animate-button").on("click", function() {
+        //     view.toRank();
+        // })
+    }
+
+    // let layoutObj = d3Layout.d3Layout(response,
+    //     createModal, refinedPapers);
+    // let node = layoutObj.node;
+    // let isDragging = layoutObj.isDragging;
+    // let simulation = layoutObj.simulation;
+    // let zoomHandler = layoutObj.zoomHandler;
+
+    // // Create tooltips.
+    // let tips = createTooltips.createTooltips(node, isDragging);
+
+    // // Create animations.
+    // animateRank.addAnimateRankListener(layoutObj, tips, refinedPapers);
 }
 
 module.exports.create_listeners = create_listeners;
