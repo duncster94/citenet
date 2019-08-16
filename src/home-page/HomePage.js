@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid"
 import "./HomePage.css"
 import SplitSearchButton from "./SplitSearchButton"
 
-function HomePage() {
+function HomePage(props) {
 
   return (
     <React.Fragment>
@@ -33,7 +33,8 @@ function HomePage() {
             </Grid>
 
             <Grid item>
-              <SplitSearchButton />
+              {/* Search button with dropdown view selector */}
+              <SplitSearchButton props={props.buttonProps}/>
             </Grid>
 
           </Grid>

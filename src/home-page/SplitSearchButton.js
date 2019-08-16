@@ -14,9 +14,13 @@ const viewOptions = [
   "Network"
 ]
 
-export default function SplitSearchButton() {
+export default function SplitSearchButton(props) {
+
+  // State for dropdown anchor element.
   const [anchorEl, setAnchorEl] = React.useState(null)
-  const [selectedIndex, setSelectedIndex] = React.useState(0)
+
+  // Passed down state for currently selected view.
+  const { selectedIndex, setSelectedIndex } = props.props
 
   function handleClick() {
     alert("clicked")
