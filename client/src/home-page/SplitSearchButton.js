@@ -23,7 +23,10 @@ export default function SplitSearchButton(props) {
   const { selectedIndex, setSelectedIndex } = props.props
 
   function handleClick() {
-    alert("clicked")
+    // alert("clicked")
+    fetch('/test', { method: "POST" })
+      .then(r => r.json())
+      .then(r => alert(r.res))
   }
 
   function handleToggle(event) {

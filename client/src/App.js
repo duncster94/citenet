@@ -9,8 +9,8 @@ export default function App() {
   // State for view selector.
   const [selectedIndex, setSelectedIndex] = React.useState(0)
   const buttonProps = {
-    "selectedIndex": selectedIndex,
-    "setSelectedIndex": setSelectedIndex,
+    selectedIndex,
+    setSelectedIndex
   }
 
   return (
