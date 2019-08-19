@@ -29,17 +29,17 @@ app.use(bodyParser.json());
 // });
 
 app.post("/test", (request, response) => {
-    response.json({res: `POST request proxied to localhost:${port}`})
+  response.json({res: `POST request proxied to localhost:${port}`})
 })
 
 // Called on user selectize query.
-app.post("/selectize_query", (request, response) => {
+app.post("/homepage_search_query", (request, response) => {
 
   // Get Elasticsearch query Promise and package response on Promise
   // resolution.
   query_es.query_es(request.body.value, index_name, es)
     .then(function(es_response) {
-      response.json(es_response)
+      response.send(es_response.hits.hits)
     });
 });
 

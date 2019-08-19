@@ -1,11 +1,11 @@
 import React from "react"
-import Select from "react-select"
 import Grid from "@material-ui/core/Grid"
 
 import "./HomePage.css"
 import SplitSearchButton from "./SplitSearchButton"
+import SearchBar from "./SearchBar"
 
-function HomePage(props) {
+export default function HomePage(props) {
 
   return (
     <React.Fragment>
@@ -58,29 +58,3 @@ function Logo() {
     />
   )
 }
-
-function SearchBar() {
-
-  const components = {
-    DropdownIndicator: () => null,
-    IndicatorSeparator: () => null
-  }
-
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' }
-  ]
-
-  return (
-    <Select
-      isMulti
-      name="colors"
-      options={options}
-      components={components}
-      placeholder="Enter paper titles and/or author names."
-    />  
-  )
-}
-
-export default HomePage
