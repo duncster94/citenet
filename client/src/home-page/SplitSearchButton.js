@@ -20,7 +20,7 @@ export default function SplitSearchButton(props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
   // Passed down state for currently selected view.
-  const { selectedIndex, setSelectedIndex } = props.props
+  const { selectedView, setSelectedView } = props.props
 
   function handleClick() {
     // alert("clicked")
@@ -34,7 +34,7 @@ export default function SplitSearchButton(props) {
   }
 
   function handleMenuItemClick(event, index) {
-    setSelectedIndex(index)
+    setSelectedView(index)
     setAnchorEl(null)
   }
 
@@ -78,7 +78,7 @@ export default function SplitSearchButton(props) {
           <MenuItem
             key={option}
             onClick={event => handleMenuItemClick(event, index)}
-            selected={index===selectedIndex}
+            selected={index===selectedView}
           >
             {option}
           </MenuItem>
