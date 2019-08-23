@@ -13,7 +13,7 @@ const optionStyles = {
 
 export default function SearchBar(props) {
 
-  const {selectedPapers, setSelectedPapers} = props.props
+  const { setSelectedPapers } = props.props
 
 	function formatOptionLabel(values) {
 		// Custom option component
