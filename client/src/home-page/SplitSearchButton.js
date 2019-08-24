@@ -20,22 +20,13 @@ export default function SplitSearchButton(props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
   // Passed down state for currently selected view.
-  const { selectedIndex, setSelectedIndex } = props.props
+  const { selectedView, setSelectedView, setIsSearched, selectedPapers } = props.props
 
   function handleClick() {
-    // alert("clicked")
-
-    let variable
-    // fetch is called a 'Promise'.
-    fetch("/test", { method: "POST" })
-      .then(response => response.json())
-      .then(function(response) {
-        // console.log('test')
-        alert(response.res)
-        variable = response.res
-        console.log(variable)
-      })
-
+    setIsSearched(true)
+    fetch('/test', { method: "POST" })
+      .then(r => r.json())
+      .then(r => alert(r.res))
   }
 
   function handleToggle(event) {
@@ -43,7 +34,7 @@ export default function SplitSearchButton(props) {
   }
 
   function handleMenuItemClick(event, index) {
-    setSelectedIndex(index)
+    setSelectedView(index)
     setAnchorEl(null)
   }
 
@@ -66,7 +57,12 @@ export default function SplitSearchButton(props) {
         >
           \/
         </Button>
-        <Button onClick={handleClick}>search</Button>
+        <Button
+          onClick={handleClick}
+          // Check if `selectedPapers` is an array (default is null)
+          disabled={!Boolean(selectedPapers)}
+        >
+          search</Button>
       </ButtonGroup>
 
       <Menu
@@ -87,7 +83,7 @@ export default function SplitSearchButton(props) {
           <MenuItem
             key={option}
             onClick={event => handleMenuItemClick(event, index)}
-            selected={index===selectedIndex}
+            selected={index===selectedView}
           >
             {option}
           </MenuItem>

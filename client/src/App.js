@@ -6,16 +6,43 @@ import HomePage from './home-page/HomePage'
 
 export default function App() {
 
-  // State for view selector.
-  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  // State for whether the user has searched.
+  const [isSearched, setIsSearched] = React.useState(false)
+
+  // Props for view selector.
+  const [selectedView, setSelectedView] = React.useState(0)
+  
+  // Props for selected papers.
+  const [selectedPapers, setSelectedPapers] = React.useState(null)
+
   const buttonProps = {
-    selectedIndex,
-    setSelectedIndex
+    selectedView,
+    setSelectedView,
+    setIsSearched,
+    selectedPapers
+  }
+
+  const searchBarProps = {
+    setSelectedPapers
+  }
+
+  // Package all props.
+  const props = {
+    buttonProps,
+    searchBarProps
+  }
+
+  // Determine which page is displayed
+  let page
+  if (isSearched) {
+    page = <div>loading...</div>
+  } else {
+    page = <HomePage props={props} />
   }
 
   return (
     <React.Fragment>
-      <HomePage buttonProps={buttonProps}/>
+      {page}
     </React.Fragment>
   )
 }

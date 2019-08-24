@@ -11,7 +11,9 @@ const optionStyles = {
 	}
 }
 
-export default function SearchBar() {
+export default function SearchBar(props) {
+
+  const { setSelectedPapers } = props.props
 
 	function formatOptionLabel(values) {
 		// Custom option component
@@ -35,7 +37,7 @@ export default function SearchBar() {
 				</Typography>
 			</div>
 		)
-	}
+  }
 
 	function loadOptions(input) {
 		
@@ -57,12 +59,17 @@ export default function SearchBar() {
 					)
 				})
 		)
-	}
+  }
+
+  function handleChange(event) {
+    setSelectedPapers(event)
+  }
 
 	return (
 		<AsyncSelect
 			isMulti
-			loadOptions={debounce(loadOptions, 250)}
+      loadOptions={debounce(loadOptions, 250)}
+      onChange={handleChange}
 			formatOptionLabel={formatOptionLabel}
 			components={
 				{

@@ -7,6 +7,8 @@ import SearchBar from "./SearchBar"
 
 export default function HomePage(props) {
 
+  const {buttonProps, searchBarProps} = props.props
+
   return (
     <React.Fragment>
       <div className="homepage-root">
@@ -29,12 +31,13 @@ export default function HomePage(props) {
           >
 
             <Grid item xs={8}>
-              <SearchBar />
+              {/* Paper select bar */}
+              <SearchBar props={searchBarProps}/>
             </Grid>
 
             <Grid item>
               {/* Search button with dropdown view selector */}
-              <SplitSearchButton props={props.buttonProps}/>
+              <SplitSearchButton props={buttonProps}/>
             </Grid>
 
           </Grid>
