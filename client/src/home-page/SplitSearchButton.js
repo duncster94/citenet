@@ -24,9 +24,18 @@ export default function SplitSearchButton(props) {
 
   function handleClick() {
     // alert("clicked")
-    fetch('/test', { method: "POST" })
-      .then(r => r.json())
-      .then(r => alert(r.res))
+
+    let variable
+    // fetch is called a 'Promise'.
+    fetch("/test", { method: "POST" })
+      .then(response => response.json())
+      .then(function(response) {
+        // console.log('test')
+        alert(response.res)
+        variable = response.res
+        console.log(variable)
+      })
+
   }
 
   function handleToggle(event) {
@@ -55,7 +64,7 @@ export default function SplitSearchButton(props) {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          \/{/* arrow icon here */}
+          \/
         </Button>
         <Button onClick={handleClick}>search</Button>
       </ButtonGroup>
