@@ -43,7 +43,7 @@ export default function HomePage(props) {
           </Grid>
 
           <Grid item>
-            <span>sexy CiteNet tagline here</span>
+            <span>A powerfully intuitive way to search the scientific literature</span>
           </Grid>
           
         </Grid>

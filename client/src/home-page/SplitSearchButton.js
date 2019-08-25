@@ -67,7 +67,7 @@ export default withRouter(function SplitSearchButton(props) {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          \/{/* arrow icon here */}
+          \/
         </Button>
         <Button
           onClick={handleClick}
