@@ -62,8 +62,12 @@ export default function SearchBar(props) {
   }
 
   function handleChange(event) {
-    // Extract unique identifiers from `event` array.
-    setSelectedPapers(event.map(paper => paper.value))
+    if (event) {
+      // Extract unique identifiers from `event` array.
+      setSelectedPapers(event.map(paper => paper.value))
+    } else {
+      setSelectedPapers(null)
+    }
   }
 
 	return (
