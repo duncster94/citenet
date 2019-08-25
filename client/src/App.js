@@ -1,10 +1,12 @@
-import React from 'react';
-import './App.css';
+import React from "react"
+import { withRouter, Route, Switch } from "react-router-dom"
+import { TransitionGroup, CSSTransition } from "react-transition-group"
 
-import HomePage from './home-page/HomePage'
+import "./App.css"
+import HomePage from "./home-page/HomePage"
 
 
-export default function App() {
+export default withRouter(function App(props) {
 
   // State for whether the user has searched.
   const [isSearched, setIsSearched] = React.useState(false)
@@ -23,26 +25,46 @@ export default function App() {
   }
 
   const searchBarProps = {
+    isSearched,
     setSelectedPapers
   }
 
   // Package all props.
-  const props = {
+  const homePageProps = {
     buttonProps,
     searchBarProps
   }
 
-  // Determine which page is displayed
-  let page
-  if (isSearched) {
-    page = <div>loading...</div>
-  } else {
-    page = <HomePage props={props} />
-  }
-
   return (
-    <React.Fragment>
-      {page}
-    </React.Fragment>
+    // `null` component avoids wrapper div
+    <TransitionGroup component={null}>
+      <CSSTransition
+        key={props.location.key}
+        timeout={1000}
+        classNames="fade-transition"
+        unmountOnExit
+        appear
+      >
+
+        <Switch location={props.location}>
+          <Route exact path="/" render={() => <HomePage props={homePageProps} />} />
+          <Route path="/rank" component={rankTest}/>
+          <Route path="/network" component={networkTest}/>
+        </Switch>
+
+      </CSSTransition>
+    </TransitionGroup>
+  )
+})
+
+function rankTest() {
+  return (
+    <div style={{position: "absolute"}}>rank view</div>
+  )
+}
+
+function networkTest() {
+  return (
+    <div style={{position: "absolute"}}>network view</div>
   )
 }

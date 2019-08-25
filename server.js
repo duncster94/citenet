@@ -29,7 +29,9 @@ app.use(bodyParser.json());
 // });
 
 app.post("/test", (request, response) => {
-  response.json({res: `POST request proxied to localhost:${port}`})
+  // response.json({res: `POST request proxied to localhost:${port}`})
+  console.log(request.body)
+  response.json({res: request.body})
 })
 
 // Called on user selectize query.
@@ -49,9 +51,8 @@ app.post("/submit_paper", (request, response) => {
   // Set response type to JSON.
   response.contentType("json");
 
-  console.log(request.body);
   // Get seeds from request body.
-  let seeds = request.body.seeds;
+  let seeds = request.body;
 
   // Create message to send to child process.
   let child_message = {seeds: seeds, index_name: index_name};

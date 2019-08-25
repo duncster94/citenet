@@ -62,7 +62,8 @@ export default function SearchBar(props) {
   }
 
   function handleChange(event) {
-    setSelectedPapers(event)
+    // Extract unique identifiers from `event` array.
+    setSelectedPapers(event.map(paper => paper.value))
   }
 
 	return (

@@ -1,5 +1,7 @@
 import React from "react"
 
+import { withRouter } from "react-router-dom"
+
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 
@@ -14,7 +16,7 @@ const viewOptions = [
   "Network"
 ]
 
-export default function SplitSearchButton(props) {
+export default withRouter(function SplitSearchButton(props) {
 
   // State for dropdown anchor element.
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -24,9 +26,19 @@ export default function SplitSearchButton(props) {
 
   function handleClick() {
     setIsSearched(true)
-    fetch('/test', { method: "POST" })
+    fetch("/submit_paper", { method: "POST",
+                     body: JSON.stringify(selectedPapers),
+                     headers: {"Content-Type": "application/json"},
+                    })
       .then(r => r.json())
-      .then(r => alert(r.res))
+      .then(r => {console.log(r)})
+    
+    // Switch to view.
+    if (selectedView === 0) {
+      props.history.push("/rank")
+    } else {
+      props.history.push("/network")
+    }
   }
 
   function handleToggle(event) {
@@ -91,4 +103,4 @@ export default function SplitSearchButton(props) {
       </Menu>
     </React.Fragment>
   )
-}
+})

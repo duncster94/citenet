@@ -1,7 +1,9 @@
 .homepage-root {
+    position: absolute;
     flex-grow: 1;
     display: flex;
     height: inherit;
+    width: inherit;
 }
 
 .homepage-logo {
@@ -15,4 +17,22 @@
 .homepage-search {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.homepage-transition-appear {
+    opacity: 0;
+}
+
+.homepage-transition-appear-active {
+    opacity: 1;
+    transition: opacity 1000ms;
+}
+
+.homepage-transition-exit {
+    opacity: 1;
+}
+
+.homepage-transition-exit-active {
+    opacity: 0;
+    transition: opacity 500ms;
 }
