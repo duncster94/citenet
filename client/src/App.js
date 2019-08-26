@@ -4,6 +4,8 @@ import { TransitionGroup, CSSTransition } from "react-transition-group"
 
 import "./App.css"
 import HomePage from "./home-page/HomePage"
+import View from "./views/View"
+import GenericNotFound from "./navigation-error/GenericNotFound"
 
 
 export default withRouter(function App(props) {
@@ -48,23 +50,11 @@ export default withRouter(function App(props) {
 
         <Switch location={props.location}>
           <Route exact path="/" render={() => <HomePage props={homePageProps} />} />
-          <Route path="/rank" component={rankTest}/>
-          <Route path="/network" component={networkTest}/>
+          <Route path="/view/:view" component={View}/>
+          <Route component={GenericNotFound}/>
         </Switch>
 
       </CSSTransition>
     </TransitionGroup>
   )
 })
-
-function rankTest() {
-  return (
-    <div style={{position: "absolute"}}>rank view</div>
-  )
-}
-
-function networkTest() {
-  return (
-    <div style={{position: "absolute"}}>network view</div>
-  )
-}

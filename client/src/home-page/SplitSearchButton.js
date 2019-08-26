@@ -11,6 +11,8 @@ import ListSubheader from "@material-ui/core/ListSubheader"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 
+import queryString from "query-string"
+
 const viewOptions = [
   "Ranked List",
   "Network"
@@ -22,23 +24,20 @@ export default withRouter(function SplitSearchButton(props) {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
   // Passed down state for currently selected view.
-  const { selectedView, setSelectedView, setIsSearched, selectedPapers } = props.props
+  const { selectedView, setSelectedView, selectedPapers } = props.props
 
   function handleClick() {
-    setIsSearched(true)
-    fetch("/submit_paper", { method: "POST",
-                     body: JSON.stringify(selectedPapers),
-                     headers: {"Content-Type": "application/json"},
-                    })
-      .then(r => r.json())
-      .then(r => {console.log(r)})
     
-    // Switch to view.
+    // Create query string.
+    const query = queryString.stringify({id: selectedPapers}, {arrayFormat: 'comma'})
+    let view
     if (selectedView === 0) {
-      props.history.push("/rank")
+      view = 'rank'
     } else {
-      props.history.push("/network")
+      view = 'network'
     }
+    // Switch to view.
+    props.history.push(`/view/${view}?${query}`)
   }
 
   function handleToggle(event) {
