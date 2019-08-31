@@ -1,5 +1,5 @@
 import React from "react"
-import { withRouter, Route, Switch } from "react-router-dom"
+import { withRouter, Route, Switch, Redirect } from "react-router-dom"
 import { TransitionGroup, CSSTransition } from "react-transition-group"
 
 import "./App.css"
@@ -51,7 +51,8 @@ export default withRouter(function App(props) {
         <Switch location={props.location}>
           <Route exact path="/" render={() => <HomePage props={homePageProps} />} />
           <Route path="/view/:view" component={View}/>
-          <Route component={GenericNotFound}/>
+          <Route path="/404" component={GenericNotFound}/>
+          <Redirect to="/404" />
         </Switch>
 
       </CSSTransition>
