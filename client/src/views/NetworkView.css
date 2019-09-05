@@ -1,0 +1,6 @@
+.network-root {
+    height: inherit;
+    width: inherit;
+    display: flex;
+    flex: 1;
+}

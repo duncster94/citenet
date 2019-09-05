@@ -1,9 +1,10 @@
 import React from "react"
+import * as d3 from "d3"
 
-export default function NetworkView(props) {
-    return (
-        <div style={{position: "absolute"}}>
-            {JSON.stringify(props.props)}
-        </div>
-    )
+import "./NetworkView.css"
+
+export default function NetworkView({ props }) {
+  return (
+    <div>Network View</div>
+  )
 }

@@ -30,14 +30,15 @@ export default function View(props) {
           paperIDs = {id: [paperIDs.id]}
         }
   
-        fetch("/submit_paper", { method: "POST",
-                                body: JSON.stringify(paperIDs.id),
-                                headers: {"Content-Type": "application/json"},
+        fetch("/submit_paper", { 
+          method: "POST",
+          body: JSON.stringify(paperIDs.id),
+          headers: {"Content-Type": "application/json"},
         })
           .then(response => response.json())
           .then(function(response) {
             setSearchResults(response)
-            console.log(response)
+            // console.log(response)
           })
       }
     }, [])
