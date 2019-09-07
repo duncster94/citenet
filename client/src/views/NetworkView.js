@@ -1,17 +1,16 @@
 import React from "react"
 import * as d3 from "d3"
+import ResizeObserver from "@juggle/resize-observer"
+
+import Popover from "@material-ui/core/Popover"
+import Typography from "@material-ui/core/Typography"
 
 import "./NetworkView.css"
 
 export default function NetworkView({ props }) {
 
   const svgRef = React.useRef(null)
-  const width = window.innerWidth, height = window.innerHeight
-
-  function onResize() {
-    // debounce then
-    return window.innerWidth, window.innterHeight
-  }
+  const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
 
   React.useEffect(() => {
 
@@ -19,7 +18,7 @@ export default function NetworkView({ props }) {
 
     const simulation = d3.forceSimulation()
       .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("link", d3.forceLink().id(function(d) {return d.id}))
 
     const links = svg.append("g")
@@ -35,12 +34,21 @@ export default function NetworkView({ props }) {
       .data(props.subgraph.nodes)
       .enter()
       .append("g")
-      .append("circle")
+
+    const circles = nodes.append("circle")
       .attr("r", 10)
       .call(d3.drag()
         .on("start", dragStart)
         .on("drag", dragging)
         .on("end", dragEnd))
+
+    circles
+      .on("mouseover", function() {
+        setPopoverAnchorEl(this)
+      })
+      .on("mouseout", function() {
+        setPopoverAnchorEl(null)
+      })
 
     simulation.nodes(props.subgraph.nodes)
     simulation.force("link").links(props.subgraph.links)
@@ -75,6 +83,18 @@ export default function NetworkView({ props }) {
       d.fy = null
     }
 
+    const resizeObserver = new ResizeObserver(() => {
+      // May want to add debouncing in the future.
+      simulation
+        .force("center")
+          .x(window.innerWidth / 2)
+          .y(window.innerHeight / 2)
+
+      simulation.alpha(0.3).restart()
+    })
+
+    resizeObserver.observe(svgRef.current)
+
   }, [])
 
   return (
@@ -82,6 +102,34 @@ export default function NetworkView({ props }) {
       className="network-root"
       ref={svgRef}
     >
+      <NodePopover props={{popoverAnchorEl}}/>
     </svg>
+  )
+}
+
+
+function NodePopover({ props }) {
+
+  const isOpen = Boolean(props.popoverAnchorEl)
+
+  return (
+    <Popover
+      className="network-node-popover"
+      open={isOpen}
+      anchorEl={props.popoverAnchorEl}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "center"
+      }}
+      transformOrigin={{
+        vertical: "bottom",
+        horizontal: "center"
+      }}
+      disableRestoreFocus
+    >
+      <Typography>
+        test
+      </Typography>
+    </Popover>
   )
 }

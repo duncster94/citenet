@@ -13,3 +13,7 @@
 .network-nodes {
     fill: red;
 }
+
+.network-node-popover {
+    pointer-events: none;
+}
