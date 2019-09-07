@@ -4,3 +4,12 @@
     display: flex;
     flex: 1;
 }
+
+.network-links {
+    stroke: black;
+    stroke-width: 2px;
+}
+
+.network-nodes {
+    fill: red;
+}

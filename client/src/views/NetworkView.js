@@ -5,44 +5,83 @@ import "./NetworkView.css"
 
 export default function NetworkView({ props }) {
 
-  const [nodes, setNodes] = React.useState(props.subgraph.nodes)
-  const [links, setLinks] = React.useState(props.subgraph.links)
+  const svgRef = React.useRef(null)
+  const width = window.innerWidth, height = window.innerHeight
+
+  function onResize() {
+    // debounce then
+    return window.innerWidth, window.innterHeight
+  }
 
   React.useEffect(() => {
-    const simulation = d3.forceSimulation(nodes)
+
+    const svg = d3.select(svgRef.current)
+
+    const simulation = d3.forceSimulation()
       .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(300, 300))
+      .force("center", d3.forceCenter(width / 2, height / 2))
       .force("link", d3.forceLink().id(function(d) {return d.id}))
 
-    simulation.force("link").links(links)
+    const links = svg.append("g")
+      .attr("class", "network-links")
+      .selectAll("line")
+      .data(props.subgraph.links)
+      .enter()
+      .append("line")
+
+    const nodes = svg.append("g")
+      .attr("class", "network-nodes")
+      .selectAll("g")
+      .data(props.subgraph.nodes)
+      .enter()
+      .append("g")
+      .append("circle")
+      .attr("r", 10)
+      .call(d3.drag()
+        .on("start", dragStart)
+        .on("drag", dragging)
+        .on("end", dragEnd))
+
+    simulation.nodes(props.subgraph.nodes)
+    simulation.force("link").links(props.subgraph.links)
 
     simulation.on("tick", () => {
-      setNodes([...nodes])
-      setLinks([...links])
+      links
+        .attr("x1", function(d) {return d.source.x})
+        .attr("y1", function(d) {return d.source.y})
+        .attr("x2", function(d) {return d.target.x})
+        .attr("y2", function(d) {return d.target.y})
+      
+      nodes
+        .attr("transform", function(d) {
+          return `translate(${d.x},${d.y})`
+        })
     })
+
+    function dragStart(d) {
+      if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+      d.fx = d.x
+      d.fy = d.y
+    }
+  
+    function dragging(d) {
+      d.fx = d3.event.x
+      d.fy = d3.event.y
+    }
+  
+    function dragEnd(d) {
+      if (!d3.event.active) simulation.alphaTarget(0)
+      d.fx = null
+      d.fy = null
+    }
+
   }, [])
 
   return (
     <svg
-      height={600}
-      width={600}
+      className="network-root"
+      ref={svgRef}
     >
-      {links.map(function (link, index) {
-        return (
-          <line
-            x1={link.source.x}
-            y1={link.source.y}
-            x2={link.target.x}
-            y2={link.target.y}
-            strokeWidth={2}
-            stroke="black"
-            key={`link-${index}`}
-          />
-        )
-      })}
-      {nodes.map(function(node, index) {
-        return <circle r={node.score * 200} cx={node.x} cy={node.y} key={`node-${index}`} />
-      })}
     </svg>
   )
 }
