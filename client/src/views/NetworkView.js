@@ -11,6 +11,7 @@ export default function NetworkView({ props }) {
 
   const svgRef = React.useRef(null)
   const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
+  const [hoveredNodeData, setHoveredNodeData] = React.useState({})
 
   React.useEffect(() => {
 
@@ -37,18 +38,22 @@ export default function NetworkView({ props }) {
 
     const circles = nodes.append("circle")
       .attr("r", 10)
-      .call(d3.drag()
-        .on("start", dragStart)
-        .on("drag", dragging)
-        .on("end", dragEnd))
-
-    circles
-      .on("mouseover", function() {
+      .on("mouseover", function(data) {
+        setHoveredNodeData(data)
         setPopoverAnchorEl(this)
       })
       .on("mouseout", function() {
         setPopoverAnchorEl(null)
       })
+      .on("click", function(data) {
+        console.log(data)
+      })
+    
+    nodes
+      .call(d3.drag()
+        .on("start", dragStart)
+        .on("drag", dragging)
+        .on("end", dragEnd))
 
     simulation.nodes(props.subgraph.nodes)
     simulation.force("link").links(props.subgraph.links)
@@ -67,12 +72,14 @@ export default function NetworkView({ props }) {
     })
 
     function dragStart(d) {
+      d3.event.sourceEvent.stopPropagation();
       if (!d3.event.active) simulation.alphaTarget(0.3).restart()
       d.fx = d.x
       d.fy = d.y
     }
   
     function dragging(d) {
+      setPopoverAnchorEl(null) // Kill popover on drag.
       d.fx = d3.event.x
       d.fy = d3.event.y
     }
@@ -102,7 +109,7 @@ export default function NetworkView({ props }) {
       className="network-root"
       ref={svgRef}
     >
-      <NodePopover props={{popoverAnchorEl}}/>
+      <NodePopover props={{popoverAnchorEl, hoveredNodeData}}/>
     </svg>
   )
 }
@@ -127,9 +134,23 @@ function NodePopover({ props }) {
       }}
       disableRestoreFocus
     >
-      <Typography>
-        test
-      </Typography>
+      <div>
+        <Typography
+          align="center"
+          color="textPrimary"
+          variant="body1"
+          gutterBottom
+        >
+          {props.hoveredNodeData.title}
+        </Typography>
+        <Typography
+          align="center"
+          color="textSecondary"
+          variant="body2"
+        >
+          authors
+        </Typography>
+      </div>
     </Popover>
   )
 }

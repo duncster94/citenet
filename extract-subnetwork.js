@@ -381,7 +381,7 @@ process.on("message", function(message) {
 
     // Create new 'ExtractSubnetwork' object.
     extSub = new ExtractSubnetwork(seeds, 10000,
-        0.25, 20, es, index_name);
+        0.25, 30, es, index_name);
 
     // Pass 'extSub' to function to await subgraph computation and send
     // extracted subgraph.
