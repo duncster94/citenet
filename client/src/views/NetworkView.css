@@ -16,10 +16,9 @@
 
 .network-node-popover {
     pointer-events: none;
-    /* display: flex; */
 }
 
-.network-node-popover > div {
-    width: 250px;
+.network-node-popover-grid {
     padding: 10px;
+    max-width: 300px;
 }
