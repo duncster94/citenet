@@ -15,12 +15,8 @@ import "./NetworkView.css"
 export default function NetworkView({ props }) {
 
   const svgRef = React.useRef(null)
-  const [popoverAnchorEls, setPopoverAnchorEls] = React.useState(() => {
-    return props.subgraph.nodes.map(function(node) {return null})
-  })
-  const [isPopoverOpen, setIsPopoverOpen] = React.useState(() => {
-    return props.subgraph.nodes.map(function(node) {return false})
-  })
+  const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
+  const [popoverPaperData, setPopoverPaperData] = React.useState(0)
 
   React.useEffect(() => {
 
@@ -47,19 +43,12 @@ export default function NetworkView({ props }) {
 
     const circles = nodes.append("circle")
       .attr("r", 10)
-      .on("mouseover", function(_, index) {
-        setIsPopoverOpen(function() {
-          const newIsPopoverOpen = [...isPopoverOpen]
-          newIsPopoverOpen[index] = true
-          return newIsPopoverOpen
-        })
+      .on("mouseover", function(data) {
+        setPopoverPaperData(data)
+        setPopoverAnchorEl(this)
       })
-      .on("mouseout", function(_, index) {
-        setIsPopoverOpen(function() {
-          const newIsPopoverOpen = [...isPopoverOpen]
-          newIsPopoverOpen[index] = false
-          return newIsPopoverOpen
-        })
+      .on("mouseout", () => {
+        setPopoverAnchorEl(null)
       })
       .on("click", function(data) {
         console.log(data)
@@ -71,17 +60,11 @@ export default function NetworkView({ props }) {
         .on("drag", dragging)
         .on("end", dragEnd))
 
-    let circleEls = []
-    circles
-      .each(function(data) {
-        circleEls.push(this)
-      })
-    setPopoverAnchorEls(circleEls)
-
     simulation.nodes(props.subgraph.nodes)
     simulation.force("link").links(props.subgraph.links)
 
     simulation.on("tick", () => {
+      console.log('tick')
       links
         .attr("x1", function(d) {return d.source.x})
         .attr("y1", function(d) {return d.source.y})
@@ -95,6 +78,7 @@ export default function NetworkView({ props }) {
     })
 
     function dragStart(d) {
+      setPopoverAnchorEl(null)
       d3.event.sourceEvent.stopPropagation();
       if (!d3.event.active) simulation.alphaTarget(0.3).restart()
       d.fx = d.x
@@ -102,32 +86,17 @@ export default function NetworkView({ props }) {
     }
   
     function dragging(d, index) {
-      setIsPopoverOpen(function() {
-        const newIsPopoverOpen = [...isPopoverOpen]
-        newIsPopoverOpen[index] = false
-        return newIsPopoverOpen
-      })
+      setPopoverAnchorEl(null)
       d.fx = d3.event.x
       d.fy = d3.event.y
     }
   
     function dragEnd(d) {
+      setPopoverAnchorEl(null)
       if (!d3.event.active) simulation.alphaTarget(0)
       d.fx = null
       d.fy = null
     }
-
-    const resizeObserver = new ResizeObserver(() => {
-      // May want to add debouncing in the future.
-      simulation
-        .force("center")
-          .x(window.innerWidth / 2)
-          .y(window.innerHeight / 2)
-
-      simulation.alpha(0.3).restart()
-    })
-
-    resizeObserver.observe(svgRef.current)
 
   }, [])
 
@@ -136,30 +105,26 @@ export default function NetworkView({ props }) {
       className="network-root"
       ref={svgRef}
     >
-      {popoverAnchorEls.map((anchorEl, index) => {
-        const popoverProps = {
-          anchorEl,
-          data: props.subgraph.nodes[index],
-          isOpen: isPopoverOpen[index]
-        }
-        return <NodePopover props={popoverProps} key={`popover-${index}`}/>
-      })}
+      <NodePopover 
+        props={{
+          popoverAnchorEl,
+          data: popoverPaperData
+        }}
+      />
     </svg>
   )
 }
 
-// `React.memo` is implementing the functional equivalent
-// of a `React.PureComponent`. Here `NodePopover` only 
-// rerenders if the actual value of the `isOpen` prop changes.
-const NodePopover = React.memo(({ props }) => {
 
-  console.log('rednered')
+function NodePopover({ props }) {
+
+  const isOpen = Boolean(props.popoverAnchorEl)
 
   return (
     <Popover
       className="network-node-popover"
-      open={props.isOpen}
-      anchorEl={props.anchorEl}
+      open={isOpen}
+      anchorEl={props.popoverAnchorEl}
       anchorOrigin={{
         vertical: "top",
         horizontal: "center"
@@ -198,19 +163,7 @@ const NodePopover = React.memo(({ props }) => {
           </Typography>
         </Grid>
 
-        <Grid item xs>
-          <ButtonGroup size="small" aria-label="small outlined button group">
-            <Button>Modal</Button>
-            <Button>Paper View</Button>
-          </ButtonGroup>
-        </Grid>
-
       </Grid>
     </Popover>
   )
-}, (prevProps, nextProps) => {
-  // Equivalent to `componentShouldUpdate`. `React.memo` makes a
-  // shallow comparison to check if `isOpen` prop has changed and
-  // prevents unnecessary rendering.
-  return prevProps.props.isOpen === nextProps.props.isOpen
-})
+}
