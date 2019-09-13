@@ -25,6 +25,23 @@ export default function NetworkView({ props }) {
 
     const svg = d3.select(svgRef.current)
 
+    // Add an arrow definition to the svg
+    svg.append("svg:defs").selectAll("marker")
+      .data(["end"])
+      .enter().append("svg:marker")
+      .attr("id", "arrowhead")
+      .attr("viewBox", "-0 -5 10 10")
+      .attr("refX", 20)
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 4)
+      .attr("markerHeight", 5)
+      .attr("xoverflow", "visible")
+      .append("svg:path")
+      .attr("d", "M 0,-5 L 10 ,0 L 0,5")
+      .attr("fill", "#000")
+      .style("stroke", "none")
+
     const simulation = d3.forceSimulation()
       .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
@@ -36,6 +53,7 @@ export default function NetworkView({ props }) {
       .data(props.subgraph.links)
       .enter()
       .append("line")
+      .attr("marker-end", "url(#arrowhead)")
 
     const nodes = svg.append("g")
       .attr("class", "network-nodes")
@@ -56,7 +74,6 @@ export default function NetworkView({ props }) {
           })
         d3.selectAll("circle").transition().duration(300)
           .style("opacity", function(other) {
-            console.log(data, other)
             return neighboring(data, other) ? 1 : 0.15
           })
       })
@@ -64,7 +81,6 @@ export default function NetworkView({ props }) {
         setPopoverAnchorEl(null)
       })
       .on("click", function(data) {
-        console.log(data)
         setIsModalOpen(true)
         d3.event.stopPropagation()
       })
@@ -79,7 +95,6 @@ export default function NetworkView({ props }) {
     simulation.force("link").links(props.subgraph.links)
 
     simulation.on("tick", () => {
-      console.log('tick')
       links
         .attr("x1", function(d) {return d.source.x})
         .attr("y1", function(d) {return d.source.y})
@@ -95,12 +110,12 @@ export default function NetworkView({ props }) {
     const linkedByIndex = {}
 
     links.each(function(d) {
-      linkedByIndex[d.source.index + "," + d.target.index] = 1
-      linkedByIndex[d.target.index + "," + d.source.index] = 1
+      linkedByIndex[d.source.index + "," + d.target.index] = true
+      linkedByIndex[d.target.index + "," + d.source.index] = true
     })
 
     function neighboring(a, b) {
-      return a.index == b.index || linkedByIndex[a.index + "," + b.index]
+      return a.index === b.index || linkedByIndex[a.index + "," + b.index]
     }
 
     function dragStart(d) {
