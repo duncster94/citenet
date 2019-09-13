@@ -14,6 +14,13 @@ export default function NetworkView({ props }) {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
+  function handleWindowClick() {
+    d3.selectAll("line").transition().duration(300)
+      .style("opacity", 1)
+    d3.selectAll("circle").transition().duration(300)
+      .style("opacity", 1)
+  }
+
   React.useEffect(() => {
 
     const svg = d3.select(svgRef.current)
@@ -42,6 +49,16 @@ export default function NetworkView({ props }) {
       .on("mouseover", function(data) {
         setPaperData(data)
         setPopoverAnchorEl(this)
+
+        d3.selectAll("line").transition().duration(300)
+          .style("opacity", function(other) {
+            return other.source === data || other.target === data ? 1 : 0.05
+          })
+        d3.selectAll("circle").transition().duration(300)
+          .style("opacity", function(other) {
+            console.log(data, other)
+            return neighboring(data, other) ? 1 : 0.15
+          })
       })
       .on("mouseout", () => {
         setPopoverAnchorEl(null)
@@ -49,6 +66,7 @@ export default function NetworkView({ props }) {
       .on("click", function(data) {
         console.log(data)
         setIsModalOpen(true)
+        d3.event.stopPropagation()
       })
     
     nodes
@@ -73,6 +91,17 @@ export default function NetworkView({ props }) {
           return `translate(${d.x},${d.y})`
         })
     })
+
+    const linkedByIndex = {}
+
+    links.each(function(d) {
+      linkedByIndex[d.source.index + "," + d.target.index] = 1
+      linkedByIndex[d.target.index + "," + d.source.index] = 1
+    })
+
+    function neighboring(a, b) {
+      return a.index == b.index || linkedByIndex[a.index + "," + b.index]
+    }
 
     function dragStart(d) {
       setPopoverAnchorEl(null)
@@ -101,6 +130,7 @@ export default function NetworkView({ props }) {
     <svg
       className="network-root"
       ref={svgRef}
+      onClick={handleWindowClick}
     >
       <NodePopover 
         props={{

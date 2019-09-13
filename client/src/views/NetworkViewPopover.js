@@ -37,7 +37,7 @@ export default function NodePopover({ props }) {
           }}
         >
           <Grow timeout={350} in={isOpen}>
-            <Paper>
+            <Paper className={useStyles().paper}>
               <span className={useStyles().arrow} ref={setArrowRef} />
               <Grid
                 className="network-node-popover-grid"
@@ -121,12 +121,18 @@ export default function NodePopover({ props }) {
         },
       },
     },
+
+    paper: {
+      backgroundColor: "rgba(255, 255, 255, 0.95)"
+    },
+
     arrow: {
       position: "absolute",
       fontSize: 7,
       width: "3em",
       height: "3em",
       pointerEvents: "none",
+      color: "rgba(255, 255, 255, 0.95)",
       "&::before": {
         content: '""',
         margin: "auto",

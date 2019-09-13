@@ -18,15 +18,21 @@ const NodeModal = React.memo(({ props }) => {
         props.setIsModalOpen(false)
     }
 
+    function handleClick(event) {
+        event.stopPropagation()
+    }
+
     return (
         <Dialog
             open={props.isModalOpen}
             onClose={handleClose}
+            onClick={handleClick}
             scroll="paper"
             aria-labelledby="scroll-dialog-title"
         >
             <DialogTitle>{props.data.title}</DialogTitle>
             <DialogContent dividers={true}>
+                <DialogContentText>authors (need to format)</DialogContentText>
                 <DialogContentText>{props.data.abstract}</DialogContentText>
             </DialogContent>
             <DialogActions>
