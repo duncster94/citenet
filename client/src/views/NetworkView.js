@@ -1,14 +1,15 @@
 import React from "react"
 import * as d3 from "d3"
-import ResizeObserver from "@juggle/resize-observer"
 
 import Grid from "@material-ui/core/Grid"
 
-import Popover from "@material-ui/core/Popover"
+import { makeStyles } from "@material-ui/core/styles"
+import { Popper } from "@material-ui/core"
+import { Paper } from "@material-ui/core"
 import Typography from "@material-ui/core/Typography"
+import Grow from "@material-ui/core/Grow"
 
-import Button from "@material-ui/core/Button"
-import ButtonGroup from "@material-ui/core/ButtonGroup"
+import { CSSTransition } from "react-transition-group"
 
 import "./NetworkView.css"
 
@@ -118,52 +119,130 @@ export default function NetworkView({ props }) {
 
 function NodePopover({ props }) {
 
+  const [arrowRef, setArrowRef] = React.useState(null)
   const isOpen = Boolean(props.popoverAnchorEl)
 
   return (
-    <Popover
-      className="network-node-popover"
-      open={isOpen}
-      anchorEl={props.popoverAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "center"
-      }}
-      transformOrigin={{
-        vertical: "bottom",
-        horizontal: "center"
-      }}
-      disableRestoreFocus
+    <CSSTransition 
+      in={isOpen} 
+      timeout={350} 
+      classNames="popper-transition"
+      unmountOnExit
     >
-      <Grid
-        className="network-node-popover-grid"
-        direction="column"
-        alignItems="center"
-        container
-      >
-        <Grid item xs>
-          <Typography
-            align="center"
-            color="textPrimary"
-            variant="body1"
-            gutterBottom
-          >
-            {props.data.title}
-          </Typography>
-        </Grid>
+    <Popper
+      className="network-node-popover"
+      // className="popper"
+      className={useStyles().popper}
+      open={true}
+      anchorEl={props.popoverAnchorEl}
+      placement="top"
+      // disablePortal={false}
+      modifiers={{
+            arrow: {
+              enabled: true,
+              element: arrowRef
+          }
+        }}
+    > 
+      <Grow timeout={350} in={isOpen}>
+      <Paper>
+      <span className={useStyles().arrow} ref={setArrowRef}/>
+        <Grid
+          className="network-node-popover-grid"
+          direction="column"
+          alignItems="center"
+          container
+        >
+          <Grid item xs>
+            <Typography
+              align="center"
+              color="textPrimary"
+              variant="body1"
+              gutterBottom
+            >
+              {props.data.title}
+            </Typography>
+          </Grid>
 
-        <Grid item xs>
-          <Typography 
-            align="center" 
-            color="textSecondary" 
-            variant="body2"
-            gutterBottom
-          >
-            authors (need to format)
-          </Typography>
-        </Grid>
+          <Grid item xs>
+            <Typography 
+              align="center" 
+              color="textSecondary" 
+              variant="body2"
+              gutterBottom
+            >
+              authors (need to format)
+            </Typography>
+          </Grid>
 
-      </Grid>
-    </Popover>
+        </Grid>
+      </Paper>
+      </Grow>
+    </Popper>
+      </CSSTransition>
   )
 }
+
+
+const useStyles = makeStyles(theme => ({
+  popper: {
+    zIndex: 1,
+    '&[x-placement*="bottom"] $arrow': {
+      top: 0,
+      left: 0,
+      marginTop: '-0.9em',
+      width: '3em',
+      height: '1em',
+      '&::before': {
+        borderWidth: '0 1em 1em 1em',
+        borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
+      },
+    },
+    '&[x-placement*="top"] $arrow': {
+      bottom: 0,
+      left: 0,
+      marginBottom: '-0.9em',
+      width: '3em',
+      height: '1em',
+      '&::before': {
+        borderWidth: '1em 1em 0 1em',
+        borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
+      },
+    },
+    '&[x-placement*="right"] $arrow': {
+      left: 0,
+      marginLeft: '-0.9em',
+      height: '3em',
+      width: '1em',
+      '&::before': {
+        borderWidth: '1em 1em 1em 0',
+        borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+      },
+    },
+    '&[x-placement*="left"] $arrow': {
+      right: 0,
+      marginRight: '-0.9em',
+      height: '3em',
+      width: '1em',
+      '&::before': {
+        borderWidth: '1em 0 1em 1em',
+        borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
+      },
+    },
+  },
+  arrow: {
+    position: 'absolute',
+    fontSize: 7,
+    width: '3em',
+    height: '3em',
+    pointerEvents: "none",
+    '&::before': {
+      content: '""',
+      margin: 'auto',
+      display: 'block',
+      width: 0,
+      height: 0,
+      borderStyle: 'solid',
+    },
+  },
+}))
