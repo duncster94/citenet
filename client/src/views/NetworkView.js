@@ -36,8 +36,8 @@ export default function NetworkView({ props }) {
     svg
       .call(zoomHandler)
       .call(zoomHandler.transform, d3.zoomIdentity
-        .translate(window.innerWidth / 4, window.innerHeight / 4)
-        .scale(0.5))
+        .translate(window.innerWidth / 6, window.innerHeight / 6)
+        .scale(2/3))
       // .on("dblclick.zoom", null) // Uncomment to disable doubleclick zooming.
 
     // Add an arrow definition to the svg
