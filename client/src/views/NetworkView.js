@@ -5,13 +5,13 @@ import NodePopover from "./NetworkViewPopover"
 import NodeModal from "./NetworkViewModal"
 import "./NetworkView.css"
 
+
 export default function NetworkView({ props }) {
 
   const svgRef = React.useRef(null)
   
   const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
   const [paperData, setPaperData] = React.useState(0)
-
   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
   function handleWindowClick() {

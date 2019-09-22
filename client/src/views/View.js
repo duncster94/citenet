@@ -7,6 +7,7 @@ import { Redirect } from "react-router-dom"
 
 import queryString from "query-string"
 
+import ViewSidebar from "./ViewSidebar"
 import NetworkView from "./NetworkView"
 import "./View.css"
 
@@ -61,7 +62,10 @@ export default function View(props) {
         )
       } else {
         return (
-          <NetworkView props={searchResults}/>
+          <React.Fragment>
+            <NetworkView props={searchResults}/>
+            <ViewSidebar />
+          </React.Fragment>
         )
       }
     }
