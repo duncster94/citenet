@@ -24,9 +24,24 @@ export default function NetworkView({ props }) {
   React.useEffect(() => {
 
     const svg = d3.select(svgRef.current)
+    const g = svg.append("g") // Group to hold elements
+
+    // Add zoom capabilities
+    let zoomHandler = d3.zoom()
+      .on("zoom", () => {
+        g.attr("transform", d3.event.transform)
+      })
+      .scaleExtent([0.1, 3])
+
+    svg
+      .call(zoomHandler)
+      .call(zoomHandler.transform, d3.zoomIdentity
+        .translate(window.innerWidth / 4, window.innerHeight / 4)
+        .scale(0.5))
+      // .on("dblclick.zoom", null) // Uncomment to disable doubleclick zooming.
 
     // Add an arrow definition to the svg
-    svg.append("svg:defs").selectAll("marker")
+    g.append("svg:defs").selectAll("marker")
       .data(["end"])
       .enter().append("svg:marker")
       .attr("id", "arrowhead")
@@ -43,19 +58,23 @@ export default function NetworkView({ props }) {
       .style("stroke", "none")
 
     const simulation = d3.forceSimulation()
-      .force("charge", d3.forceManyBody().strength(-200))
+      .force("charge", d3.forceManyBody().strength(-600))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
+      .force("collide", d3.forceCollide()
+        .radius(function(_, idx) {
+            return props.metadata.radii[idx] + 3;
+        }))
       .force("link", d3.forceLink().id(function(d) {return d.id}))
 
-    const links = svg.append("g")
+    const links = g.append("g")
       .attr("class", "network-links")
       .selectAll("line")
       .data(props.subgraph.links)
       .enter()
       .append("line")
-      .attr("marker-end", "url(#arrowhead)")
+      // .attr("marker-end", "url(#arrowhead)")
 
-    const nodes = svg.append("g")
+    const nodes = g.append("g")
       .attr("class", "network-nodes")
       .selectAll("g")
       .data(props.subgraph.nodes)
@@ -63,7 +82,14 @@ export default function NetworkView({ props }) {
       .append("g")
 
     const circles = nodes.append("circle")
-      .attr("r", 10)
+      .attr("r", function(_, idx) {
+        return props.metadata.radii[idx]
+      })
+      .attr("fill", function(_, idx) {
+        return props.metadata.colours[idx]
+      })
+      .attr("stroke", "#222")
+      .attr("stroke-width", "2px")
       .on("mouseover", function(data) {
         setPaperData(data)
         setPopoverAnchorEl(this)

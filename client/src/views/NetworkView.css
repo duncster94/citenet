@@ -10,10 +10,6 @@
     stroke-width: 2px;
 }
 
-.network-nodes {
-    fill: red;
-}
-
 .network-node-popover {
     pointer-events: none;
 }

@@ -65,7 +65,78 @@ app.post("/submit_paper", (request, response) => {
   // Once the child process has extracted the subnetwork, send to
   // client.
   fork_randomwalk.on("message", function(message) {
-    response.send({subgraph: message.subgraph, seeds: seeds});
+
+    // Get minimum and maximum publication years from "graph".
+    let dates = []
+    message.subgraph.nodes.forEach(function (node) {
+
+      let pub_year = node.pub_date.Year
+
+      // Make sure publication year is defined.
+      if (pub_year) {
+        dates.push(pub_year);
+      }
+    })
+    let min_date = Math.min(...dates)
+    let max_date = Math.max(...dates)
+
+    function score_to_radius(node) {
+      /*
+      Given a node, take its score and map it to a radius.
+      */
+  
+      let radius = 75 * Math.pow(node.score, 1 / 3)
+  
+      return radius
+    }
+
+    function date_to_colour(node, D_min, D_max, seeds) {
+      /*
+      Given a node, map the appropriate colour.
+      */
+
+      // If the node is a seed node, colour it differently.
+      if (seeds.includes(node.id.toString())) {
+        return "#f00"
+      }
+
+      // Get publication year.
+      let year = node.pub_date.Year
+
+      // If publication year is not available, set node colour to
+      // grey.
+      if (!year) {
+        return "#ccc"
+      }
+
+      // Define minimum and maximum lightness.
+      L_min = 50
+      L_max = 100
+
+      // Get lightness of node colour based on date.
+      let m = (L_max - L_min) / (D_min - D_max)
+      let b = L_max - m * D_min
+
+      let lightness = m * year + b
+
+      let colour = `hsla(41,100%, ${lightness.toString()}%,1)`
+
+      return colour
+    }
+
+    let radii = message.subgraph.nodes.map(node => {
+      return score_to_radius(node)
+    })
+
+    let colours = message.subgraph.nodes.map(node => {
+      return date_to_colour(node, min_date, max_date, seeds)
+    })
+
+    response.send({
+      subgraph: message.subgraph, 
+      seeds: seeds, 
+      metadata: {radii, colours}
+    })
   });
 });
 
