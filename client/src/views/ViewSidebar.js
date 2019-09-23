@@ -1,6 +1,9 @@
 import React from "react"
-import Button from "@material-ui/core/Button"
+
+import { withRouter } from "react-router-dom"
+
 import Divider from "@material-ui/core/Divider"
+import IconButton from "@material-ui/core/IconButton"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
@@ -8,7 +11,8 @@ import ListItemText from "@material-ui/core/ListItemText"
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import { makeStyles } from "@material-ui/core/styles"
 
-const drawerWidth = 240
+import Icon from "@mdi/react"
+import { mdiChevronRight } from "@mdi/js"
 
 const useStyles = makeStyles({
     list: {
@@ -21,7 +25,7 @@ const useStyles = makeStyles({
     }
 })
 
-export default function ViewSidebar() {
+export default withRouter(function ViewSidebar(props) {
     const classes = useStyles()
     const [isOpen, setIsOpen] = React.useState(false)
 
@@ -29,8 +33,12 @@ export default function ViewSidebar() {
         if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
             return
         }
-
         setIsOpen(open)
+    }
+
+    const handleHomeClick = () => {
+        // Switch to view.
+        props.history.push("/")
     }
 
     const drawer = (
@@ -41,7 +49,9 @@ export default function ViewSidebar() {
             onKeyDown={toggleDrawer(false)}
         >
             <List>
-                <ListItem button>
+                <ListItem button
+                    onClick={handleHomeClick}
+                >
                     <ListItemText primary="Home" />
                 </ListItem>
                 <ListItem button>
@@ -54,12 +64,16 @@ export default function ViewSidebar() {
 
     return (
         <React.Fragment>
-            <Button
+            <IconButton
                 onClick={toggleDrawer(true)}
                 className={classes.drawerButton}
+                aria-label="Open sidebar"
             >
-                Open
-            </Button>
+                <Icon
+                    path={mdiChevronRight}
+                    size={1}
+                />
+            </IconButton>
             <SwipeableDrawer
                 open={isOpen}
                 onClose={toggleDrawer(false)}
@@ -69,4 +83,4 @@ export default function ViewSidebar() {
             </SwipeableDrawer>
         </React.Fragment>
     )
-}
+})
