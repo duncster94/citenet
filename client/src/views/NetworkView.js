@@ -81,6 +81,10 @@ export default function NetworkView({ props }) {
       .enter()
       .append("g")
 
+    // Define timeout for hover action which prevents overeager
+    // popover display and neighbour focusing. 
+    let hoverTimeout
+
     const circles = nodes.append("circle")
       .attr("r", function(_, idx) {
         return props.metadata.radii[idx]
@@ -91,20 +95,26 @@ export default function NetworkView({ props }) {
       .attr("stroke", "#222")
       .attr("stroke-width", "2px")
       .on("mouseover", function(data) {
-        setPaperData(data)
-        setPopoverAnchorEl(this)
 
-        d3.selectAll("line").transition().duration(300)
-          .style("opacity", function(other) {
-            return other.source === data || other.target === data ? 1 : 0.05
-          })
-        d3.selectAll("circle").transition().duration(300)
-          .style("opacity", function(other) {
-            return neighboring(data, other) ? 1 : 0.15
-          })
+        hoverTimeout = setTimeout(() => {
+
+          setPaperData(data)
+          setPopoverAnchorEl(this)
+
+          d3.selectAll("line").transition().duration(300)
+            .style("opacity", function(other) {
+              return other.source === data || other.target === data ? 1 : 0.05
+            })
+          d3.selectAll("circle").transition().duration(300)
+            .style("opacity", function(other) {
+              return neighboring(data, other) ? 1 : 0.15
+            })
+
+        }, 200)
       })
       .on("mouseout", () => {
         setPopoverAnchorEl(null)
+        clearTimeout(hoverTimeout)
       })
       .on("click", function(data) {
         setIsModalOpen(true)
