@@ -80,7 +80,7 @@ app.post("/submit_paper", (request, response) => {
     let min_date = Math.min(...dates)
     let max_date = Math.max(...dates)
 
-    function score_to_radius(node) {
+    function scoreToRadius(node) {
       /*
       Given a node, take its score and map it to a radius.
       */
@@ -90,7 +90,7 @@ app.post("/submit_paper", (request, response) => {
       return radius
     }
 
-    function date_to_colour(node, D_min, D_max, seeds) {
+    function dateToColour(node, D_min, D_max, seeds) {
       /*
       Given a node, map the appropriate colour.
       */
@@ -124,12 +124,39 @@ app.post("/submit_paper", (request, response) => {
       return colour
     }
 
-    let radii = message.subgraph.nodes.map(node => {
-      return score_to_radius(node)
+    function formatAuthors(authors) {
+      /*
+      Formats author list for use in modal and popover.
+      */
+
+      let authorString = ""
+
+      // Add author names to 'authorString'.
+      for (author of authors) {
+        let first_name = author.FirstName.split(" ").map(str => {
+          return str[0]
+        }).join("")
+        let last_name = author.LastName
+
+        authorString += `${first_name} ${last_name}, `
+      }
+
+      // Remove final comma and space at end of 'authorString'.
+      authorString = authorString.slice(0, -2);
+
+      return authorString;
+    }
+
+    const radii = message.subgraph.nodes.map(node => {
+      return scoreToRadius(node)
     })
 
-    let colours = message.subgraph.nodes.map(node => {
-      return date_to_colour(node, min_date, max_date, seeds)
+    const colours = message.subgraph.nodes.map(node => {
+      return dateToColour(node, min_date, max_date, seeds)
+    })
+
+    message.subgraph.nodes.forEach(node => {
+      node.formattedAuthors = formatAuthors(node.authors)
     })
 
     response.send({

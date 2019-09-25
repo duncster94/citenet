@@ -13,6 +13,7 @@ import "./NetworkView.css"
 
 export default function NodePopover({ props }) {
 
+    console.log(props)
     const [arrowRef, setArrowRef] = React.useState(null)
     const isOpen = Boolean(props.popoverAnchorEl)
   
@@ -63,7 +64,7 @@ export default function NodePopover({ props }) {
                     variant="body2"
                     gutterBottom
                   >
-                    authors (need to format)
+                    {props.data.formattedAuthors}
               </Typography>
                 </Grid>
   
