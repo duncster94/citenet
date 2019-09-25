@@ -120,7 +120,47 @@ export default function NetworkView({ props }) {
         setIsModalOpen(true)
         d3.event.stopPropagation()
       })
-    
+
+    // Add a clip path for any overlaid images so they are clipped
+    // to the circle.
+    nodes.append("clipPath")
+      .attr("id", function (d) {
+        return `clip_${d.id}`
+      })
+      .append("circle")
+      .attr("r", function (_, idx) {
+        return props.metadata.radii[idx] - 1
+      })
+
+    // Add image overlay for refined search papers.
+    nodes.append("svg:image")
+      .attr("xlink:href", "/hatch.svg") // `/` references `public` 
+      .attr("pointer-events", "none") // Won't be hoverable/clickable
+      .attr("height", "150")
+      .attr("width", "150")
+      .attr("x", function (d) {
+        return -75;
+      })
+      .attr("y", function (d) {
+        return -75;
+      })
+      .attr("clip-path", function (d) {
+        return `url(#clip_${d.id})`;
+      })
+      .attr("id", function (d) {
+        return `overlay_${d.id}`;
+      })
+      .style("display", function (d) {
+
+        // Check if node is in refine list, if so,
+        // display overlay.
+        if (props.seeds.includes(d.id)) {
+          return "inline";
+        } else {
+          return "none";
+        }
+      })
+
     nodes
       .call(d3.drag()
         .on("start", dragStart)
