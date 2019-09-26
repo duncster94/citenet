@@ -19,6 +19,8 @@ export default function NetworkView({ props }) {
       .style("opacity", 1)
     d3.selectAll("circle").transition().duration(300)
       .style("opacity", 1)
+    d3.selectAll(".hatch").transition().duration(300)
+      .style("opacity", "1")
   }
 
   React.useEffect(() => {
@@ -109,6 +111,11 @@ export default function NetworkView({ props }) {
             .style("opacity", function(other) {
               return neighboring(data, other) ? 1 : 0.15
             })
+          
+          d3.selectAll(".hatch").transition().duration(300)
+            .style("opacity", function(other) {
+              return neighboring(data, other) ? "1" : "0.25"
+            })
 
         }, 200)
       })
@@ -134,10 +141,12 @@ export default function NetworkView({ props }) {
 
     // Add image overlay for refined search papers.
     nodes.append("svg:image")
+      .attr("class", "hatch")
       .attr("xlink:href", "/hatch.svg") // `/` references `public` 
       .attr("pointer-events", "none") // Won't be hoverable/clickable
       .attr("height", "150")
       .attr("width", "150")
+      // .attr("opacity", "0.5")
       .attr("x", function (d) {
         return -75;
       })
