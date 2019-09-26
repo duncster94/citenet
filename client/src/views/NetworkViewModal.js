@@ -22,6 +22,8 @@ const NodeModal = React.memo(({ props }) => {
         event.stopPropagation()
     }
 
+    console.log(props)
+
     return (
         <Dialog
             open={props.isModalOpen}
@@ -38,7 +40,13 @@ const NodeModal = React.memo(({ props }) => {
             </DialogContent>
             <DialogActions>
                 <Button>Add to search</Button>
-                <Button>Publisher's site</Button>
+                <a 
+                    href={props.data.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.data.id.toString() : ""}
+                    target="_blank"
+                    style={{textDecoration: "none"}}
+                >
+                    <Button>Publisher's site</Button>
+                </a>
             </DialogActions>
 
         </Dialog>
