@@ -13,69 +13,79 @@ import "./NetworkView.css"
 
 export default function NodePopover({ props }) {
 
-    console.log(props)
-    const [arrowRef, setArrowRef] = React.useState(null)
-    const isOpen = Boolean(props.popoverAnchorEl)
-  
-    return (
-      <CSSTransition
-        in={isOpen}
-        timeout={250}
-        classNames="popper-transition"
-        unmountOnExit
+  const [arrowRef, setArrowRef] = React.useState(null)
+  const isOpen = Boolean(props.popoverAnchorEl)
+
+  return (
+    <CSSTransition
+      in={isOpen}
+      timeout={250}
+      classNames="popper-transition"
+      unmountOnExit
+    >
+      <Popper
+        className="network-node-popover"
+        className={useStyles().popper}
+        open={true}
+        anchorEl={props.popoverAnchorEl}
+        placement="top"
+        modifiers={{
+          arrow: {
+            enabled: true,
+            element: arrowRef
+          }
+        }}
       >
-        <Popper
-          className="network-node-popover"
-          className={useStyles().popper}
-          open={true}
-          anchorEl={props.popoverAnchorEl}
-          placement="top"
-          modifiers={{
-            arrow: {
-              enabled: true,
-              element: arrowRef
-            }
-          }}
-        >
-          <Grow timeout={350} in={isOpen}>
-            <Paper className={useStyles().paper}>
-              <span className={useStyles().arrow} ref={setArrowRef} />
-              <Grid
-                className="network-node-popover-grid"
-                direction="column"
-                alignItems="center"
-                container
-              >
-                <Grid item xs>
-                  <Typography
-                    align="center"
-                    color="textPrimary"
-                    variant="body1"
-                    gutterBottom
-                  >
-                    {props.data.title}
-                  </Typography>
-                </Grid>
-  
-                <Grid item xs>
-                  <Typography
-                    align="center"
-                    color="textSecondary"
-                    variant="body2"
-                    gutterBottom
-                  >
-                    {props.data.formattedAuthors}
-              </Typography>
-                </Grid>
-  
+        <Grow timeout={350} in={isOpen}>
+          <Paper className={useStyles().paper}>
+            <span className={useStyles().arrow} ref={setArrowRef} />
+            <Grid
+              className="network-node-popover-grid"
+              direction="column"
+              alignItems="center"
+              container
+            >
+              <Grid item xs>
+                <Typography
+                  align="center"
+                  color="textPrimary"
+                  variant="body1"
+                  gutterBottom
+                >
+                  {props.data.title}
+                </Typography>
               </Grid>
-            </Paper>
-          </Grow>
-        </Popper>
-      </CSSTransition>
-    )
-  }
-  
+
+              <Grid item xs>
+                <Typography
+                  align="center"
+                  color="textSecondary"
+                  variant="body2"
+                  gutterBottom
+                >
+                  {props.data.formattedAuthors}
+                </Typography>
+              </Grid>
+
+              <Grid item xs>
+                <Typography
+                  align="center"
+                  color="textSecondary"
+                  variant="body2"
+                  gutterBottom
+                >
+                  {props.data.formattedDate}
+                </Typography>
+              </Grid>
+
+            </Grid>
+          </Paper>
+        </Grow>
+      </Popper>
+    </CSSTransition>
+  )
+}
+
   const useStyles = makeStyles(theme => ({
     popper: {
       zIndex: 1,

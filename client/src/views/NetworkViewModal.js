@@ -33,6 +33,7 @@ const NodeModal = React.memo(({ props }) => {
             <DialogTitle>{props.data.title}</DialogTitle>
             <DialogContent dividers={true}>
                 <DialogContentText>{props.data.formattedAuthors}</DialogContentText>
+                <DialogContentText>{props.data.formattedDate}</DialogContentText>
                 <DialogContentText>{props.data.abstract}</DialogContentText>
             </DialogContent>
             <DialogActions>

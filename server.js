@@ -147,6 +147,55 @@ app.post("/submit_paper", (request, response) => {
       return authorString;
     }
 
+    function formatDate(date) {
+
+      let dateString = ""
+
+      if ("Month" in date) {
+        switch (date["Month"]) {
+          case "Jan":
+            dateString += "January "
+            break
+          case "Feb":
+            dateString += "February "
+            break
+          case "Mar":
+            dateString += "March "
+            break
+          case "Apr":
+            dateString += "April "
+            break
+          case "Jun":
+            dateString += "June "
+            break
+          case "Jul":
+            dateString += "July "
+            break
+          case "Aug":
+            dateString += "August "
+            break
+          case "Sep":
+            dateString += "September "
+            break
+          case "Oct":
+            dateString += "October "
+            break
+          case "Nov":
+            dateString += "November "
+            break
+          case "Dec":
+            dateString += "December "
+            break
+          default:
+            dateString += `${date["Month"]} `
+        }
+      }
+
+      dateString += date["Year"]
+
+      return dateString
+    }
+
     const radii = message.subgraph.nodes.map(node => {
       return scoreToRadius(node)
     })
@@ -157,6 +206,10 @@ app.post("/submit_paper", (request, response) => {
 
     message.subgraph.nodes.forEach(node => {
       node.formattedAuthors = formatAuthors(node.authors)
+    })
+
+    message.subgraph.nodes.forEach(node => {
+      node.formattedDate = formatDate(node.pub_date)
     })
 
     response.send({
