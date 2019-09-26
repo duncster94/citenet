@@ -11,6 +11,9 @@ import ListSubheader from "@material-ui/core/ListSubheader"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 
+import Icon from "@mdi/react"
+import { mdiChevronDown, mdiMagnify } from "@mdi/js"
+
 import queryString from "query-string"
 
 const viewOptions = [
@@ -66,14 +69,21 @@ export default withRouter(function SplitSearchButton(props) {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          \/
+          <Icon 
+            path={mdiChevronDown}
+            size={1}
+          />
         </Button>
         <Button
           onClick={handleClick}
           // Check if `selectedPapers` is an array (default is null)
           disabled={!Boolean(selectedPapers)}
         >
-          search</Button>
+          <Icon
+            path={mdiMagnify}
+            size={1}
+          />
+        </Button>
       </ButtonGroup>
 
       <Menu
