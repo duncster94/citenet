@@ -8,6 +8,7 @@ import { Redirect } from "react-router-dom"
 import queryString from "query-string"
 
 import ViewSidebar from "./ViewSidebar"
+import RankView from "./RankView"
 import NetworkView from "./NetworkView"
 import "./View.css"
 
@@ -58,7 +59,10 @@ export default function View(props) {
     } else {
       if (props.match.params.view === "rank") {
         return (
-          <div style={{position: "absolute"}}>rank</div>
+          <React.Fragment>
+            <RankView props={searchResults} />
+            <ViewSidebar />
+          </React.Fragment>
         )
       } else {
         return (
