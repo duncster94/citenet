@@ -1,6 +1,13 @@
 import React from "react"
+import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
+import Dialog from "@material-ui/core/Dialog"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import Divider from "@material-ui/core/Divider"
 import Typography from "@material-ui/core/Typography"
 import Grid from "@material-ui/core/Grid"
 
@@ -10,7 +17,7 @@ export default function RankView({ props }) {
 
   console.log(props)
 
-  const paperInfoHeight = "150px" // height of left-hand side paper info cards
+  const paperInfoHeight = 200 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.metadata.radii)
 
   function handleScroll(e) {
@@ -57,7 +64,7 @@ export default function RankView({ props }) {
               <div
                 style={{
                   position: "relative",
-                  height: paperInfoHeight,
+                  height: `${paperInfoHeight}px`,
                   // borderStyle: "solid",
                   scrollSnapAlign: "center",
                   marginTop: marginTop,
@@ -71,8 +78,8 @@ export default function RankView({ props }) {
                   style={{ position: "absolute" }}
                 >
                   <circle
-                    cx={`${maxRadius}px`}
-                    cy={`${maxRadius}px`}
+                    cx={maxRadius}
+                    cy={paperInfoHeight/2}
                     r={props.metadata.radii[i]}
                     fill={props.metadata.colours[i]}
                   />
@@ -80,8 +87,10 @@ export default function RankView({ props }) {
                 <Card
                   style={{
                     position: "absolute",
-                    top: maxRadius,
-                    left: maxRadius
+                    top: paperInfoHeight/2,
+                    left: maxRadius,
+                    height: `calc(100% - ${maxRadius}px)`,
+                    width: `calc(100% - ${maxRadius}px - 5px)`
                   }}
                 >
                   <CardContent>
@@ -98,8 +107,45 @@ export default function RankView({ props }) {
       </Grid>
 
       <Grid item xs>
-        <div>test</div>
+        <NodeDialog props={props.subgraph.nodes[0]}/>
       </Grid>
     </Grid>
+  )
+}
+
+
+function NodeDialog({ props }) {
+  console.log(props)
+  return (
+    <Card 
+      style={{
+        display: "flex", 
+        flexDirection: "column", 
+        height: "90vh", 
+        margin: "5vh"
+      }}
+    >
+      <DialogTitle>{props.title}</DialogTitle>
+      <DialogContent 
+        dividers={true}
+        style={{
+          overflowY: "auto"
+        }}
+      >
+        <DialogContentText>{props.formattedAuthors}</DialogContentText>
+        <DialogContentText>{props.formattedDate}</DialogContentText>
+        <DialogContentText>{props.abstract}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button>Add to search</Button>
+        <a
+          href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
+          target="_blank"
+          style={{ textDecoration: "none" }}
+        >
+          <Button>Publisher's site</Button>
+        </a>
+      </DialogActions>
+    </Card>
   )
 }
