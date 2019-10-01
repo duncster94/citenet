@@ -2,12 +2,10 @@ import React from "react"
 import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
-import Dialog from "@material-ui/core/Dialog"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
-import Divider from "@material-ui/core/Divider"
 import Typography from "@material-ui/core/Typography"
 import Grid from "@material-ui/core/Grid"
 
@@ -41,13 +39,15 @@ export default function RankView({ props }) {
       container
     >
       <Grid item xs>
-        <div style={{
-          scrollSnapType: "y mandatory",
-          overflowY: "scroll",
-          maxHeight: "100vh",
-          scrollSnapDestination: "50vh",
-          paddingLeft: "40px"
-        }}
+        <div 
+            style={{
+            scrollSnapType: "y mandatory",
+            overflowY: "scroll",
+            maxHeight: "100vh",
+            scrollSnapDestination: "50vh",
+            paddingLeft: "40px"
+            }}
+            className="lhs-paper-cards"
           onScroll={handleScroll}
         >
 
@@ -81,7 +81,8 @@ export default function RankView({ props }) {
                   // borderStyle: "solid",
                   scrollSnapAlign: "center",
                   marginTop: marginTop,
-                  marginBottom: marginBottom
+                  marginBottom: marginBottom,
+                  marginRight: "2.5vh"
                 }}
                 key={`paper-metadata-${i}`}
               >
@@ -143,7 +144,8 @@ function NodeDialog({ props }) {
             display: "flex",
             flexDirection: "column",
             maxHeight: "90vh",
-            margin: "5vh"
+            margin: "5vh",
+            marginLeft: "2.5vh"
           }}
         >
           <DialogTitle>{props.title}</DialogTitle>
