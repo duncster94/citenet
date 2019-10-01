@@ -17,11 +17,23 @@ export default function RankView({ props }) {
 
   console.log(props)
 
+  const [selectedPaper, setSelectedPaper] = React.useState(props.subgraph.nodes[0])
   const paperInfoHeight = 200 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.metadata.radii)
+  
+  // Currently no Javascript hooks exist for CSS snap scroll events so
+  // for now the `scrollTop` pixel values must be tracked to determine which
+  // paper is currently selected.
+  const pixelIntervals = {}
+  props.subgraph.nodes.forEach((node, i) => {
+    pixelIntervals[i * paperInfoHeight] = node
+  })
 
   function handleScroll(e) {
-    console.log(e.target.scrollTop)
+    // should add scroll debouncing here at some point
+    if (e.target.scrollTop in pixelIntervals) {
+      setSelectedPaper(pixelIntervals[e.target.scrollTop])
+    }
   }
 
   return (
@@ -50,12 +62,13 @@ export default function RankView({ props }) {
           {props.subgraph.nodes.map((node, i) => {
             let marginTop
             let marginBottom
+            const halfPaperInfoHeight = paperInfoHeight / 2
             if (i === 0) {
-              marginTop = "50vh"
+              marginTop = `calc(50vh - ${halfPaperInfoHeight}px)`
               marginBottom = "0vh"
             } else if (i + 1 === props.subgraph.nodes.length) {
               marginTop = "0vh"
-              marginBottom = "50vh"
+              marginBottom = `calc(50vh - ${halfPaperInfoHeight}px)`
             } else {
               marginTop = "0vh"
               marginBottom = "0vh"
@@ -107,7 +120,7 @@ export default function RankView({ props }) {
       </Grid>
 
       <Grid item xs>
-        <NodeDialog props={props.subgraph.nodes[0]}/>
+        <NodeDialog props={selectedPaper}/>
       </Grid>
     </Grid>
   )
@@ -115,37 +128,47 @@ export default function RankView({ props }) {
 
 
 function NodeDialog({ props }) {
-  console.log(props)
+
   return (
-    <Card 
-      style={{
-        display: "flex", 
-        flexDirection: "column", 
-        height: "90vh", 
-        margin: "5vh"
-      }}
+    <Grid
+      container
+      direction="column"
+      justify="center"
+      alignItems="center"
+      style={{ flexGrow: 1, height: "100vh" }}
     >
-      <DialogTitle>{props.title}</DialogTitle>
-      <DialogContent 
-        dividers={true}
-        style={{
-          overflowY: "auto"
-        }}
-      >
-        <DialogContentText>{props.formattedAuthors}</DialogContentText>
-        <DialogContentText>{props.formattedDate}</DialogContentText>
-        <DialogContentText>{props.abstract}</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button>Add to search</Button>
-        <a
-          href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
-          target="_blank"
-          style={{ textDecoration: "none" }}
+      <Grid item>
+        <Card
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            maxHeight: "90vh",
+            margin: "5vh"
+          }}
         >
-          <Button>Publisher's site</Button>
-        </a>
-      </DialogActions>
-    </Card>
+          <DialogTitle>{props.title}</DialogTitle>
+          <DialogContent
+            dividers={true}
+            style={{
+              overflowY: "auto"
+            }}
+          >
+            <DialogContentText>{props.formattedAuthors}</DialogContentText>
+            <DialogContentText>{props.formattedDate}</DialogContentText>
+            <DialogContentText>{props.abstract}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button>Add to search</Button>
+            <a
+              href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
+              target="_blank"
+              style={{ textDecoration: "none" }}
+            >
+              <Button>Publisher's site</Button>
+            </a>
+          </DialogActions>
+        </Card>
+      </Grid>
+    </Grid>
   )
 }
