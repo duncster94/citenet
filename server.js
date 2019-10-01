@@ -195,6 +195,8 @@ app.post("/submit_paper", (request, response) => {
 
       return dateString
     }
+    
+    message.subgraph.nodes.sort((a, b) => (a.score > b.score) ? -1 : 1)
 
     const radii = message.subgraph.nodes.map(node => {
       return scoreToRadius(node)
@@ -203,6 +205,7 @@ app.post("/submit_paper", (request, response) => {
     const colours = message.subgraph.nodes.map(node => {
       return dateToColour(node, min_date, max_date, seeds)
     })
+
 
     message.subgraph.nodes.forEach(node => {
       node.formattedAuthors = formatAuthors(node.authors)

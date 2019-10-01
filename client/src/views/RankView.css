@@ -1,3 +1,9 @@
+.lhs-paper-cards {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow: -moz-scrollbars-none;
+}
+
 .lhs-paper-cards::-webkit-scrollbar {
     display: none;
 }

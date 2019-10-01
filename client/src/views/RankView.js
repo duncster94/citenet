@@ -29,6 +29,7 @@ export default function RankView({ props }) {
 
   function handleScroll(e) {
     // should add scroll debouncing here at some point
+    // also scroll snapping isn't working on edge, will need to polyfill
     if (e.target.scrollTop in pixelIntervals) {
       setSelectedPaper(pixelIntervals[e.target.scrollTop])
     }
@@ -39,15 +40,15 @@ export default function RankView({ props }) {
       container
     >
       <Grid item xs>
-        <div 
-            style={{
+        <div
+          style={{
             scrollSnapType: "y mandatory",
             overflowY: "scroll",
             maxHeight: "100vh",
             scrollSnapDestination: "50vh",
             paddingLeft: "40px"
-            }}
-            className="lhs-paper-cards"
+          }}
+          className="lhs-paper-cards"
           onScroll={handleScroll}
         >
 
@@ -92,16 +93,18 @@ export default function RankView({ props }) {
                   style={{ position: "absolute" }}
                 >
                   <circle
-                    cx={maxRadius}
-                    cy={paperInfoHeight/2}
+                    cx={maxRadius + 2}
+                    cy={(paperInfoHeight / 2) + 2}
                     r={props.metadata.radii[i]}
                     fill={props.metadata.colours[i]}
+                    stroke="#222"
+                    stroke-width="2px"
                   />
                 </svg>
                 <Card
                   style={{
                     position: "absolute",
-                    top: paperInfoHeight/2,
+                    top: paperInfoHeight / 2,
                     left: maxRadius,
                     height: `calc(100% - ${maxRadius}px)`,
                     width: `calc(100% - ${maxRadius}px - 5px)`
@@ -121,7 +124,7 @@ export default function RankView({ props }) {
       </Grid>
 
       <Grid item xs>
-        <NodeDialog props={selectedPaper}/>
+        <NodeDialog props={selectedPaper} />
       </Grid>
     </Grid>
   )
