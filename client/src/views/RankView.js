@@ -108,7 +108,7 @@ export default function RankView({ props }) {
                     position: "absolute",
                     top: paperInfoHeight / 2,
                     left: maxRadius,
-                    height: `calc(100% - ${maxRadius}px)`,
+                    maxHeight: `calc(100% - ${maxRadius}px)`,
                     width: `calc(100% - ${maxRadius}px - 5px)`
                   }}
                 >
