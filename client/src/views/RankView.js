@@ -40,6 +40,17 @@ export default function RankView({ props }) {
       container
     >
       <Grid item xs>
+        <svg
+          style={{
+            position: "absolute",
+            height: "15px",
+            width: "15px",
+            top: "calc(50vh - 7.5px)",
+            left: "10px"
+          }}
+        >
+          <image xlinkHref="/focus-arrow.svg" height="15px" width="15px" />
+        </svg>
         <div
           style={{
             scrollSnapType: "y mandatory",
@@ -51,15 +62,6 @@ export default function RankView({ props }) {
           className="lhs-paper-cards"
           onScroll={handleScroll}
         >
-
-          <div style={{
-            position: "absolute",
-            height: "0px",
-            width: "10vw",
-            top: "50vh",
-            borderStyle: "solid"
-          }}>
-          </div>
           {props.subgraph.nodes.map((node, i) => {
             let marginTop
             let marginBottom
@@ -98,7 +100,7 @@ export default function RankView({ props }) {
                     r={props.metadata.radii[i]}
                     fill={props.metadata.colours[i]}
                     stroke="#222"
-                    stroke-width="2px"
+                    strokeWidth="2px"
                   />
                 </svg>
                 <Card
@@ -111,8 +113,18 @@ export default function RankView({ props }) {
                   }}
                 >
                   <CardContent>
-                    <Typography>
+                    <Typography 
+                      variant="body1"
+                      color="textPrimary"
+                      gutterBottom
+                    >
                       {node.title}
+                    </Typography>
+                    <Typography 
+                      variant="body2"
+                      color="textSecondary"
+                    >
+                      {node.formattedAuthors}
                     </Typography>
                   </CardContent>
                 </Card>
