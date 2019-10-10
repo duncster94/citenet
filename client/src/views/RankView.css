@@ -7,3 +7,18 @@
 .lhs-paper-cards::-webkit-scrollbar {
     display: none;
 }
+
+.node-dialog-enter {
+    opacity: 0;
+}
+.node-dialog-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+}
+.node-dialog-exit {
+    opacity: 1;
+}
+.node-dialog-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}

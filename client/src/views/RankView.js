@@ -6,8 +6,9 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
-import Typography from "@material-ui/core/Typography"
 import Grid from "@material-ui/core/Grid"
+import Typography from "@material-ui/core/Typography"
+import { TransitionGroup, CSSTransition } from "react-transition-group"
 
 import "./RankView.css"
 
@@ -146,46 +147,56 @@ export default function RankView({ props }) {
 function NodeDialog({ props }) {
 
   return (
-    <Grid
-      container
-      direction="column"
-      justify="center"
-      alignItems="center"
-      style={{ flexGrow: 1, height: "100vh" }}
-    >
-      <Grid item>
-        <Card
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            maxHeight: "90vh",
-            margin: "5vh",
-            marginLeft: "2.5vh"
-          }}
-        >
-          <DialogTitle>{props.title}</DialogTitle>
-          <DialogContent
-            dividers={true}
-            style={{
-              overflowY: "auto"
-            }}
+    <TransitionGroup>
+      <CSSTransition
+        timeout={200}
+        key={props.id}
+        classNames="node-dialog"
+      >
+        <div style={{ position: "absolute" }}>
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+          // style={{position: "absolute"}}
           >
-            <DialogContentText>{props.formattedAuthors}</DialogContentText>
-            <DialogContentText>{props.formattedDate}</DialogContentText>
-            <DialogContentText>{props.abstract}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button>Add to search</Button>
-            <a
-              href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
-              target="_blank"
-              style={{ textDecoration: "none" }}
-            >
-              <Button>Publisher's site</Button>
-            </a>
-          </DialogActions>
-        </Card>
-      </Grid>
-    </Grid>
+            <Grid item>
+              <Card
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "90vh",
+                  margin: "5vh",
+                  marginLeft: "2.5vh"
+                }}
+              >
+                <DialogTitle>{props.title}</DialogTitle>
+                <DialogContent
+                  dividers={true}
+                  style={{
+                    overflowY: "auto"
+                  }}
+                >
+                  <DialogContentText>{props.formattedAuthors}</DialogContentText>
+                  <DialogContentText>{props.formattedDate}</DialogContentText>
+                  <DialogContentText>{props.abstract}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button>Add to search</Button>
+                  <a
+                    href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
+                    target="_blank"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button>Publisher's site</Button>
+                  </a>
+                </DialogActions>
+              </Card>
+            </Grid>
+          </Grid>
+        </div>
+      </CSSTransition>
+    </TransitionGroup>
   )
 }
