@@ -8,17 +8,13 @@
     display: none;
 }
 
-.node-dialog-enter {
-    opacity: 0;
+.changed {
+    animation: shake 0.15s;
 }
-.node-dialog-enter-active {
-    opacity: 1;
-    transition: opacity 200ms ease-in;
-}
-.node-dialog-exit {
-    opacity: 1;
-}
-.node-dialog-exit-active {
-    opacity: 0;
-    transition: opacity 200ms ease-in;
-}
+
+@keyframes shake {
+    
+    50% {
+        transform: translate3d(0, 4px, 0)
+    }
+  }

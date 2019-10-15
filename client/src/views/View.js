@@ -16,6 +16,7 @@ export default function View(props) {
 
     const [redirect, setRedirect] = React.useState(false)
     const [searchResults, setSearchResults] = React.useState(null)
+    const [searchQueue, setSearchQueue] = React.useState([])
   
     // Equivalent to `componentDidMount`.
     React.useEffect(() => {
@@ -39,6 +40,7 @@ export default function View(props) {
         })
           .then(response => response.json())
           .then(function(response) {
+            setSearchQueue(response.seeds)
             setSearchResults(response)
             // console.log(response)
           })
@@ -60,14 +62,14 @@ export default function View(props) {
       if (props.match.params.view === "rank") {
         return (
           <React.Fragment>
-            <RankView props={searchResults} />
+            <RankView props={{searchResults, searchQueue}} />
             <ViewSidebar />
           </React.Fragment>
         )
       } else {
         return (
           <React.Fragment>
-            <NetworkView props={searchResults}/>
+            <NetworkView props={{searchResults, searchQueue}}/>
             <ViewSidebar />
           </React.Fragment>
         )

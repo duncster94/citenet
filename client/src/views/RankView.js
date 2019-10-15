@@ -8,7 +8,6 @@ import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
 
 import "./RankView.css"
 
@@ -16,15 +15,15 @@ export default function RankView({ props }) {
 
   console.log(props)
 
-  const [selectedPaper, setSelectedPaper] = React.useState(props.subgraph.nodes[0])
+  const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const paperInfoHeight = 200 // height of left-hand side paper info cards
-  const maxRadius = Math.max(...props.metadata.radii)
+  const maxRadius = Math.max(...props.searchResults.metadata.radii)
   
   // Currently no Javascript hooks exist for CSS snap scroll events so
   // for now the `scrollTop` pixel values must be tracked to determine which
   // paper is currently selected.
   const pixelIntervals = {}
-  props.subgraph.nodes.forEach((node, i) => {
+  props.searchResults.subgraph.nodes.forEach((node, i) => {
     pixelIntervals[i * paperInfoHeight] = node
   })
 
@@ -63,14 +62,14 @@ export default function RankView({ props }) {
           className="lhs-paper-cards"
           onScroll={handleScroll}
         >
-          {props.subgraph.nodes.map((node, i) => {
+          {props.searchResults.subgraph.nodes.map((node, i) => {
             let marginTop
             let marginBottom
             const halfPaperInfoHeight = paperInfoHeight / 2
             if (i === 0) {
               marginTop = `calc(50vh - ${halfPaperInfoHeight}px)`
               marginBottom = "0vh"
-            } else if (i + 1 === props.subgraph.nodes.length) {
+            } else if (i + 1 === props.searchResults.subgraph.nodes.length) {
               marginTop = "0vh"
               marginBottom = `calc(50vh - ${halfPaperInfoHeight}px)`
             } else {
@@ -82,7 +81,6 @@ export default function RankView({ props }) {
                 style={{
                   position: "relative",
                   height: `${paperInfoHeight}px`,
-                  // borderStyle: "solid",
                   scrollSnapAlign: "center",
                   marginTop: marginTop,
                   marginBottom: marginBottom,
@@ -98,10 +96,28 @@ export default function RankView({ props }) {
                   <circle
                     cx={maxRadius + 2}
                     cy={(paperInfoHeight / 2) + 2}
-                    r={props.metadata.radii[i]}
-                    fill={props.metadata.colours[i]}
+                    r={props.searchResults.metadata.radii[i]}
+                    fill={props.searchResults.metadata.colours[i]}
                     stroke="#222"
                     strokeWidth="2px"
+                  />
+                  <clipPath id={`clip_${i}`}>
+                    <circle  
+                      cx={maxRadius + 2}
+                      cy={(paperInfoHeight / 2) + 2}
+                      r={props.searchResults.metadata.radii[i] - 1}
+                    />
+                  </clipPath>
+                  <image
+                    xlinkHref="/hatch.svg"
+                    width="150px"
+                    height="150px"
+                    x={-75 + maxRadius + 2}
+                    y={-75 + (paperInfoHeight / 2) + 2}
+                    style={{
+                      clipPath: `url(#clip_${i})`,
+                      display: props.searchQueue.includes(node.id) ? "inline" : "none"
+                    }}
                   />
                 </svg>
                 <Card
@@ -137,7 +153,10 @@ export default function RankView({ props }) {
       </Grid>
 
       <Grid item xs>
-        <NodeDialog props={selectedPaper} />
+        <NodeDialog 
+          props={selectedPaper} 
+          key={+new Date()}  // unique key needed to retrigger animation
+        />
       </Grid>
     </Grid>
   )
@@ -147,56 +166,48 @@ export default function RankView({ props }) {
 function NodeDialog({ props }) {
 
   return (
-    <TransitionGroup>
-      <CSSTransition
-        timeout={200}
-        key={props.id}
-        classNames="node-dialog"
+    <div style={{overflow: "hidden"}}>
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
       >
-        <div style={{ position: "absolute" }}>
-          <Grid
-            container
-            direction="column"
-            justify="center"
-            alignItems="center"
-          // style={{position: "absolute"}}
+        <Grid item>
+          <Card
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              maxHeight: "90vh",
+              margin: "5vh",
+              marginLeft: "2.5vh"
+            }}
+            className="changed"
           >
-            <Grid item>
-              <Card
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  maxHeight: "90vh",
-                  margin: "5vh",
-                  marginLeft: "2.5vh"
-                }}
+            <DialogTitle>{props.title}</DialogTitle>
+            <DialogContent
+              dividers={true}
+              style={{
+                overflowY: "auto"
+              }}
+            >
+              <DialogContentText>{props.formattedAuthors}</DialogContentText>
+              <DialogContentText>{props.formattedDate}</DialogContentText>
+              <DialogContentText>{props.abstract}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button>Add to search</Button>
+              <a
+                href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
+                target="_blank"
+                style={{ textDecoration: "none" }}
               >
-                <DialogTitle>{props.title}</DialogTitle>
-                <DialogContent
-                  dividers={true}
-                  style={{
-                    overflowY: "auto"
-                  }}
-                >
-                  <DialogContentText>{props.formattedAuthors}</DialogContentText>
-                  <DialogContentText>{props.formattedDate}</DialogContentText>
-                  <DialogContentText>{props.abstract}</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button>Add to search</Button>
-                  <a
-                    href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
-                    target="_blank"
-                    style={{ textDecoration: "none" }}
-                  >
-                    <Button>Publisher's site</Button>
-                  </a>
-                </DialogActions>
-              </Card>
-            </Grid>
-          </Grid>
-        </div>
-      </CSSTransition>
-    </TransitionGroup>
+                <Button>Publisher's site</Button>
+              </a>
+            </DialogActions>
+          </Card>
+        </Grid>
+      </Grid>
+    </div>
   )
 }
