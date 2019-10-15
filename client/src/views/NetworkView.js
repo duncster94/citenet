@@ -8,6 +8,8 @@ import "./NetworkView.css"
 
 export default function NetworkView({ props }) {
 
+  console.log(props.searchQueue)
+
   const svgRef = React.useRef(null)
   
   const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
@@ -64,14 +66,14 @@ export default function NetworkView({ props }) {
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("collide", d3.forceCollide()
         .radius(function(_, idx) {
-            return props.metadata.radii[idx] + 3;
+            return props.searchResults.metadata.radii[idx] + 3;
         }))
       .force("link", d3.forceLink().id(function(d) {return d.id}))
 
     const links = g.append("g")
       .attr("class", "network-links")
       .selectAll("line")
-      .data(props.subgraph.links)
+      .data(props.searchResults.subgraph.links)
       .enter()
       .append("line")
       // .attr("marker-end", "url(#arrowhead)")
@@ -79,7 +81,7 @@ export default function NetworkView({ props }) {
     const nodes = g.append("g")
       .attr("class", "network-nodes")
       .selectAll("g")
-      .data(props.subgraph.nodes)
+      .data(props.searchResults.subgraph.nodes)
       .enter()
       .append("g")
 
@@ -89,10 +91,10 @@ export default function NetworkView({ props }) {
 
     const circles = nodes.append("circle")
       .attr("r", function(_, idx) {
-        return props.metadata.radii[idx]
+        return props.searchResults.metadata.radii[idx]
       })
       .attr("fill", function(_, idx) {
-        return props.metadata.colours[idx]
+        return props.searchResults.metadata.colours[idx]
       })
       .attr("stroke", "#222")
       .attr("stroke-width", "2px")
@@ -136,7 +138,7 @@ export default function NetworkView({ props }) {
       })
       .append("circle")
       .attr("r", function (_, idx) {
-        return props.metadata.radii[idx] - 1
+        return props.searchResults.metadata.radii[idx] - 1
       })
 
     // Add image overlay for refined search papers.
@@ -161,12 +163,12 @@ export default function NetworkView({ props }) {
       })
       .style("display", function (d) {
 
-        // Check if node is in refine list, if so,
+        // Check if node is in search queue list, if so,
         // display overlay.
-        if (props.seeds.includes(d.id)) {
-          return "inline";
+        if (props.searchQueue.includes(d.id)) {
+          return "inline"
         } else {
-          return "none";
+          return "none"
         }
       })
 
@@ -176,8 +178,8 @@ export default function NetworkView({ props }) {
         .on("drag", dragging)
         .on("end", dragEnd))
 
-    simulation.nodes(props.subgraph.nodes)
-    simulation.force("link").links(props.subgraph.links)
+    simulation.nodes(props.searchResults.subgraph.nodes)
+    simulation.force("link").links(props.searchResults.subgraph.links)
 
     simulation.on("tick", () => {
       links

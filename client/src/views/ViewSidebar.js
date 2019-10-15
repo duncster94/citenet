@@ -12,7 +12,7 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import { makeStyles } from "@material-ui/core/styles"
 
 import Icon from "@mdi/react"
-import { mdiChevronRight } from "@mdi/js"
+import { mdiChevronLeft } from "@mdi/js"
 
 const useStyles = makeStyles({
     list: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     },
     drawerButton: {
         position: "absolute",
-        left: 0,
+        right: 0,
         top: 0
     }
 })
@@ -70,7 +70,7 @@ export default withRouter(function ViewSidebar(props) {
                 aria-label="Open sidebar"
             >
                 <Icon
-                    path={mdiChevronRight}
+                    path={mdiChevronLeft}
                     size={1}
                 />
             </IconButton>
@@ -78,6 +78,7 @@ export default withRouter(function ViewSidebar(props) {
                 open={isOpen}
                 onClose={toggleDrawer(false)}
                 onOpen={toggleDrawer(true)}
+                anchor="right"
             >
                 {drawer}
             </SwipeableDrawer>
