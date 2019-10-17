@@ -1,18 +1,9 @@
 import React from "react"
-
-import Button from "@material-ui/core/Button"
-
 import Dialog from "@material-ui/core/Dialog"
-import DialogActions from "@material-ui/core/DialogActions"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogContentText from "@material-ui/core/DialogContentText"
-import DialogTitle from "@material-ui/core/DialogTitle"
-
+import ViewDialog from "./ViewDialog"
 import "./NetworkView.css"
 
-const NodeModal = React.memo(({ props }) => {
-    
-    console.log(props.isModalOpen)
+export default function NodeModal({ props }) {
     
     function handleClose() {
         props.setIsModalOpen(false)
@@ -22,8 +13,6 @@ const NodeModal = React.memo(({ props }) => {
         event.stopPropagation()
     }
 
-    console.log(props)
-
     return (
         <Dialog
             open={props.isModalOpen}
@@ -32,27 +21,7 @@ const NodeModal = React.memo(({ props }) => {
             scroll="paper"
             aria-labelledby="scroll-dialog-title"
         >
-            <DialogTitle>{props.data.title}</DialogTitle>
-            <DialogContent dividers={true}>
-                <DialogContentText>{props.data.formattedAuthors}</DialogContentText>
-                <DialogContentText>{props.data.formattedDate}</DialogContentText>
-                <DialogContentText>{props.data.abstract}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button>Add to search</Button>
-                <a 
-                    href={props.data.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.data.id.toString() : ""}
-                    target="_blank"
-                    style={{textDecoration: "none"}}
-                >
-                    <Button>Publisher's site</Button>
-                </a>
-            </DialogActions>
-
+            <ViewDialog props={props} />
         </Dialog>
     )
-}, function(prevProps, nextProps) {
-    return prevProps.props.isModalOpen === nextProps.props.isModalOpen
-})
-
-export default NodeModal
+}

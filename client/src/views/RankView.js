@@ -9,11 +9,12 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 
+import ViewDialog from "./ViewDialog"
 import "./RankView.css"
 
 export default function RankView({ props }) {
 
-  console.log(props)
+  // console.log(props)
 
   const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const paperInfoHeight = 200 // height of left-hand side paper info cards
@@ -154,7 +155,7 @@ export default function RankView({ props }) {
 
       <Grid item xs>
         <NodeDialog 
-          props={selectedPaper} 
+          props={{selectedPaper, searchQueue: props.searchQueue, setSearchQueue: props.setSearchQueue}}
           key={+new Date()}  // unique key needed to retrigger animation
         />
       </Grid>
@@ -184,27 +185,7 @@ function NodeDialog({ props }) {
             }}
             className="changed"
           >
-            <DialogTitle>{props.title}</DialogTitle>
-            <DialogContent
-              dividers={true}
-              style={{
-                overflowY: "auto"
-              }}
-            >
-              <DialogContentText>{props.formattedAuthors}</DialogContentText>
-              <DialogContentText>{props.formattedDate}</DialogContentText>
-              <DialogContentText>{props.abstract}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button>Add to search</Button>
-              <a
-                href={props.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.id.toString() : ""}
-                target="_blank"
-                style={{ textDecoration: "none" }}
-              >
-                <Button>Publisher's site</Button>
-              </a>
-            </DialogActions>
+            <ViewDialog props={props}/>
           </Card>
         </Grid>
       </Grid>

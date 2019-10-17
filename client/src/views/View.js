@@ -17,11 +17,11 @@ export default function View(props) {
     const [redirect, setRedirect] = React.useState(false)
     const [searchResults, setSearchResults] = React.useState(null)
     const [searchQueue, setSearchQueue] = React.useState([])
-  
+
     // Equivalent to `componentDidMount`.
     React.useEffect(() => {
       let paperIDs = queryString.parse(props.location.search, {arrayFormat: 'comma'})
-  
+
       // Check if `paperIDs` is empty and if so, redirect to 404.
       if (Object.entries(paperIDs).length === 0) {
         setRedirect(true)
@@ -42,7 +42,7 @@ export default function View(props) {
           .then(function(response) {
             setSearchQueue(response.seeds)
             setSearchResults(response)
-            // console.log(response)
+            console.log(response)
           })
       }
     }, [])
@@ -62,15 +62,15 @@ export default function View(props) {
       if (props.match.params.view === "rank") {
         return (
           <React.Fragment>
-            <RankView props={{searchResults, searchQueue}} />
-            <ViewSidebar />
+            <RankView props={{searchResults, searchQueue, setSearchQueue}} />
+            <ViewSidebar props={{searchQueue, view: "rank"}}/>
           </React.Fragment>
         )
       } else {
         return (
           <React.Fragment>
-            <NetworkView props={{searchResults, searchQueue}}/>
-            <ViewSidebar />
+            <NetworkView props={{searchResults, searchQueue, setSearchQueue}}/>
+            <ViewSidebar props={{searchQueue, view: "network"}}/>
           </React.Fragment>
         )
       }
