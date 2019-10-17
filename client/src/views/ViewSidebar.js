@@ -77,6 +77,9 @@ export default withRouter(function ViewSidebar(props) {
                 <ListItem 
                     button
                     onClick={handleRefineClick}
+                    disabled={props.props.searchQueue.length === 0 ?
+                        true :
+                        false}
                 >
                     <ListItemText primary="Refine Search" />
                 </ListItem>
