@@ -9,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 
+import ViewDialog from "./ViewDialog"
 import "./RankView.css"
 
 export default function RankView({ props }) {
@@ -165,22 +166,22 @@ export default function RankView({ props }) {
 
 function NodeDialog({ props }) {
 
-  function handleAddToSearchClick() {
-    // props.searchQueue.push(props.selectedPaper.id)
-    if (props.searchQueue.includes(props.selectedPaper.id)) {
+  // function handleAddToSearchClick() {
+  //   // props.searchQueue.push(props.selectedPaper.id)
+  //   if (props.searchQueue.includes(props.selectedPaper.id)) {
       
-      // https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
-      let array = [...props.searchQueue]
-      let index = array.indexOf(props.selectedPaper.id)
-      if (index !== -1) {
-        array.splice(index, 1)
-        props.setSearchQueue(array)
-      }
+  //     // https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
+  //     let array = [...props.searchQueue]
+  //     let index = array.indexOf(props.selectedPaper.id)
+  //     if (index !== -1) {
+  //       array.splice(index, 1)
+  //       props.setSearchQueue(array)
+  //     }
 
-    } else {
-      props.setSearchQueue([...props.searchQueue, props.selectedPaper.id])
-    }
-  }
+  //   } else {
+  //     props.setSearchQueue([...props.searchQueue, props.selectedPaper.id])
+  //   }
+  // }
 
   return (
     <div style={{overflow: "hidden"}}>
@@ -201,37 +202,7 @@ function NodeDialog({ props }) {
             }}
             className="changed"
           >
-            <DialogTitle>{props.selectedPaper.title}</DialogTitle>
-            <DialogContent
-              dividers={true}
-              style={{
-                overflowY: "auto"
-              }}
-            >
-              <DialogContentText>
-                {props.selectedPaper.formattedAuthors}
-              </DialogContentText>
-              <DialogContentText>
-                {props.selectedPaper.formattedDate}
-              </DialogContentText>
-              <DialogContentText>
-                {props.selectedPaper.abstract}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleAddToSearchClick}
-              >
-                Add to search
-              </Button>
-              <a
-                href={props.selectedPaper.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.selectedPaper.id.toString() : ""}
-                target="_blank"
-                style={{ textDecoration: "none" }}
-              >
-                <Button>Publisher's site</Button>
-              </a>
-            </DialogActions>
+            <ViewDialog props={props}/>
           </Card>
         </Grid>
       </Grid>

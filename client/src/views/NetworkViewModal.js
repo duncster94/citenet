@@ -8,6 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
 
+import ViewDialog from "./ViewDialog"
 import "./NetworkView.css"
 
 const NodeModal = React.memo(({ props }) => {
@@ -32,23 +33,7 @@ const NodeModal = React.memo(({ props }) => {
             scroll="paper"
             aria-labelledby="scroll-dialog-title"
         >
-            <DialogTitle>{props.data.title}</DialogTitle>
-            <DialogContent dividers={true}>
-                <DialogContentText>{props.data.formattedAuthors}</DialogContentText>
-                <DialogContentText>{props.data.formattedDate}</DialogContentText>
-                <DialogContentText>{props.data.abstract}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button>Add to search</Button>
-                <a 
-                    href={props.data.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.data.id.toString() : ""}
-                    target="_blank"
-                    style={{textDecoration: "none"}}
-                >
-                    <Button>Publisher's site</Button>
-                </a>
-            </DialogActions>
-
+            <ViewDialog props={props} />
         </Dialog>
     )
 }, function(prevProps, nextProps) {

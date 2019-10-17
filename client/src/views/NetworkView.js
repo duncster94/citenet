@@ -228,6 +228,18 @@ export default function NetworkView({ props }) {
 
   }, [])
 
+  // On `searchQueue` change, manually set node hatch display.
+  React.useEffect(() => {
+    d3.selectAll(".hatch")
+      .style("display", function (d) {
+        if (props.searchQueue.includes(d.id)) {
+          return "inline"
+        } else {
+          return "none"
+        }
+      })
+  }, [props.searchQueue])
+
   return (
     <svg
       className="network-root"
@@ -243,7 +255,9 @@ export default function NetworkView({ props }) {
       <NodeModal props={{
         isModalOpen,
         setIsModalOpen,
-        data: paperData
+        selectedPaper: paperData,
+        searchQueue: props.searchQueue,
+        setSearchQueue: props.setSearchQueue
       }} />
     </svg>
   )
