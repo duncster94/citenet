@@ -14,6 +14,8 @@ import { makeStyles } from "@material-ui/core/styles"
 import Icon from "@mdi/react"
 import { mdiChevronLeft } from "@mdi/js"
 
+import queryString from "query-string"
+
 const useStyles = makeStyles({
     list: {
         width: 250,
@@ -41,6 +43,17 @@ export default withRouter(function ViewSidebar(props) {
         props.history.push("/")
     }
 
+    const handleRefineClick = () => {
+        // Refine search
+        // console.log(props.props.searchQueue)
+        const query = queryString.stringify(
+            { id: props.props.searchQueue }, 
+            { arrayFormat: 'comma' }
+        )
+        console.log(query)
+        props.history.push(`/view/${props.props.view}?${query}`)
+    }
+
     const drawer = (
         <div 
             className={classes.list}
@@ -49,15 +62,24 @@ export default withRouter(function ViewSidebar(props) {
             onKeyDown={toggleDrawer(false)}
         >
             <List>
-                <ListItem button
+                <ListItem 
+                    button
                     onClick={handleHomeClick}
                 >
                     <ListItemText primary="Home" />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary="Rank View" />
+                    <ListItemText 
+                        primary={props.props.view === "rank" ? "Network View" : "Rank View"}
+                    />
                 </ListItem>
                 <Divider />
+                <ListItem 
+                    button
+                    onClick={handleRefineClick}
+                >
+                    <ListItemText primary="Refine Search" />
+                </ListItem>
             </List>
         </div>
     )
