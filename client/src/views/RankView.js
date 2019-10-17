@@ -166,23 +166,6 @@ export default function RankView({ props }) {
 
 function NodeDialog({ props }) {
 
-  // function handleAddToSearchClick() {
-  //   // props.searchQueue.push(props.selectedPaper.id)
-  //   if (props.searchQueue.includes(props.selectedPaper.id)) {
-      
-  //     // https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
-  //     let array = [...props.searchQueue]
-  //     let index = array.indexOf(props.selectedPaper.id)
-  //     if (index !== -1) {
-  //       array.splice(index, 1)
-  //       props.setSearchQueue(array)
-  //     }
-
-  //   } else {
-  //     props.setSearchQueue([...props.searchQueue, props.selectedPaper.id])
-  //   }
-  // }
-
   return (
     <div style={{overflow: "hidden"}}>
       <Grid

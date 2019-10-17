@@ -14,7 +14,6 @@ export default function ViewDialog({ props }) {
     function handleAddToSearchClick() {
 
         if (props.searchQueue.includes(props.selectedPaper.id)) {
-
             // https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
             let array = [...props.searchQueue]
             let index = array.indexOf(props.selectedPaper.id)
@@ -22,7 +21,6 @@ export default function ViewDialog({ props }) {
                 array.splice(index, 1)
                 props.setSearchQueue(array)
             }
-
         } else {
             props.setSearchQueue([...props.searchQueue, props.selectedPaper.id])
         }
@@ -32,18 +30,29 @@ export default function ViewDialog({ props }) {
         <React.Fragment>
             <DialogTitle>{props.selectedPaper.title}</DialogTitle>
             <DialogContent dividers={true}>
-                <DialogContentText>{props.selectedPaper.formattedAuthors}</DialogContentText>
-                <DialogContentText>{props.selectedPaper.formattedDate}</DialogContentText>
-                <DialogContentText>{props.selectedPaper.abstract}</DialogContentText>
+                <DialogContentText>
+                    {props.selectedPaper.formattedAuthors}
+                </DialogContentText>
+                <DialogContentText>
+                    {props.selectedPaper.formattedDate}
+                </DialogContentText>
+                <DialogContentText>
+                    {props.selectedPaper.abstract}
+                </DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button
                     onClick={handleAddToSearchClick}
                 >
-                    Add to search
+                    {props.searchQueue.includes(props.selectedPaper.id) ?
+                        "Remove from queue" :
+                        "Add to queue"}
                 </Button>
                 <a
-                    href={props.selectedPaper.id ? "https://www.ncbi.nlm.nih.gov/pubmed/" + props.selectedPaper.id.toString() : ""}
+                    href={props.selectedPaper.id ?
+                        "https://www.ncbi.nlm.nih.gov/pubmed/" +
+                            props.selectedPaper.id.toString() :
+                        ""}
                     target="_blank"
                     style={{ textDecoration: "none" }}
                 >
