@@ -38,19 +38,25 @@ export default withRouter(function ViewSidebar(props) {
         setIsOpen(open)
     }
 
-    const handleHomeClick = () => {
+    function handleHomeClick() {
         // Switch to view.
         props.history.push("/")
     }
 
-    const handleRefineClick = () => {
+    function handleViewSwitchClick() {
+        if (props.props.view === "rank") {
+            props.history.push(`/view/network${props.location.search}`)
+        } else {
+            props.history.push(`/view/rank${props.location.search}`)
+        }
+    }
+
+    function handleRefineClick() {
         // Refine search
-        // console.log(props.props.searchQueue)
         const query = queryString.stringify(
             { id: props.props.searchQueue }, 
             { arrayFormat: 'comma' }
         )
-        console.log(query)
         props.history.push(`/view/${props.props.view}?${query}`)
     }
 
@@ -68,9 +74,14 @@ export default withRouter(function ViewSidebar(props) {
                 >
                     <ListItemText primary="Home" />
                 </ListItem>
-                <ListItem button>
+                <ListItem 
+                    button
+                    onClick={handleViewSwitchClick}
+                >
                     <ListItemText 
-                        primary={props.props.view === "rank" ? "Network View" : "Rank View"}
+                        primary={props.props.view === "rank" ? 
+                            "Network View" : 
+                            "Rank View"}
                     />
                 </ListItem>
                 <Divider />
