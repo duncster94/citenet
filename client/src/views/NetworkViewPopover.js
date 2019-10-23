@@ -86,71 +86,71 @@ export default function NodePopover({ props }) {
   )
 }
 
-  const useStyles = makeStyles(theme => ({
-    popper: {
-      zIndex: 1,
-      '&[x-placement*="bottom"] $arrow': {
-        top: 0,
-        left: 0,
-        marginTop: "-0.9em",
-        width: "3em",
-        height: "1em",
-        "&::before": {
-          borderWidth: "0 1em 1em 1em",
-          borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
-        },
-      },
-      '&[x-placement*="top"] $arrow': {
-        bottom: 0,
-        left: 0,
-        marginBottom: "-0.9em",
-        width: "3em",
-        height: "1em",
-        "&::before": {
-          borderWidth: "1em 1em 0 1em",
-          borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
-        },
-      },
-      '&[x-placement*="right"] $arrow': {
-        left: 0,
-        marginLeft: "-0.9em",
-        height: "3em",
-        width: "1em",
-        "&::before": {
-          borderWidth: "1em 1em 1em 0",
-          borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
-        },
-      },
-      '&[x-placement*="left"] $arrow': {
-        right: 0,
-        marginRight: "-0.9em",
-        height: "3em",
-        width: "1em",
-        "&::before": {
-          borderWidth: "1em 0 1em 1em",
-          borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
-        },
-      },
-    },
-
-    paper: {
-      backgroundColor: "rgba(255, 255, 255, 0.95)"
-    },
-
-    arrow: {
-      position: "absolute",
-      fontSize: 7,
+const useStyles = makeStyles(theme => ({
+  popper: {
+    zIndex: 1,
+    '&[x-placement*="bottom"] $arrow': {
+      top: 0,
+      left: 0,
+      marginTop: "-0.9em",
       width: "3em",
-      height: "3em",
-      pointerEvents: "none",
-      color: "rgba(255, 255, 255, 0.95)",
+      height: "1em",
       "&::before": {
-        content: '""',
-        margin: "auto",
-        display: "block",
-        width: 0,
-        height: 0,
-        borderStyle: "solid",
-      }
+        borderWidth: "0 1em 1em 1em",
+        borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
+      },
+    },
+    '&[x-placement*="top"] $arrow': {
+      bottom: 0,
+      left: 0,
+      marginBottom: "-0.9em",
+      width: "3em",
+      height: "1em",
+      "&::before": {
+        borderWidth: "1em 1em 0 1em",
+        borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
+      },
+    },
+    '&[x-placement*="right"] $arrow': {
+      left: 0,
+      marginLeft: "-0.9em",
+      height: "3em",
+      width: "1em",
+      "&::before": {
+        borderWidth: "1em 1em 1em 0",
+        borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+      },
+    },
+    '&[x-placement*="left"] $arrow': {
+      right: 0,
+      marginRight: "-0.9em",
+      height: "3em",
+      width: "1em",
+      "&::before": {
+        borderWidth: "1em 0 1em 1em",
+        borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
+      },
+    },
+  },
+
+  paper: {
+    backgroundColor: "rgba(255, 255, 255, 0.95)"
+  },
+
+  arrow: {
+    position: "absolute",
+    fontSize: 7,
+    width: "3em",
+    height: "3em",
+    pointerEvents: "none",
+    color: "rgba(255, 255, 255, 0.95)",
+    "&::before": {
+      content: '""',
+      margin: "auto",
+      display: "block",
+      width: 0,
+      height: 0,
+      borderStyle: "solid",
     }
-  }))
+  }
+}))

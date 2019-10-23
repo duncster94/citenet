@@ -4,24 +4,24 @@ import ViewDialog from "./ViewDialog"
 import "./NetworkView.css"
 
 export default function NodeModal({ props }) {
-    
-    function handleClose() {
-        props.setIsModalOpen(false)
-    }
 
-    function handleClick(event) {
-        event.stopPropagation()
-    }
+  function handleClose() {
+    props.setIsModalOpen(false)
+  }
 
-    return (
-        <Dialog
-            open={props.isModalOpen}
-            onClose={handleClose}
-            onClick={handleClick}
-            scroll="paper"
-            aria-labelledby="scroll-dialog-title"
-        >
-            <ViewDialog props={props} />
-        </Dialog>
-    )
+  function handleClick(event) {
+    event.stopPropagation()
+  }
+
+  return (
+    <Dialog
+      open={props.isModalOpen}
+      onClose={handleClose}
+      onClick={handleClick}
+      scroll="paper"
+      aria-labelledby="scroll-dialog-title"
+    >
+      <ViewDialog props={props} />
+    </Dialog>
+  )
 }

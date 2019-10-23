@@ -30,9 +30,9 @@ export default withRouter(function SplitSearchButton(props) {
   const { selectedView, setSelectedView, selectedPapers } = props.props
 
   function handleClick() {
-    
+
     // Create query string.
-    const query = queryString.stringify({id: selectedPapers}, {arrayFormat: 'comma'})
+    const query = queryString.stringify({ id: selectedPapers }, { arrayFormat: 'comma' })
     let view
     if (selectedView === 0) {
       view = 'rank'
@@ -60,7 +60,7 @@ export default withRouter(function SplitSearchButton(props) {
     <React.Fragment>
       <ButtonGroup
         variant="contained"
-        color="primary" 
+        color="primary"
         aria-label="split button"
       >
         <Button
@@ -69,7 +69,7 @@ export default withRouter(function SplitSearchButton(props) {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          <Icon 
+          <Icon
             path={mdiChevronDown}
             size={1}
           />
@@ -104,7 +104,7 @@ export default withRouter(function SplitSearchButton(props) {
           <MenuItem
             key={option}
             onClick={event => handleMenuItemClick(event, index)}
-            selected={index===selectedView}
+            selected={index === selectedView}
           >
             {option}
           </MenuItem>

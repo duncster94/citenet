@@ -19,7 +19,7 @@ export default function RankView({ props }) {
   const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const paperInfoHeight = 200 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.searchResults.metadata.radii)
-  
+
   // Currently no Javascript hooks exist for CSS snap scroll events so
   // for now the `scrollTop` pixel values must be tracked to determine which
   // paper is currently selected.
@@ -103,7 +103,7 @@ export default function RankView({ props }) {
                     strokeWidth="2px"
                   />
                   <clipPath id={`clip_${i}`}>
-                    <circle  
+                    <circle
                       cx={maxRadius + 2}
                       cy={(paperInfoHeight / 2) + 2}
                       r={props.searchResults.metadata.radii[i] - 1}
@@ -131,14 +131,14 @@ export default function RankView({ props }) {
                   }}
                 >
                   <CardContent>
-                    <Typography 
+                    <Typography
                       variant="body1"
                       color="textPrimary"
                       gutterBottom
                     >
                       {node.title}
                     </Typography>
-                    <Typography 
+                    <Typography
                       variant="body2"
                       color="textSecondary"
                     >
@@ -154,8 +154,8 @@ export default function RankView({ props }) {
       </Grid>
 
       <Grid item xs>
-        <NodeDialog 
-          props={{selectedPaper, searchQueue: props.searchQueue, setSearchQueue: props.setSearchQueue}}
+        <NodeDialog
+          props={{ selectedPaper, searchQueue: props.searchQueue, setSearchQueue: props.setSearchQueue }}
           key={+new Date()}  // unique key needed to retrigger animation
         />
       </Grid>
@@ -167,7 +167,7 @@ export default function RankView({ props }) {
 function NodeDialog({ props }) {
 
   return (
-    <div style={{overflow: "hidden"}}>
+    <div style={{ overflow: "hidden" }}>
       <Grid
         container
         direction="column"
@@ -185,7 +185,7 @@ function NodeDialog({ props }) {
             }}
             className="changed"
           >
-            <ViewDialog props={props}/>
+            <ViewDialog props={props} />
           </Card>
         </Grid>
       </Grid>
