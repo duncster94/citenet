@@ -82,6 +82,14 @@ export default function SearchBar(props) {
           IndicatorSeparator: () => null
         }
       }
+      theme={(theme) => ({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          primary: "#ffae00",
+          primary25: "#ffeeca"
+        }
+      })}
     />
   )
 }
