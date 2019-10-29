@@ -12,7 +12,13 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer"
 import { makeStyles } from "@material-ui/core/styles"
 
 import Icon from "@mdi/react"
-import { mdiChevronLeft } from "@mdi/js"
+import { 
+  mdiChevronLeft, 
+  mdiHomeOutline, 
+  mdiGraphOutline,
+  mdiFormatListBulleted,
+  mdiRedoVariant
+} from "@mdi/js"
 
 import queryString from "query-string"
 
@@ -72,12 +78,27 @@ export default withRouter(function ViewSidebar(props) {
           button
           onClick={handleHomeClick}
         >
+          <ListItemIcon>
+            <Icon
+              path={mdiHomeOutline}
+              size={1}
+            />
+          </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
         <ListItem
           button
           onClick={handleViewSwitchClick}
         >
+          <ListItemIcon>
+            <Icon
+              path={props.props.view === "rank" ? 
+                mdiGraphOutline :
+                mdiFormatListBulleted
+              }
+              size={1}
+            />
+          </ListItemIcon>
           <ListItemText
             primary={props.props.view === "rank" ?
               "Network View" :
@@ -92,6 +113,12 @@ export default withRouter(function ViewSidebar(props) {
             true :
             false}
         >
+          <ListItemIcon>
+            <Icon
+              path={mdiRedoVariant}
+              size={1}
+            />
+          </ListItemIcon>
           <ListItemText primary="Refine Search" />
         </ListItem>
       </List>

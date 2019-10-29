@@ -1,11 +1,6 @@
 import React from "react"
-import Button from "@material-ui/core/Button"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
-import DialogActions from "@material-ui/core/DialogActions"
-import DialogContent from "@material-ui/core/DialogContent"
-import DialogContentText from "@material-ui/core/DialogContentText"
-import DialogTitle from "@material-ui/core/DialogTitle"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 
@@ -13,8 +8,6 @@ import ViewDialog from "./ViewDialog"
 import "./RankView.css"
 
 export default function RankView({ props }) {
-
-  // console.log(props)
 
   const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const paperInfoHeight = 200 // height of left-hand side paper info cards

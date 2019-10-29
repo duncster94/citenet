@@ -6,6 +6,15 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
+import IconButton from "@material-ui/core/IconButton"
+import Tooltip from "@material-ui/core/Tooltip"
+
+import Icon from "@mdi/react"
+import { 
+  mdiPlusBox,
+  mdiMinusBox,
+  mdiOpenInNew
+} from "@mdi/js"
 
 import "./NetworkView.css"
 
@@ -41,23 +50,52 @@ export default function ViewDialog({ props }) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={handleAddToSearchClick}
+        <Tooltip 
+          title={props.searchQueue.includes(props.selectedPaper.id) ?
+            "Remove from search queue" :
+            "Add to search queue"}
+          placement="top"
+          enterDelay={600}
+          leaveDelay={100}
         >
-          {props.searchQueue.includes(props.selectedPaper.id) ?
-            "Remove from queue" :
-            "Add to queue"}
-        </Button>
-        <a
-          href={props.selectedPaper.id ?
-            "https://www.ncbi.nlm.nih.gov/pubmed/" +
-            props.selectedPaper.id.toString() :
-            ""}
-          target="_blank"
-          style={{ textDecoration: "none" }}
+          <IconButton
+            onClick={handleAddToSearchClick}
+            aria-label="Add to search queue"
+          >
+            <Icon
+              path={props.searchQueue.includes(props.selectedPaper.id) ?
+                mdiMinusBox :
+                mdiPlusBox} 
+              size={1}
+            />       
+          </IconButton>
+        </Tooltip>
+        <Tooltip 
+          title="Go to publisher's site"
+          placement="top"
+          enterDelay={600}
+          leaveDelay={100}
         >
-          <Button>Publisher's site</Button>
-        </a>
+          <a
+            href={props.selectedPaper.id ?
+              "https://www.ncbi.nlm.nih.gov/pubmed/" +
+              props.selectedPaper.id.toString() :
+              ""}
+            target="_blank"
+            style={{ textDecoration: "none" }}
+          >
+            <IconButton
+              // onClick={handleAddToSearchClick}
+              aria-label="To publisher's site"
+            >
+              <Icon
+                path={mdiOpenInNew} 
+                size={1}
+              />       
+            </IconButton>
+          </a>
+        </Tooltip>
+        <div style={{flex: "1 0 0"}} /> {/* added so buttons float left */}
       </DialogActions>
     </React.Fragment>
   )
