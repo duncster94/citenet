@@ -7,12 +7,18 @@ import ButtonGroup from "@material-ui/core/ButtonGroup"
 
 import Divider from "@material-ui/core/Divider"
 import ListSubheader from "@material-ui/core/ListSubheader"
+import ListItemIcon from "@material-ui/core/ListItemIcon"
 
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 
 import Icon from "@mdi/react"
-import { mdiChevronDown, mdiMagnify } from "@mdi/js"
+import { 
+  mdiChevronDown, 
+  mdiMagnify,
+  mdiGraphOutline,
+  mdiFormatListBulleted, 
+} from "@mdi/js"
 
 import queryString from "query-string"
 
@@ -32,12 +38,12 @@ export default withRouter(function SplitSearchButton(props) {
   function handleClick() {
 
     // Create query string.
-    const query = queryString.stringify({ id: selectedPapers }, { arrayFormat: 'comma' })
+    const query = queryString.stringify({ id: selectedPapers }, { arrayFormat: "comma" })
     let view
     if (selectedView === 0) {
-      view = 'rank'
+      view = "rank"
     } else {
-      view = 'network'
+      view = "network"
     }
     // Switch to view.
     props.history.push(`/view/${view}?${query}`)
@@ -68,6 +74,10 @@ export default withRouter(function SplitSearchButton(props) {
           size="small"
           aria-haspopup="true"
           onClick={handleToggle}
+          style={{
+            // borderLeft: "1px solid #aaa",
+            borderRadius: "0"
+          }}
         >
           <Icon
             path={mdiChevronDown}
@@ -106,6 +116,14 @@ export default withRouter(function SplitSearchButton(props) {
             onClick={event => handleMenuItemClick(event, index)}
             selected={index === selectedView}
           >
+            <ListItemIcon>
+              <Icon 
+                path={option === "Ranked List" ?
+                  mdiFormatListBulleted :
+                  mdiGraphOutline}
+                size={1}
+              />
+            </ListItemIcon>
             {option}
           </MenuItem>
         ))}
