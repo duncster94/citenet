@@ -2,12 +2,9 @@ import React from "react"
 import Grid from "@material-ui/core/Grid"
 
 import "./HomePage.css"
-import SplitSearchButton from "./SplitSearchButton"
 import SearchBar from "./SearchBar"
 
-export default function HomePage(props) {
-
-  const { buttonProps, searchBarProps } = props.props
+export default function HomePage({ props }) {
 
   return (
     <React.Fragment>
@@ -32,12 +29,7 @@ export default function HomePage(props) {
 
             <Grid item xs={8}>
               {/* Paper select bar */}
-              <SearchBar props={searchBarProps} />
-            </Grid>
-
-            <Grid item>
-              {/* Search button with dropdown view selector */}
-              <SplitSearchButton props={buttonProps} />
+              <SearchBar props={props} />
             </Grid>
 
           </Grid>

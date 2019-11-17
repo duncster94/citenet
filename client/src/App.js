@@ -21,22 +21,13 @@ export default withRouter(function App(props) {
   // Props for selected papers.
   const [selectedPapers, setSelectedPapers] = React.useState(null)
 
-  const buttonProps = {
+  const homePageProps = {
     selectedView,
     setSelectedView,
     setIsSearched,
-    selectedPapers
-  }
-
-  const searchBarProps = {
+    selectedPapers,
     isSearched,
     setSelectedPapers
-  }
-
-  // Package all props.
-  const homePageProps = {
-    buttonProps,
-    searchBarProps
   }
 
   return (

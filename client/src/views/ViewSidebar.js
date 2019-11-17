@@ -2,6 +2,7 @@ import React from "react"
 
 import { withRouter } from "react-router-dom"
 
+import Avatar from "@material-ui/core/Avatar"
 import Divider from "@material-ui/core/Divider"
 import IconButton from "@material-ui/core/IconButton"
 import List from "@material-ui/core/List"
@@ -21,6 +22,7 @@ import {
 } from "@mdi/js"
 
 import queryString from "query-string"
+import theme from "../Theme"
 
 const useStyles = makeStyles({
   list: {
@@ -30,6 +32,10 @@ const useStyles = makeStyles({
     position: "absolute",
     right: 0,
     top: 0
+  },
+  avatarMain: {
+    color: "#fff",
+    backgroundColor: theme.palette.primary.main
   }
 })
 
@@ -79,10 +85,13 @@ export default withRouter(function ViewSidebar(props) {
           onClick={handleHomeClick}
         >
           <ListItemIcon>
-            <Icon
-              path={mdiHomeOutline}
-              size={1}
-            />
+            <Avatar className={classes.avatarMain}>
+              <Icon
+                path={mdiHomeOutline}
+                size={1}
+                color="white"
+              />
+            </Avatar>
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
@@ -91,13 +100,16 @@ export default withRouter(function ViewSidebar(props) {
           onClick={handleViewSwitchClick}
         >
           <ListItemIcon>
-            <Icon
-              path={props.props.view === "rank" ? 
-                mdiGraphOutline :
-                mdiFormatListBulleted
-              }
-              size={1}
-            />
+            <Avatar className={classes.avatarMain}>
+              <Icon
+                path={props.props.view === "rank" ? 
+                  mdiGraphOutline :
+                  mdiFormatListBulleted
+                }
+                size={1}
+                color="white"
+              />
+            </Avatar>
           </ListItemIcon>
           <ListItemText
             primary={props.props.view === "rank" ?
@@ -114,10 +126,13 @@ export default withRouter(function ViewSidebar(props) {
             false}
         >
           <ListItemIcon>
-            <Icon
-              path={mdiRedoVariant}
-              size={1}
-            />
+            <Avatar className={classes.avatarMain}>
+              <Icon
+                path={mdiRedoVariant}
+                size={1}
+                color="white"
+              />
+            </Avatar>
           </ListItemIcon>
           <ListItemText primary="Refine Search" />
         </ListItem>
