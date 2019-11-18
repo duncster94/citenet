@@ -195,6 +195,17 @@ app.post("/submit_paper", (request, response) => {
 
       return dateString
     }
+
+    function formatJournal(journal) {
+      let formattedJournal 
+      if (journal.length > 20) {
+        formattedJournal = journal.substring(0, 20) + '...'
+      } else {
+        formattedJournal = journal
+      }
+
+      return formattedJournal
+    }
     
     message.subgraph.nodes.sort((a, b) => (a.score > b.score) ? -1 : 1)
 
@@ -213,6 +224,10 @@ app.post("/submit_paper", (request, response) => {
 
     message.subgraph.nodes.forEach(node => {
       node.formattedDate = formatDate(node.pub_date)
+    })
+
+    message.subgraph.nodes.forEach(node => {
+      node.formattedJournal = formatJournal(node.journal)
     })
 
     response.send({

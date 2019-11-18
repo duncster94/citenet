@@ -122,14 +122,14 @@ export default withRouter(function SearchBar(props) {
       formatOptionLabel={formatOptionLabel}
       components={{IndicatorsContainer}}
       placeholder="Enter paper title or author name(s)."
-      // theme={(theme_) => ({
-      //   ...theme_,
-      //   colors: {
-      //     ...theme_.colors,
-      //     primary: theme.palette.primary.main,
-      //     primary25: "#ffeeca"
-      //   }
-      // })}
+      theme={(theme_) => ({
+        ...theme_,
+        colors: {
+          ...theme_.colors,
+          primary: theme.palette.primary.main,
+          primary25: theme.palette.primary.mainLight
+        }
+      })}
       // styles={{
       //   control: (provided) => ({
       //     ...provided,
@@ -200,6 +200,7 @@ function MenuSearchButtons({ props }) {
           <Icon
             path={mdiChevronDown}
             size={1}
+            color={theme.palette.primary.black}
           />
         </Button>
         <Button
@@ -213,7 +214,7 @@ function MenuSearchButtons({ props }) {
             color={
               !Boolean(props.selectedPapers) ?
               "#ccc" :
-              "#000"
+              theme.palette.primary.black
             }
           />
         </Button>

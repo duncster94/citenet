@@ -1,14 +1,12 @@
 import React from "react"
-
-import Button from "@material-ui/core/Button"
-
+import Chip from "@material-ui/core/Chip"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
-
+import { makeStyles } from "@material-ui/core/styles"
 import Icon from "@mdi/react"
 import { 
   mdiPlusBox,
@@ -16,9 +14,19 @@ import {
   mdiOpenInNew
 } from "@mdi/js"
 
+import theme from "../Theme"
 import "./NetworkView.css"
 
+const useStyles = makeStyles({
+  title: {
+    backgroundColor: theme.palette.primary.black,
+    color: "#fff"
+  }
+})
+
 export default function ViewDialog({ props }) {
+
+  const classes = useStyles()
 
   function handleAddToSearchClick() {
 
@@ -37,13 +45,31 @@ export default function ViewDialog({ props }) {
 
   return (
     <React.Fragment>
-      <DialogTitle>{props.selectedPaper.title}</DialogTitle>
+      <DialogTitle className={classes.title}>
+        {props.selectedPaper.title}
+      </DialogTitle>
       <DialogContent dividers={true}>
+        {/* <DialogContentText> */}
+          <Chip 
+            label={props.selectedPaper.journal}
+            size="small"
+            style={{
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              maxWidth: "20vw",
+              flexShrink: 0
+              // display: "block"
+            }}
+          />
+          <Chip 
+            label={props.selectedPaper.formattedDate}
+            size="small"
+            style={{float: "right"}}
+          />
+        {/* </DialogContentText> */}
         <DialogContentText>
           {props.selectedPaper.formattedAuthors}
-        </DialogContentText>
-        <DialogContentText>
-          {props.selectedPaper.formattedDate}
         </DialogContentText>
         <DialogContentText>
           {props.selectedPaper.abstract}
@@ -67,6 +93,7 @@ export default function ViewDialog({ props }) {
                 mdiMinusBox :
                 mdiPlusBox} 
               size={1}
+              color={theme.palette.primary.black}
             />       
           </IconButton>
         </Tooltip>
@@ -91,6 +118,7 @@ export default function ViewDialog({ props }) {
               <Icon
                 path={mdiOpenInNew} 
                 size={1}
+                color={theme.palette.primary.black}
               />       
             </IconButton>
           </a>

@@ -1,6 +1,8 @@
 import React from "react"
 import Grid from "@material-ui/core/Grid"
+import Typography from "@material-ui/core/Typography"
 
+import theme from "../Theme"
 import "./HomePage.css"
 import SearchBar from "./SearchBar"
 
@@ -35,7 +37,9 @@ export default function HomePage({ props }) {
           </Grid>
 
           <Grid item>
-            <span>A powerfully intuitive way to search the scientific literature</span>
+            <Typography style={{color: theme.palette.primary.main}}>
+              A powerfully intuitive way to search the scientific literature
+            </Typography>
           </Grid>
 
         </Grid>
