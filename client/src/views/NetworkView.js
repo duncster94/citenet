@@ -8,8 +8,6 @@ import "./NetworkView.css"
 
 export default function NetworkView({ props }) {
 
-  console.log(props.searchQueue)
-
   const svgRef = React.useRef(null)
   
   const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
