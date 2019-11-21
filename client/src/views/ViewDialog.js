@@ -21,6 +21,12 @@ const useStyles = makeStyles({
   title: {
     backgroundColor: theme.palette.primary.black,
     color: "#fff"
+  },
+  authors: {
+
+  },
+  chipDiv: {
+    marginBottom: "15px"
   }
 })
 
@@ -49,7 +55,9 @@ export default function ViewDialog({ props }) {
         {props.selectedPaper.title}
       </DialogTitle>
       <DialogContent dividers={true}>
-        {/* <DialogContentText> */}
+        <div
+          className={classes.chipDiv}
+        >
           <Chip 
             label={props.selectedPaper.journal}
             size="small"
@@ -67,8 +75,11 @@ export default function ViewDialog({ props }) {
             size="small"
             style={{float: "right"}}
           />
-        {/* </DialogContentText> */}
-        <DialogContentText>
+        </div>
+        <DialogContentText
+          variant="caption"
+          classes={classes.authors}
+        >
           {props.selectedPaper.formattedAuthors}
         </DialogContentText>
         <DialogContentText>

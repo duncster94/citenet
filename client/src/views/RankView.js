@@ -23,6 +23,11 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up("md")]: {
       display: "none"
     }
+  },
+  lhsAuthors: {
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    overflow: "hidden"
   }
 }))
 
@@ -182,6 +187,7 @@ export default function RankView({ props }) {
                         {node.title}
                       </Typography>
                       <Typography
+                        className={classes.lhsAuthors}
                         variant="body2"
                         color="textSecondary"
                       >
