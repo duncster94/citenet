@@ -2,7 +2,7 @@ import React from "react"
 import * as d3 from "d3"
 
 import NodePopover from "./NetworkViewPopover"
-import NodeModal from "./PopupModal"
+import PopupModal from "./PopupModal"
 import "./NetworkView.css"
 
 
@@ -250,7 +250,7 @@ export default function NetworkView({ props }) {
           data: paperData
         }}
       />
-      <NodeModal props={{
+      <PopupModal props={{
         isModalOpen,
         setIsModalOpen,
         selectedPaper: paperData,

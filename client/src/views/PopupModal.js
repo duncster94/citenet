@@ -2,7 +2,7 @@ import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import ViewDialog from "./ViewDialog"
 
-export default function NodeModal({ props }) {
+export default function PopupModal({ props }) {
   /* Paper information dialog that displays on top of content.
   */
 

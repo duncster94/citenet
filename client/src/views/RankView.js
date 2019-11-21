@@ -7,7 +7,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
 
 import ViewDialog from "./ViewDialog"
-import NodeModal from "./PopupModal"
+import PopupModal from "./PopupModal"
 import "./RankView.css"
 
 const useStyles = makeStyles(theme => ({
@@ -57,7 +57,7 @@ export default function RankView({ props }) {
     /* Scrolls LHS paper div to clicked paper.
     */
     e.stopPropagation()
-    lhsRef.current.scrollTo(0, interval)
+    lhsRef.current.scrollTo({top: interval, behavior: "smooth"})
 
     // media query to detect if modal should be displayed
     if (matches) {
@@ -208,7 +208,7 @@ export default function RankView({ props }) {
         </Grid>
       </Grid>
       {/* Dialog that pops up on small screens */}
-      <NodeModal props={{
+      <PopupModal props={{
         isModalOpen,
         setIsModalOpen,
         selectedPaper,
