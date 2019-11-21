@@ -1,9 +1,10 @@
 import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import ViewDialog from "./ViewDialog"
-import "./NetworkView.css"
 
 export default function NodeModal({ props }) {
+  /* Paper information dialog that displays on top of content.
+  */
 
   function handleClose() {
     props.setIsModalOpen(false)

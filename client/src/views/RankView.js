@@ -7,7 +7,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
 
 import ViewDialog from "./ViewDialog"
-import NodeModal from "./NetworkViewModal"
+import NodeModal from "./PopupModal"
 import "./RankView.css"
 
 const useStyles = makeStyles(theme => ({
@@ -33,6 +33,7 @@ export default function RankView({ props }) {
   const matches = useMediaQuery(theme.breakpoints.down("xs"))
   const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const lhsRef = React.useRef(null)
   const paperInfoHeight = 200 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.searchResults.metadata.radii)
 
@@ -52,14 +53,26 @@ export default function RankView({ props }) {
     }
   }
 
-  function handleNodeClick(e) {
+  const handleNodeClick = interval => e => {
+    /* Scrolls LHS paper div to clicked paper.
+    */
     e.stopPropagation()
-    
+    lhsRef.current.scrollTo(0, interval)
+
     // media query to detect if modal should be displayed
     if (matches) {
       setIsModalOpen(true)
     }
   }
+
+  React.useEffect(() => {
+    /* Detects if the window size is larger than xs and sets
+    the popup modal to closed.
+    */
+    if (!matches) {
+      setIsModalOpen(false)
+    }
+  }, [matches])
 
   return (
     <React.Fragment>
@@ -88,6 +101,7 @@ export default function RankView({ props }) {
             }}
             className="lhs-paper-cards"
             onScroll={handleScroll}
+            ref={lhsRef}
           >
             {props.searchResults.subgraph.nodes.map((node, i) => {
               let marginTop
@@ -127,7 +141,7 @@ export default function RankView({ props }) {
                       fill={props.searchResults.metadata.colours[i]}
                       stroke="#222"
                       strokeWidth="2px"
-                      onClick={handleNodeClick}
+                      onClick={handleNodeClick(i * paperInfoHeight)}
                     />
                     <clipPath id={`clip_${i}`}>
                       <circle
@@ -146,7 +160,7 @@ export default function RankView({ props }) {
                         clipPath: `url(#clip_${i})`,
                         display: props.searchQueue.includes(node.id) ? "inline" : "none"
                       }}
-                      onClick={handleNodeClick}
+                      onClick={handleNodeClick(i * paperInfoHeight)}
                     />
                   </svg>
                   <Card
@@ -157,7 +171,7 @@ export default function RankView({ props }) {
                       maxHeight: `calc(100% - ${maxRadius}px)`,
                       width: `calc(100% - ${maxRadius}px - 5px)`
                     }}
-                    onClick={handleNodeClick}
+                    onClick={handleNodeClick(i * paperInfoHeight)}
                   >
                     <CardContent>
                       <Typography
@@ -193,6 +207,7 @@ export default function RankView({ props }) {
           />
         </Grid>
       </Grid>
+      {/* Dialog that pops up on small screens */}
       <NodeModal props={{
         isModalOpen,
         setIsModalOpen,
