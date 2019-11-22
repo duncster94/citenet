@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   lhsAuthors: {
+    display: "block",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
     overflow: "hidden"
@@ -188,7 +189,7 @@ export default function RankView({ props }) {
                       </Typography>
                       <Typography
                         className={classes.lhsAuthors}
-                        variant="body2"
+                        variant="caption"
                         color="textSecondary"
                       >
                         {node.formattedAuthors}

@@ -25,6 +25,15 @@ const useStyles = makeStyles({
   authors: {
 
   },
+  journalChip: {
+    "& span": {
+      display: "block",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      maxWidth: "20vw",
+    }
+  },
   chipDiv: {
     marginBottom: "15px"
   }
@@ -61,14 +70,7 @@ export default function ViewDialog({ props }) {
           <Chip 
             label={props.selectedPaper.journal}
             size="small"
-            style={{
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              maxWidth: "20vw",
-              flexShrink: 0
-              // display: "block"
-            }}
+            className={classes.journalChip}
           />
           <Chip 
             label={props.selectedPaper.formattedDate}
@@ -78,7 +80,7 @@ export default function ViewDialog({ props }) {
         </div>
         <DialogContentText
           variant="caption"
-          classes={classes.authors}
+          // classes={classes.authors}
         >
           {props.selectedPaper.formattedAuthors}
         </DialogContentText>
