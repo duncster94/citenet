@@ -10,6 +10,8 @@ import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
 import "./RankView.css"
 
+import theme from "../Theme"
+
 const useStyles = makeStyles(theme => ({
   nodeDialog: {
     overflow: "hidden"
@@ -145,8 +147,8 @@ export default function RankView({ props }) {
                       cy={(paperInfoHeight / 2) + 2}
                       r={props.searchResults.metadata.radii[i]}
                       fill={props.searchResults.metadata.colours[i]}
-                      stroke="#222"
-                      strokeWidth="2px"
+                      stroke={theme.palette.primary.black}
+                      strokeWidth="1.5px"
                       onClick={handleNodeClick(i * paperInfoHeight)}
                     />
                     <clipPath id={`clip_${i}`}>

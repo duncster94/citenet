@@ -1,5 +1,6 @@
 import React from "react"
 
+import Chip from "@material-ui/core/Chip"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import { Popper } from "@material-ui/core"
@@ -11,80 +12,6 @@ import { CSSTransition } from "react-transition-group"
 
 import "./NetworkView.css"
 
-export default function NodePopover({ props }) {
-
-  const [arrowRef, setArrowRef] = React.useState(null)
-  const isOpen = Boolean(props.popoverAnchorEl)
-
-  return (
-    <CSSTransition
-      in={isOpen}
-      timeout={250}
-      classNames="popper-transition"
-      unmountOnExit
-    >
-      <Popper
-        className="network-node-popover"
-        className={useStyles().popper}
-        open={true}
-        anchorEl={props.popoverAnchorEl}
-        placement="top"
-        modifiers={{
-          arrow: {
-            enabled: true,
-            element: arrowRef
-          }
-        }}
-      >
-        <Grow timeout={350} in={isOpen}>
-          <Paper className={useStyles().paper}>
-            <span className={useStyles().arrow} ref={setArrowRef} />
-            <Grid
-              className="network-node-popover-grid"
-              direction="column"
-              alignItems="center"
-              container
-            >
-              <Grid item xs>
-                <Typography
-                  align="center"
-                  color="textPrimary"
-                  variant="body1"
-                  gutterBottom
-                >
-                  {props.data.title}
-                </Typography>
-              </Grid>
-
-              <Grid item xs>
-                <Typography
-                  align="center"
-                  color="textSecondary"
-                  variant="body2"
-                  gutterBottom
-                >
-                  {props.data.formattedAuthors}
-                </Typography>
-              </Grid>
-
-              <Grid item xs>
-                <Typography
-                  align="center"
-                  color="textSecondary"
-                  variant="body2"
-                  gutterBottom
-                >
-                  {props.data.formattedDate}
-                </Typography>
-              </Grid>
-
-            </Grid>
-          </Paper>
-        </Grow>
-      </Popper>
-    </CSSTransition>
-  )
-}
 
 const useStyles = makeStyles(theme => ({
   popper: {
@@ -152,5 +79,83 @@ const useStyles = makeStyles(theme => ({
       height: 0,
       borderStyle: "solid",
     }
-  }
+  },
+
+  journalChip: {
+    "& span": {
+      display: "block",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      maxWidth: "100px",
+    }
+  },
 }))
+
+
+export default function NodePopover({ props }) {
+
+  const classes = useStyles()
+  const [arrowRef, setArrowRef] = React.useState(null)
+  const isOpen = Boolean(props.popoverAnchorEl)
+
+  return (
+    <CSSTransition
+      in={isOpen}
+      timeout={250}
+      classNames="popper-transition"
+      unmountOnExit
+    >
+      <Popper
+        className="network-node-popover"
+        className={classes.popper}
+        open={true}
+        anchorEl={props.popoverAnchorEl}
+        placement="top"
+        modifiers={{
+          arrow: {
+            enabled: true,
+            element: arrowRef
+          }
+        }}
+      >
+        <Grow timeout={350} in={isOpen}>
+          <Paper className={classes.paper}>
+            <span className={classes.arrow} ref={setArrowRef} />
+            <Grid
+              className="network-node-popover-grid"
+              direction="column"
+              alignItems="center"
+              container
+            >
+
+
+              <Grid item xs>
+                <Typography
+                  align="center"
+                  color="textPrimary"
+                  variant="body1"
+                  gutterBottom
+                >
+                  {props.data.title}
+                </Typography>
+              </Grid>
+
+              <Grid item xs>
+                <Typography
+                  align="center"
+                  color="textSecondary"
+                  variant="body2"
+                  gutterBottom
+                >
+                  {props.data.formattedAuthors}
+                </Typography>
+              </Grid>
+
+            </Grid>
+          </Paper>
+        </Grow>
+      </Popper>
+    </CSSTransition>
+  )
+}

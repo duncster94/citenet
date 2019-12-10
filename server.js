@@ -97,7 +97,7 @@ app.post("/submit_paper", (request, response) => {
 
       // If the node is a seed node, colour it differently.
       if (seeds.includes(node.id.toString())) {
-        return "#f00"
+        return "#9D0000"
       }
 
       // Get publication year.
@@ -119,7 +119,7 @@ app.post("/submit_paper", (request, response) => {
 
       let lightness = m * year + b
 
-      let colour = `hsla(41,100%, ${lightness.toString()}%,1)`
+      let colour = `hsla(0,0%, ${lightness.toString()}%,1)`
 
       return colour
     }

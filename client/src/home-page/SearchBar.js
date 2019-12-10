@@ -130,18 +130,12 @@ export default withRouter(function SearchBar(props) {
           primary25: theme.palette.primary.mainLight
         }
       })}
-      // styles={{
-      //   control: (provided) => ({
-      //     ...provided,
-      //     borderColor: "white",
-      //     minHeight: "5px",
-      //     borderRight: "0px",
-      //     borderRadius: "5px 0 0 5px",
-      //     boxShadow: "1px 0.8px 2.6px 0px hsl(0,0%,50%)",
-      //     marginTop: "2px",
-      //     marginBottom: "1px"
-      //   })
-      // }}
+      styles={{
+        menuList: (base) => ({
+          ...base,
+          maxHeight: "40vh",
+        })
+      }}
     />
   )
 })

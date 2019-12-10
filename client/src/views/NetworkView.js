@@ -5,6 +5,7 @@ import NodePopover from "./NetworkViewPopover"
 import PopupModal from "./PopupModal"
 import "./NetworkView.css"
 
+import theme from "../Theme"
 
 export default function NetworkView({ props }) {
 
@@ -69,11 +70,12 @@ export default function NetworkView({ props }) {
       .force("link", d3.forceLink().id(function(d) {return d.id}))
 
     const links = g.append("g")
-      .attr("class", "network-links")
       .selectAll("line")
       .data(props.searchResults.subgraph.links)
       .enter()
       .append("line")
+      .attr("stroke", theme.palette.primary.blackLight)
+      .attr("stroke-width", "2.5px")
       // .attr("marker-end", "url(#arrowhead)")
 
     const nodes = g.append("g")
@@ -94,8 +96,8 @@ export default function NetworkView({ props }) {
       .attr("fill", function(_, idx) {
         return props.searchResults.metadata.colours[idx]
       })
-      .attr("stroke", "#222")
-      .attr("stroke-width", "2px")
+      .attr("stroke", theme.palette.primary.black)
+      .attr("stroke-width", "1.5px")
       .on("mouseover", function(data) {
 
         hoverTimeout = setTimeout(() => {

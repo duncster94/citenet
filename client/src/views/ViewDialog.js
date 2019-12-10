@@ -31,7 +31,7 @@ const useStyles = makeStyles({
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
       overflow: "hidden",
-      maxWidth: "20vw",
+      maxWidth: "18vw",
     }
   },
   chipDiv: {
@@ -71,11 +71,13 @@ export default function ViewDialog({ props }) {
             label={props.selectedPaper.journal}
             size="small"
             className={classes.journalChip}
+            color="primary"
           />
           <Chip 
             label={props.selectedPaper.formattedDate}
             size="small"
             style={{float: "right"}}
+            color="primary"
           />
         </div>
         <DialogContentText
