@@ -125,6 +125,16 @@ export default function RankView({ props }) {
                 marginTop = "0vh"
                 marginBottom = "0vh"
               }
+
+              // Put darker border around light coloured nodes.
+              const lightness = props.searchResults.metadata.colours[i].split(",")[2]
+              let stroke
+              if (lightness && 
+                parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
+                stroke = "#ddd"    
+              } else {
+                stroke = "#fff"
+              }
               return (
                 <div
                   style={{
@@ -147,8 +157,8 @@ export default function RankView({ props }) {
                       cy={(paperInfoHeight / 2) + 2}
                       r={props.searchResults.metadata.radii[i]}
                       fill={props.searchResults.metadata.colours[i]}
-                      stroke={theme.palette.primary.black}
-                      strokeWidth="1.5px"
+                      stroke={stroke}
+                      strokeWidth="2.5px"
                       onClick={handleNodeClick(i * paperInfoHeight)}
                     />
                     <clipPath id={`clip_${i}`}>

@@ -96,8 +96,16 @@ export default function NetworkView({ props }) {
       .attr("fill", function(_, idx) {
         return props.searchResults.metadata.colours[idx]
       })
-      .attr("stroke", theme.palette.primary.black)
-      .attr("stroke-width", "1.5px")
+      .attr("stroke", function(_, idx) {
+        const lightness = props.searchResults.metadata.colours[idx].split(",")[2]
+        if (lightness && 
+          parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
+          return "#ddd"
+        } else {
+          return "#fff"
+        }
+      })
+      .attr("stroke-width", "2.5px")
       .on("mouseover", function(data) {
 
         hoverTimeout = setTimeout(() => {
