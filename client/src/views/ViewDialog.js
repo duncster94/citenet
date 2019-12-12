@@ -61,14 +61,14 @@ export default function ViewDialog({ props }) {
   return (
     <React.Fragment>
       <DialogTitle className={classes.title}>
-        {props.selectedPaper.title}
+        {props.selectedPaper.Title}
       </DialogTitle>
       <DialogContent dividers={true}>
         <div
           className={classes.chipDiv}
         >
           <Chip 
-            label={props.selectedPaper.journal}
+            label={props.selectedPaper.Journal.Title}
             size="small"
             className={classes.journalChip}
             color="primary"
@@ -87,7 +87,7 @@ export default function ViewDialog({ props }) {
           {props.selectedPaper.formattedAuthors}
         </DialogContentText>
         <DialogContentText>
-          {props.selectedPaper.abstract}
+          {props.selectedPaper.Abstract}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -146,9 +146,19 @@ class ExtractSubnetwork {
 
             // Randomly select neighbour to jump to.
             let rand_index = Math.floor(Math.random() * node_neighbours.length);
+            let sampled_node = node_neighbours[rand_index];
 
-            // Update current node.
-            current_node = node_neighbours[rand_index];
+            // Check that `sampled_node` exists in ES.
+            let exists = await this.es_client.exists({
+                id: sampled_node,
+                index: this.es_index
+            })
+            if (exists) {
+                // Update `current_node` if it exists in ES.
+                current_node = sampled_node
+            } else {
+                continue
+            }
 
             // Determine if walk ends.
             end_walk = Math.random() <= this.restart_prob;
@@ -189,9 +199,25 @@ class ExtractSubnetwork {
         });
 
         // Extract 'cites' and 'cited_by' relationships.
-        let source = es_query.hits.hits[0]._source;
+        // console.log(es_query.hits.hits)
+        let source
+        if (es_query.hits.hits.length === 0) {
+            source = {
+                "cites": [],
+                "cited_by": []
+            }
+        } else {
+            source = es_query.hits.hits[0]._source;
+        }
+
         let cites = source.cites;
+        if (!cites) {
+            cites = []
+        }
         let cited_by = source.cited_by;
+        if (!cited_by) {
+            cited_by = []
+        }
         let neighbours = cites.concat(cited_by);
 
         // Store node in 'stored_neighbours' object to avoid
@@ -224,7 +250,7 @@ class ExtractSubnetwork {
         });
 
         // Create ID to rank number object.
-        let rank = 0;
+        let rank = this.source_nodes.length;
         let IDtoRank = {};
         frequencies_arr.slice(0, this.n_top).forEach(function(obj) {
             IDtoRank[obj.key] = rank;
@@ -232,11 +258,21 @@ class ExtractSubnetwork {
         });
 
         // Retain the top 'n_top' results and map back to object.
+        let maxVal = 0
         let top_n_results = frequencies_arr.slice(0, this.n_top)
             .reduce(function(obj, prop) {
                 obj[prop.key] = prop.value;
+                if (prop.value > maxVal) {
+                    maxVal = prop.value
+                }
                 return obj;
             }, {});
+        
+        // Add source nodes to result.
+        this.source_nodes.forEach((node, idx) => {
+            top_n_results[node] = maxVal
+            IDtoRank[node] = idx
+        })
 
         return {"topN": top_n_results, "IDtoRank": IDtoRank};
     }
@@ -293,11 +329,12 @@ class ExtractSubnetwork {
                 // relationships with nodes that are in 'top_results'.
                 for (let neighbour of node_neighbours) {
                     if (top_results[neighbour]) {
-                        edge_arr.push({source: node, target: neighbour});
+                        edge_arr.push({source: parseInt(node), target: neighbour});
                     }
                 }
             }
         }
+
         return edge_arr;
     }
 
@@ -311,7 +348,7 @@ class ExtractSubnetwork {
         let es_query = await this.es_client.search({
             index: this.es_index,
             body: {
-                size: this.n_top,
+                size: this.n_top + this.source_nodes.length,
                 query: {
                     ids: {
                         type: 'paper',
@@ -328,17 +365,23 @@ class ExtractSubnetwork {
         for (let node_data of es_query.hits.hits) {
             let id = node_data._id;
             let source = node_data._source;
-            let title = source.title;
-            let pub_date = source.pub_date;
-            let journal = source.journal;
-            let authors = source.authors;
-            let abstract = source.abstract;
+            let Title = source.Title;
+            let PubDate = source.PubDate;
+            let Journal = source.Journal;
+            let Authors = source.Authors;
+            let Abstract = source.Abstract;
             let score = top_results[id];
 
             // Add node metadata to 'metadata' object.
-            metadata.push({id: id, title: title, pub_date: pub_date,
-                journal: journal, authors: authors, abstract: abstract,
-                score: score, rank: IDtoRank[id]})
+            metadata.push({
+                id,
+                Title,
+                PubDate,
+                Journal,
+                Authors,
+                Abstract,
+                score,
+                rank: IDtoRank[id]})
         }
 
         return metadata;
@@ -380,8 +423,8 @@ process.on("message", function(message) {
     let index_name = message.index_name;
 
     // Create new 'ExtractSubnetwork' object.
-    extSub = new ExtractSubnetwork(seeds, 10000,
-        0.25, 30, es, index_name);
+    extSub = new ExtractSubnetwork(seeds, 5000,
+        0.8, 50, es, index_name);
 
     // Pass 'extSub' to function to await subgraph computation and send
     // extracted subgraph.

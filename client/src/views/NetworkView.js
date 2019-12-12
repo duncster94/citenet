@@ -187,6 +187,8 @@ export default function NetworkView({ props }) {
         .on("end", dragEnd))
 
     simulation.nodes(props.searchResults.subgraph.nodes)
+    console.log(props.searchResults.subgraph.nodes)
+    console.log(props.searchResults.subgraph.links)
     simulation.force("link").links(props.searchResults.subgraph.links)
 
     simulation.on("tick", () => {

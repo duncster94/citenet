@@ -47,7 +47,8 @@ export default withRouter(function SearchBar(props) {
   function formatOptionLabel(values) {
     // Custom option component
 
-    const authorString = values.labels.authors.map(function (element) {
+    console.log(values)
+    const authorString = values.labels.Authors.map(function (element) {
       return `${element.Initials} ${element.LastName}`
     }).join(", ")
     return (
@@ -56,7 +57,7 @@ export default withRouter(function SearchBar(props) {
           variant="subtitle2"
           color="textPrimary"
         >
-          {values.labels.title}
+          {values.labels.Title}
         </Typography>
         <Typography
           variant="caption"

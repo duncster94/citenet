@@ -5,7 +5,8 @@ function query_es(query, index_name, es) {
     */
 
     // Fields to query.
-    let fields = ["title", "authors.FirstName", "authors.LastName", "_id"]
+    // let fields = ["title", "authors.FirstName", "authors.LastName", "_id"]
+    let fields = ["Title", "Authors.ForeName", "Authors.LastName", "_id"]
 
     // Query Elasticsearch.
     let es_query = es.search({

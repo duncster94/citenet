@@ -137,7 +137,7 @@ export default function NodePopover({ props }) {
                   variant="body1"
                   gutterBottom
                 >
-                  {props.data.title}
+                  {props.data.Title}
                 </Typography>
               </Grid>
 

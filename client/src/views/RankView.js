@@ -197,7 +197,7 @@ export default function RankView({ props }) {
                         color="textPrimary"
                         gutterBottom
                       >
-                        {node.title}
+                        {node.Title}
                       </Typography>
                       <Typography
                         className={classes.lhsAuthors}

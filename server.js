@@ -14,7 +14,8 @@ const es = new elasticsearch.Client({
 const port = 3001;
 
 // Elasticsearch index.
-const index_name = "gisample";
+// const index_name = "gisample";
+const index_name = "papers"
 
 // Boilerplate
 app.use(express.static(path.join(__dirname, "public")));
@@ -34,6 +35,8 @@ app.post("/test", (request, response) => {
 
 // Called on user selectize query.
 app.post("/homepage_search_query", (request, response) => {
+
+  // console.log(request)
 
   // Get Elasticsearch query Promise and package response on Promise
   // resolution.
@@ -70,7 +73,8 @@ app.post("/submit_paper", (request, response) => {
     let dates = []
     message.subgraph.nodes.forEach(function (node) {
 
-      let pub_year = node.pub_date.Year
+      // console.log(node)
+      let pub_year = node.PubDate.Year
 
       // Make sure publication year is defined.
       if (pub_year) {
@@ -80,13 +84,18 @@ app.post("/submit_paper", (request, response) => {
     let min_date = Math.min(...dates)
     let max_date = Math.max(...dates)
 
-    function scoreToRadius(node) {
+    function scoreToRadius(node, maxScore, seeds) {
       /*
       Given a node, take its score and map it to a radius.
       */
   
-      let radius = 75 * Math.pow(node.score, 1 / 3)
-  
+      let radius = 50 * node.score / maxScore
+
+      // Set seed nodes to a fixed size.
+      if (seeds.includes(node.id)) {
+        radius = 25
+      }
+
       return radius
     }
 
@@ -101,7 +110,7 @@ app.post("/submit_paper", (request, response) => {
       }
 
       // Get publication year.
-      let year = node.pub_date.Year
+      let year = node.PubDate.Year
 
       // If publication year is not available, set node colour to
       // grey.
@@ -133,9 +142,15 @@ app.post("/submit_paper", (request, response) => {
 
       // Add author names to 'authorString'.
       for (author of authors) {
-        let first_name = author.FirstName.split(" ").map(str => {
-          return str[0]
-        }).join("")
+        let first_name
+        if (author.ForeName) {
+          first_name = author.ForeName.split(" ").map(str => {
+            return str[0]
+          }).join("")
+        } else {
+          first_name = ""
+        }
+
         let last_name = author.LastName
 
         authorString += `${first_name} ${last_name}, `
@@ -186,6 +201,42 @@ app.post("/submit_paper", (request, response) => {
           case "Dec":
             dateString += "December "
             break
+          case "01":
+            dateString += "January "
+            break
+          case "02":
+            dateString += "February "
+            break
+          case "03":
+            dateString += "March "
+            break
+          case "04":
+            dateString += "April "
+            break
+          case "05":
+            dateString += "May"
+            break
+          case "06":
+            dateString += "June "
+            break
+          case "07":
+            dateString += "July "
+            break
+          case "08":
+            dateString += "August "
+            break
+          case "09":
+            dateString += "September "
+            break
+          case "10":
+            dateString += "October "
+            break
+          case "11":
+            dateString += "November "
+            break
+          case "12":
+            dateString += "December "
+            break
           default:
             dateString += `${date["Month"]} `
         }
@@ -208,9 +259,10 @@ app.post("/submit_paper", (request, response) => {
     }
     
     message.subgraph.nodes.sort((a, b) => (a.score > b.score) ? -1 : 1)
+    const maxScore = message.subgraph.nodes[0].score
 
     const radii = message.subgraph.nodes.map(node => {
-      return scoreToRadius(node)
+      return scoreToRadius(node, maxScore, seeds)
     })
 
     const colours = message.subgraph.nodes.map(node => {
@@ -219,16 +271,18 @@ app.post("/submit_paper", (request, response) => {
 
 
     message.subgraph.nodes.forEach(node => {
-      node.formattedAuthors = formatAuthors(node.authors)
+      node.formattedAuthors = formatAuthors(node.Authors)
     })
 
     message.subgraph.nodes.forEach(node => {
-      node.formattedDate = formatDate(node.pub_date)
+      node.formattedDate = formatDate(node.PubDate)
     })
 
     message.subgraph.nodes.forEach(node => {
-      node.formattedJournal = formatJournal(node.journal)
+      node.formattedJournal = formatJournal(node.Journal)
     })
+
+    console.log(message.subgraph.nodes.length)
 
     response.send({
       subgraph: message.subgraph, 
