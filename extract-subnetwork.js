@@ -29,17 +29,14 @@ class ExtractSubnetwork {
         /*
         Wrapper function that calls functions to extract a
         subnetwork relevant to the user's query.
-
             1. First walks are split evenly across source nodes.
             2. The random walk with restart is executed.
             3. The top n resulting nodes are then extracted.
             4. Edge relationships between these nodes are extracted.
             5. Finally, subgraph results are formatted appropriately
                and returned to the master process.
-
         params:
             None
-
         returns:
             null
         */
@@ -66,7 +63,6 @@ class ExtractSubnetwork {
         /*
         The core of the search algorithm. Performs random walk with
         restart over the network.
-
             1. Iterate over each source node, allocating 'walks_per_node'
                to be executed.
             2. Iterate through 'walks_per_node'.
@@ -74,11 +70,9 @@ class ExtractSubnetwork {
                with probability 'restart_prob'.
             4. When a walk ends, increment the termination node in
                'frequencies'.
-
         params:
             walks_per_node: Integer. Determines how many walks each
                 source node gets.
-
         returns:
             null
         */
@@ -387,7 +381,7 @@ process.on("message", function(message) {
 
     // Create new 'ExtractSubnetwork' object.
     extSub = new ExtractSubnetwork(seeds, 10000,
-        0.25, 60, es, index_name);
+        0.25, 30, es, index_name);
 
     // Pass 'extSub' to function to await subgraph computation and send
     // extracted subgraph.
