@@ -89,11 +89,11 @@ app.post("/submit_paper", (request, response) => {
       Given a node, take its score and map it to a radius.
       */
   
-      let radius = 50 * node.score / maxScore
+      let radius = 30 * node.score / maxScore
 
       // Set seed nodes to a fixed size.
       if (seeds.includes(node.id)) {
-        radius = 25
+        radius = 15
       }
 
       return radius
