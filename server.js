@@ -258,7 +258,7 @@ app.post("/submit_paper", (request, response) => {
       return formattedJournal
     }
     
-    message.subgraph.nodes.sort((a, b) => (a.score > b.score) ? -1 : 1)
+    message.subgraph.nodes.sort((a, b) => (a.score > b.score || seeds.includes(a.id)) ? -1 : 1)
     const maxScore = message.subgraph.nodes[0].score
 
     const radii = message.subgraph.nodes.map(node => {

@@ -65,6 +65,7 @@ export default function RankView({ props }) {
     /* Scrolls LHS paper div to clicked paper.
     */
     e.stopPropagation()
+    console.log(lhsRef.current)
     lhsRef.current.scrollTo({top: interval, behavior: "smooth"})
 
     // media query to detect if modal should be displayed
