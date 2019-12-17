@@ -4,13 +4,14 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import theme from "../Theme"
+import AboutPage from "./AboutPage"
+import Navbar from "../generic-components/Navbar"
 import SearchBar from "./SearchBar"
 
 const useStyles = makeStyles({
   root: {
     position: "absolute",
     flexGrow: 1,
-    display: "flex",
     height: "inherit",
     width: "inherit",
   },
@@ -34,10 +35,26 @@ const useStyles = makeStyles({
 export default function HomePage({ props }) {
 
   const classes = useStyles()
+  const [page, setPage] = React.useState(0)
+
+  function handleNavbarChange(_, newValue) {
+    if (newValue === page) {
+      return
+    }
+    setPage(newValue)
+  }
 
   return (
     <React.Fragment>
-      <div className={classes.root}>
+      <Navbar props={{handleNavbarChange, page}}/>
+      <div
+        className={classes.root}
+        style={{
+          display: page === 0 ?
+            "flex" :
+            "none"
+        }}
+      >
         <Grid
           container
           direction="column"
@@ -76,6 +93,7 @@ export default function HomePage({ props }) {
 
         </Grid>
       </div>
+      <AboutPage props={{page}}/>
     </React.Fragment>
   )
 }
