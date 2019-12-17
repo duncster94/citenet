@@ -85,11 +85,9 @@ app.post("/submit_paper", (request, response) => {
     let max_date = Math.max(...dates)
 
     function scoreToRadius(node, maxScore, seeds) {
-      /*
-      Given a node, take its score and map it to a radius.
+      /* Given a node, take its score and map it to a radius.
       */
 
-      console.log(node.score)
       let radius = 30 * node.score / maxScore
 
       // Set seed nodes to a fixed size.
@@ -100,8 +98,7 @@ app.post("/submit_paper", (request, response) => {
     }
 
     function dateToColour(node, D_min, D_max, seeds) {
-      /*
-      Given a node, map the appropriate colour.
+      /* Given a node, map the appropriate colour.
       */
 
       // If the node is a seed node, colour it differently.
@@ -134,8 +131,7 @@ app.post("/submit_paper", (request, response) => {
     }
 
     function formatAuthors(authors) {
-      /*
-      Formats author list for use in modal and popover.
+      /* Formats author list for use in modal and popover.
       */
 
       let authorString = ""
