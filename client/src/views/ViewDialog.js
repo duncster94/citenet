@@ -84,7 +84,9 @@ export default function ViewDialog({ props }) {
           variant="caption"
           // classes={classes.authors}
         >
-          {props.selectedPaper.formattedAuthors}
+          {props.selectedPaper.formattedAuthors ? 
+           props.selectedPaper.formattedAuthors :
+           ""}
         </DialogContentText>
         <DialogContentText>
           {props.selectedPaper.Abstract}

@@ -88,15 +88,15 @@ app.post("/submit_paper", (request, response) => {
       /*
       Given a node, take its score and map it to a radius.
       */
-  
+
+      console.log(node.score)
       let radius = 30 * node.score / maxScore
 
       // Set seed nodes to a fixed size.
       if (seeds.includes(node.id)) {
         radius = 15
       }
-
-      return radius
+      return Math.max(5, radius)
     }
 
     function dateToColour(node, D_min, D_max, seeds) {

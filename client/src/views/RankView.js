@@ -205,7 +205,9 @@ export default function RankView({ props }) {
                         variant="caption"
                         color="textSecondary"
                       >
-                        {node.formattedAuthors}
+                        {node.formattedAuthors ? 
+                         node.formattedAuthors :
+                         ""}
                       </Typography>
                     </CardContent>
                   </Card>

@@ -91,6 +91,7 @@ export default function NetworkView({ props }) {
 
     const circles = nodes.append("circle")
       .attr("r", function(_, idx) {
+        console.log(props.searchResults.metadata.radii[idx])
         return props.searchResults.metadata.radii[idx]
       })
       .attr("fill", function(_, idx) {
