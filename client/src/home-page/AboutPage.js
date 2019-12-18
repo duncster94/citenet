@@ -43,7 +43,7 @@ export default function AboutPage() {
           {/* <hr /> */}
         <Grid item xs={6}>
           <Typography gutterBottom>
-            Papers are being published as an incredible rate. The ever-increasing body of literature makes sorting through
+            Papers are being published at an incredible rate. The ever-increasing body of literature makes sorting through
             irrelevant research while at the same time not missing critically important results a daunting task. The 
             traditional literature search paradigm is slow, fragmented and difficult to mentally 
             organize (so many browser tabs!).
