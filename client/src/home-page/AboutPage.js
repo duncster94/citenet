@@ -1,6 +1,7 @@
 import React from "react"
 import Box from "@material-ui/core/Box"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
@@ -10,6 +11,12 @@ const useStyles = makeStyles({
     position: "absolute",
     paddingTop: "30px",
     width: "inherit"
+  },
+  homeLink: {
+    position: "absolute",
+    top: "15px",
+    left: "20px",
+    fontSize: "14px"
   }
 })
 
@@ -54,6 +61,11 @@ export default function AboutPage() {
           </Typography>
         </Grid>
       </Grid>
+      <Typography className={classes.homeLink}>
+        <Link href="/">
+          Home
+        </Link>
+      </Typography>
     </div>
   )
 }

@@ -5,7 +5,6 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import theme from "../Theme"
-import AboutPage from "./AboutPage"
 import SearchBar from "./SearchBar"
 
 const useStyles = makeStyles({
@@ -27,7 +26,7 @@ const useStyles = makeStyles({
     maxWidth: "50%",
     height: "auto",
   },
-  about: {
+  aboutLink: {
     position: "absolute",
     top: "15px",
     left: "20px",
@@ -110,7 +109,7 @@ function AboutLink() {
   const classes = useStyles()
 
   return (
-    <Typography className={classes.about}>
+    <Typography className={classes.aboutLink}>
       <Link href="/about">
         About
       </Link>
