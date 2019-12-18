@@ -1,15 +1,16 @@
 import React from "react"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import theme from "../Theme"
 import AboutPage from "./AboutPage"
-import Navbar from "../generic-components/Navbar"
 import SearchBar from "./SearchBar"
 
 const useStyles = makeStyles({
   root: {
+    display: "flex",
     position: "absolute",
     flexGrow: 1,
     height: "inherit",
@@ -26,6 +27,12 @@ const useStyles = makeStyles({
     maxWidth: "50%",
     height: "auto",
   },
+  about: {
+    position: "absolute",
+    top: "15px",
+    left: "20px",
+    fontSize: "14px"
+  }
   // tagline: {
   //   color: theme.palette.primary.main,
   //   marginBottom: "15vh"
@@ -35,25 +42,11 @@ const useStyles = makeStyles({
 export default function HomePage({ props }) {
 
   const classes = useStyles()
-  const [page, setPage] = React.useState(0)
-
-  function handleNavbarChange(_, newValue) {
-    if (newValue === page) {
-      return
-    }
-    setPage(newValue)
-  }
 
   return (
     <React.Fragment>
-      <Navbar props={{handleNavbarChange, page}}/>
       <div
         className={classes.root}
-        style={{
-          display: page === 0 ?
-            "flex" :
-            "none"
-        }}
       >
         <Grid
           container
@@ -93,7 +86,8 @@ export default function HomePage({ props }) {
 
         </Grid>
       </div>
-      <AboutPage props={{page}}/>
+      {/* <AboutPage props={{page}}/> */}
+      <AboutLink />
     </React.Fragment>
   )
 }
@@ -108,5 +102,18 @@ function Logo() {
       alt="CiteNet logo"
       src="/images/citenet_logo.png"
     />
+  )
+}
+
+function AboutLink() {
+
+  const classes = useStyles()
+
+  return (
+    <Typography className={classes.about}>
+      <Link href="/about">
+        About
+      </Link>
+    </Typography>
   )
 }

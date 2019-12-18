@@ -6,6 +6,7 @@ import { MuiThemeProvider } from "@material-ui/core/styles"
 import "./App.css"
 import theme from "./Theme"
 import HomePage from "./home-page/HomePage"
+import AboutPage from "./home-page/AboutPage"
 import View from "./views/View"
 import GenericNotFound from "./navigation-error/GenericNotFound"
 
@@ -43,6 +44,7 @@ export default withRouter(function App(props) {
 
           <Switch location={props.location}>
             <Route exact path="/" render={() => <HomePage props={homePageProps} />} />
+            <Route path="/about" component={AboutPage} />
             <Route path="/view/:view" component={View} />
             <Route path="/404" component={GenericNotFound} />
             <Redirect to="/404" />
