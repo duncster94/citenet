@@ -7,7 +7,7 @@ const query_es = require("./query-es.js");
 
 const app = express();
 const es = new elasticsearch.Client({
-  host: 'localhost:9200',
+  host: '192.168.3.186:9200',
   log: 'error'
 });
 
