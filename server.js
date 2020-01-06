@@ -288,6 +288,15 @@ app.post('/submit_paper', (request, response) => {
   });
 });
 
+if (process.env.NODE_ENV === 'production') {
+  // if environment is in production, serve the static production build
+  app.use(express.static(path.join(__dirname, 'client/build')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build/index.html'))
+  })
+}
+
 app.listen(port, () => {
-  console.log('Server listening on Port ' + port);
+  console.log(`Server listening on Port ${port}`);
 });
