@@ -23,9 +23,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Called on page load.
-app.get('/', (request, response) => {
-  response.status(200).send({ message: `Server running on port ${port}` })
-});
+// app.get('/', (request, response) => {
+//   response.status(200).send({ message: `Server running on port ${port}` })
+// });
 
 app.post('/test', (request, response) => {
   // response.json({res: `POST request proxied to localhost:${port}`})
