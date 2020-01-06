@@ -1,40 +1,40 @@
-const express = require("express");
-const { fork } = require("child_process");
-const path = require("path");
-const bodyParser = require("body-parser");
-const elasticsearch = require("elasticsearch");
-const query_es = require("./query-es.js");
+const express = require('express');
+const { fork } = require('child_process');
+const path = require('path');
+const bodyParser = require('body-parser');
+const elasticsearch = require('elasticsearch');
+const query_es = require('./query-es.js');
+const CONSTANTS = require('./constants')
 
 const app = express();
 const es = new elasticsearch.Client({
-  host: '192.168.3.186:9200',
+  host: CONSTANTS.DATABASE_IP,
   log: 'error'
 });
 
 const port = 3001;
 
 // Elasticsearch index.
-// const index_name = "gisample";
-const index_name = "papers"
+const index_name = 'papers'
 
 // Boilerplate
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Called on page load.
-// app.get("/", (request, response) => {
-//   response.render("index");
+// app.get('/', (request, response) => {
+//   response.status(200).send({ message: `Server running on port ${port}` })
 // });
 
-app.post("/test", (request, response) => {
+app.post('/test', (request, response) => {
   // response.json({res: `POST request proxied to localhost:${port}`})
   console.log(request.body)
   response.json({res: request.body})
 })
 
 // Called on user selectize query.
-app.post("/homepage_search_query", (request, response) => {
+app.post('/homepage_search_query', (request, response) => {
 
   // console.log(request)
 
@@ -47,10 +47,10 @@ app.post("/homepage_search_query", (request, response) => {
 });
 
 // Called when user submits papers.
-app.post("/submit_paper", (request, response) => {
+app.post('/submit_paper', (request, response) => {
 
   // Set response type to JSON.
-  response.contentType("json");
+  response.contentType('json');
 
   // Get seeds from request body.
   let seeds = request.body;
@@ -59,7 +59,7 @@ app.post("/submit_paper", (request, response) => {
   let child_message = {seeds: seeds, index_name: index_name};
 
   // Fork a child process.
-  const fork_randomwalk = fork("extract-subnetwork.js");
+  const fork_randomwalk = fork('extract-subnetwork.js');
 
   // Send 'message' to child process to run random walk and extract
   // the relevant subnetwork.
@@ -67,9 +67,9 @@ app.post("/submit_paper", (request, response) => {
 
   // Once the child process has extracted the subnetwork, send to
   // client.
-  fork_randomwalk.on("message", function(message) {
+  fork_randomwalk.on('message', function(message) {
 
-    // Get minimum and maximum publication years from "graph".
+    // Get minimum and maximum publication years from 'graph'.
     let dates = []
     message.subgraph.nodes.forEach(function (node) {
 
@@ -103,7 +103,7 @@ app.post("/submit_paper", (request, response) => {
 
       // If the node is a seed node, colour it differently.
       if (seeds.includes(node.id.toString())) {
-        return "#9D0000"
+        return '#9D0000'
       }
 
       // Get publication year.
@@ -112,7 +112,7 @@ app.post("/submit_paper", (request, response) => {
       // If publication year is not available, set node colour to
       // grey.
       if (!year) {
-        return "#ccc"
+        return '#ccc'
       }
 
       // Define minimum and maximum lightness.
@@ -134,17 +134,17 @@ app.post("/submit_paper", (request, response) => {
       /* Formats author list for use in modal and popover.
       */
 
-      let authorString = ""
+      let authorString = ''
 
       // Add author names to 'authorString'.
       for (author of authors) {
         let first_name
         if (author.ForeName) {
-          first_name = author.ForeName.split(" ").map(str => {
+          first_name = author.ForeName.split(' ').map(str => {
             return str[0]
-          }).join("")
+          }).join('')
         } else {
-          first_name = ""
+          first_name = ''
         }
 
         let last_name = author.LastName
@@ -160,85 +160,85 @@ app.post("/submit_paper", (request, response) => {
 
     function formatDate(date) {
 
-      let dateString = ""
+      let dateString = ''
 
-      if ("Month" in date) {
-        switch (date["Month"]) {
-          case "Jan":
-            dateString += "January "
+      if ('Month' in date) {
+        switch (date['Month']) {
+          case 'Jan':
+            dateString += 'January '
             break
-          case "Feb":
-            dateString += "February "
+          case 'Feb':
+            dateString += 'February '
             break
-          case "Mar":
-            dateString += "March "
+          case 'Mar':
+            dateString += 'March '
             break
-          case "Apr":
-            dateString += "April "
+          case 'Apr':
+            dateString += 'April '
             break
-          case "Jun":
-            dateString += "June "
+          case 'Jun':
+            dateString += 'June '
             break
-          case "Jul":
-            dateString += "July "
+          case 'Jul':
+            dateString += 'July '
             break
-          case "Aug":
-            dateString += "August "
+          case 'Aug':
+            dateString += 'August '
             break
-          case "Sep":
-            dateString += "September "
+          case 'Sep':
+            dateString += 'September '
             break
-          case "Oct":
-            dateString += "October "
+          case 'Oct':
+            dateString += 'October '
             break
-          case "Nov":
-            dateString += "November "
+          case 'Nov':
+            dateString += 'November '
             break
-          case "Dec":
-            dateString += "December "
+          case 'Dec':
+            dateString += 'December '
             break
-          case "01":
-            dateString += "January "
+          case '01':
+            dateString += 'January '
             break
-          case "02":
-            dateString += "February "
+          case '02':
+            dateString += 'February '
             break
-          case "03":
-            dateString += "March "
+          case '03':
+            dateString += 'March '
             break
-          case "04":
-            dateString += "April "
+          case '04':
+            dateString += 'April '
             break
-          case "05":
-            dateString += "May"
+          case '05':
+            dateString += 'May'
             break
-          case "06":
-            dateString += "June "
+          case '06':
+            dateString += 'June '
             break
-          case "07":
-            dateString += "July "
+          case '07':
+            dateString += 'July '
             break
-          case "08":
-            dateString += "August "
+          case '08':
+            dateString += 'August '
             break
-          case "09":
-            dateString += "September "
+          case '09':
+            dateString += 'September '
             break
-          case "10":
-            dateString += "October "
+          case '10':
+            dateString += 'October '
             break
-          case "11":
-            dateString += "November "
+          case '11':
+            dateString += 'November '
             break
-          case "12":
-            dateString += "December "
+          case '12':
+            dateString += 'December '
             break
           default:
-            dateString += `${date["Month"]} `
+            dateString += `${date['Month']} `
         }
       }
 
-      dateString += date["Year"]
+      dateString += date['Year']
 
       return dateString
     }
@@ -288,6 +288,15 @@ app.post("/submit_paper", (request, response) => {
   });
 });
 
+if (process.env.NODE_ENV === 'production') {
+  // if environment is in production, serve the static production build
+  app.use(express.static(path.join(__dirname, 'client/build')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build/index.html'))
+  })
+}
+
 app.listen(port, () => {
-  console.log("Server listening on Port " + port);
+  console.log(`Server listening on Port ${port}`);
 });
