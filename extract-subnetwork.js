@@ -3,10 +3,12 @@ TODO: documentation.
 */
 
 // Connect to Elasticsearch client.
-const elasticsearch = require("elasticsearch");
+const elasticsearch = require('elasticsearch')
+const CONSTANTS = require('./constants')
+
 const es = new elasticsearch.Client({
-  host: "localhost:9200",
-  log: "error"
+  host: CONSTANTS.DATABASE_IP,
+  log: 'error'
 });
 
 class ExtractSubnetwork {
@@ -41,7 +43,7 @@ class ExtractSubnetwork {
             null
         */
 
-        console.log("Querying source nodes:", this.source_nodes);
+        console.log('Querying source nodes:', this.source_nodes);
 
         // Split 'n_walks' evenly by the number of source nodes.
         let walks_per_node = this.computeWalkNumber();
@@ -186,7 +188,7 @@ class ExtractSubnetwork {
         // Query Elasticsearch for the 'cited' and 'cited_by'
         // relationships of 'node'.
         let es_query = await this.es_client.search({
-            _source: ["cites", "cited_by"],
+            _source: ['cites', 'cited_by'],
             index: this.es_index,
             body: {
                 query: {
@@ -203,8 +205,8 @@ class ExtractSubnetwork {
         let source
         if (es_query.hits.hits.length === 0) {
             source = {
-                "cites": [],
-                "cited_by": []
+                'cites': [],
+                'cited_by': []
             }
         } else {
             source = es_query.hits.hits[0]._source;
@@ -274,7 +276,7 @@ class ExtractSubnetwork {
             IDtoRank[node] = idx
         })
 
-        return {"topN": top_n_results, "IDtoRank": IDtoRank};
+        return {'topN': top_n_results, 'IDtoRank': IDtoRank};
     }
 
     async formatResponse(topResultsObj) {
@@ -416,7 +418,7 @@ class ExtractSubnetwork {
     }
 }
 
-process.on("message", function(message) {
+process.on('message', function(message) {
     console.log('parent', message);
 
     let seeds = message.seeds;
