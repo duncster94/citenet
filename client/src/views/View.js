@@ -33,17 +33,23 @@ export default function View(props) {
         paperIDs = { id: [paperIDs.id] }
       }
 
-      fetch("/submit_paper", {
-        method: "POST",
-        body: JSON.stringify(paperIDs.id),
-        headers: { "Content-Type": "application/json" },
-      })
-        .then(response => response.json())
-        .then(function (response) {
-          setSearchQueue(response.seeds)
-          setSearchResults(response)
-          console.log(response)
+      async function submitPaper() {
+        const res = await fetch("/submit_paper", {
+          method: "POST",
+          body: JSON.stringify(paperIDs.id),
+          headers: { "Content-Type": "application/json" },
         })
+        if (res.status && res.status !== 200) {
+          // TODO: redirect to more informative error page
+          setRedirect(true)
+          return
+        }
+        const data = await res.json()
+        setSearchQueue(data.seeds)
+        setSearchResults(data)
+      }
+
+      submitPaper()
     }
   }, [])
 
