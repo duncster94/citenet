@@ -12,8 +12,6 @@ const es = new elasticsearch.Client({
   log: 'error'
 });
 
-const port = 3001;
-
 // Elasticsearch index.
 const index_name = 'papers'
 
@@ -278,7 +276,7 @@ app.post('/submit_paper', (request, response) => {
       node.formattedJournal = formatJournal(node.Journal)
     })
 
-    console.log(message.subgraph.nodes.length)
+    // console.log(message.subgraph.nodes.length)
 
     response.send({
       subgraph: message.subgraph, 
@@ -288,13 +286,21 @@ app.post('/submit_paper', (request, response) => {
   });
 });
 
+let port
+
 if (process.env.NODE_ENV === 'production') {
+
+  port = 3001
+
   // if environment is in production, serve the static production build
   app.use(express.static(path.join(__dirname, 'client/build')))
 
   app.get('*', (req, res) => {
+    console.log(req.headers['x-real-ip'])
     res.sendFile(path.join(__dirname, 'client/build/index.html'))
   })
+} else {
+  port = 3002
 }
 
 app.listen(port, () => {

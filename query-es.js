@@ -5,7 +5,7 @@ function query_es(query, index_name, es) {
   */
 
   // Fields to query.
-  let fields = ['Title', 'Authors.ForeName', 'Authors.LastName', '_id']
+  let fields = ['Title', 'Authors.ForeName', 'Authors.LastName', '_id', 'PubDate.Year', 'Journal.Title', 'Journal.ISO']
 
   // Query Elasticsearch.
   let es_query = es.search({
@@ -19,6 +19,7 @@ function query_es(query, index_name, es) {
             multi_match: {
               query: query,
               fields: fields,
+              type: 'cross_fields'
             }
           },
           filter: {
