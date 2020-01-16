@@ -8,6 +8,7 @@ import "./NetworkView.css"
 import theme from "../Theme"
 
 export default function NetworkView({ props }) {
+  console.log(props.searchResults)
 
   const svgRef = React.useRef(null)
   
@@ -61,13 +62,15 @@ export default function NetworkView({ props }) {
       .style("stroke", "none")
 
     const simulation = d3.forceSimulation()
-      .force("charge", d3.forceManyBody().strength(-600))
+      .force("charge", d3.forceManyBody()
+        .strength(-600))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("collide", d3.forceCollide()
         .radius(function(_, idx) {
-            return props.searchResults.metadata.radii[idx] + 3;
+          return props.searchResults.metadata.radii[idx] + 3;
         }))
       .force("link", d3.forceLink().id(function(d) {return d.id}))
+
 
     const links = g.append("g")
       .selectAll("line")
@@ -188,9 +191,20 @@ export default function NetworkView({ props }) {
         .on("end", dragEnd))
 
     simulation.nodes(props.searchResults.subgraph.nodes)
-    console.log(props.searchResults.subgraph.nodes)
-    console.log(props.searchResults.subgraph.links)
     simulation.force("link").links(props.searchResults.subgraph.links)
+
+    // the following forces ensure disconnected nodes are forced closer to the center
+    simulation
+      .force('x', d3.forceX().x(function(d) {
+        return 3 * window.innerWidth / 4
+      })
+        .strength( function(d) {return d.hasCitationEdges ? 0 : 0.5})
+      )
+      .force('y', d3.forceY().y(function(d) {
+        return window.innerHeight / 2
+      })
+        .strength( function(d) {return d.hasCitationEdges ? 0 : 0.5})
+      )
 
     simulation.on("tick", () => {
       links
