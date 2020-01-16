@@ -15,9 +15,11 @@ const useStyles = makeStyles({
     height: "inherit",
     width: "inherit",
   },
-  search: {
-    marginTop: "10px",
-    marginBottom: "10px",
+  aboutLink: {
+    position: "absolute",
+    top: "15px",
+    left: "20px",
+    fontSize: "14px",
   },
   logo: {
     display: "block",
@@ -26,16 +28,9 @@ const useStyles = makeStyles({
     maxWidth: "50%",
     height: "auto",
   },
-  aboutLink: {
-    position: "absolute",
-    top: "15px",
-    left: "20px",
-    fontSize: "14px"
+  search: {
+    marginTop: "45px",
   }
-  // tagline: {
-  //   color: theme.palette.primary.main,
-  //   marginBottom: "15vh"
-  // }
 })
 
 export default function HomePage({ props }) {
@@ -70,17 +65,6 @@ export default function HomePage({ props }) {
               <SearchBar props={props} />
             </Grid>
 
-          </Grid>
-
-          <Grid item>
-            <Typography 
-              style={{
-                color: theme.palette.primary.main,
-                marginBottom: "15vh"
-              }} // This should be in `makeStyles` but it doesn't work...?
-            >
-              A powerfully intuitive way to search the scientific literature
-            </Typography>
           </Grid>
 
         </Grid>
