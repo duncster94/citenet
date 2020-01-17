@@ -126,6 +126,7 @@ export default function ViewDialog({ props }) {
               props.selectedPaper.id.toString() :
               ""}
             target="_blank"
+            rel='noopener noreferrer'
             style={{ textDecoration: "none" }}
           >
             <IconButton
