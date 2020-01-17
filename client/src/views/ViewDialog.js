@@ -72,13 +72,23 @@ export default function ViewDialog({ props }) {
             size="small"
             className={classes.journalChip}
             color="primary"
+            display={
+              props.selectedPaper.Journal.Title == null ?
+              'none':
+              'block'
+            }
           />
           <Chip 
             label={props.selectedPaper.formattedDate}
             size="small"
             style={{float: "right"}}
             color="primary"
-          />
+            display={
+              props.selectedPaper.formattedDate == null ?
+              'none':
+              'block'
+            }
+          />        
         </div>
         <DialogContentText
           variant="caption"
@@ -86,10 +96,12 @@ export default function ViewDialog({ props }) {
         >
           {props.selectedPaper.formattedAuthors ? 
            props.selectedPaper.formattedAuthors :
-           ""}
+           ''}
         </DialogContentText>
         <DialogContentText>
-          {props.selectedPaper.Abstract}
+          {props.selectedPaper.Abstract ?
+           props.selectedPaper.Abstract :
+           ''}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -126,6 +138,7 @@ export default function ViewDialog({ props }) {
               props.selectedPaper.id.toString() :
               ""}
             target="_blank"
+            rel='noopener noreferrer'
             style={{ textDecoration: "none" }}
           >
             <IconButton
