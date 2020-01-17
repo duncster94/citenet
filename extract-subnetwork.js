@@ -66,8 +66,11 @@ class ExtractSubnetwork {
     let topCitationObj = this.getTop('citation')
     let topSemanticObj = this.getTop('semantic')
     let topObj = await this.combineTop(
-      [topCitationObj, topSemanticObj]
+      [topCitationObj, topSemanticObj],
+      ['citation', 'semantic']
+      // [topCitationObj]
     )
+
     // let topObj = this.getTop('citation')
     // let topObj = this.getTop('semantic')
 
@@ -297,6 +300,8 @@ class ExtractSubnetwork {
     Returns the top 'n_top' scoring nodes in the random walk.
     */
 
+    // console.log(this.citation_edge_frequencies)
+
     // Map 'frequencies' object to an array of key, value pairs.
     let frequencies_arr
     if (type === 'citation') {
@@ -351,34 +356,45 @@ class ExtractSubnetwork {
     return { 'topN': top_n_results, 'IDtoRank': IDtoRank };
   }
 
-  async combineTop(topObjs) {
+  async combineTop(topObjs, types) {
     /* Given the top scoring nodes in the citation and semantic networks,
     takes the average of node scores and reranks to obtain the final top
     `this.n_top` nodes. In instances where a node has no edges in a network,
     only the score from the network where it has edges is counted.
     */
 
+    let maxCitationScore = 0
+    let maxSemanticScore = 0
     let topFinal = {}
-    for (let topObj of topObjs) {
+
+    topObjs.forEach((topObj, i) => {
+    // for (let topObj of topObjs) {
+      let type = types[i]
       let { topN } = topObj
       for (let key in topN) {
         if (!(key in topFinal)) {
           topFinal[key] = topN[key]
-        }
-        else {
+        } else {
           // topFinal[key] += topN[key]
           if (topN[key] > topFinal[key]) {
             topFinal[key] = topN[key]
           }
+        }
 
+        if (type === 'citation' && topN[key] > maxCitationScore) {
+          maxCitationScore = topN[key]
+        }
+
+        if (type === 'semantic' && topN[key] > maxSemanticScore) {
+          maxSemanticScore = topN[key]
         }
       }
-    }
-
+    })
+    
     // TODO: determine which IDs in the keys of `topFinal` have edges in
     // each network type given by `objTypes` and compute average (maybe try max too)
     // score depending on whether the node has edges or not
-
+    
     // let denominators = {}  // Determines which each score should be divided by
     // let es_query = await this.es_client.search({
     //   index: this.es_index,
@@ -394,21 +410,24 @@ class ExtractSubnetwork {
     //   }
     // })
 
+    // // determine how to normalize frequencies, based on presence or absence of node
+    // // in each network type
     // for (let article of es_query.hits.hits) {
-    //   if (!(article._id in denominators)) {
-    //     denominators[article._id] = 0
-    //   }
-    //   if (('cites' in article._source) || ('cited_by' in article._source)) {
-    //     denominators[article._id] += 1
-    //   }
-    //   if ('semantic_sim' in article._source && article._source['semantic_sim'].length > 0) {
-    //     denominators[article._id] += 1
+    //   let inCitationGraph = (('cites' in article._source) || ('cited_by' in article._source))
+    //   let inSemanticGraph = ('semantic_sim' in article._source && article._source['semantic_sim'].length > 0)
+    //   if (inCitationGraph && inSemanticGraph) {
+    //     denominators[article._id] = Math.max(maxCitationScore, maxSemanticScore)
+    //   } else if (inCitationGraph) {
+    //     denominators[article._id] = maxCitationScore
+    //   } else {
+    //     denominators[article._id] = maxSemanticScore
     //   }
     // }
 
-    // for (let key in topFinal) {
-    //   topFinal[key] /= denominators[key]
-    // }
+    for (let key in topFinal) {
+      // topFinal[key] /= denominators[key]
+      topFinal[key] /= Math.max(maxCitationScore, maxSemanticScore)
+    }
 
     let frequenciesArr = Object.keys(topFinal)
     .map(function (key) {
@@ -592,7 +611,7 @@ process.on('message', function (message) {
 
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 5000, 0.6, 30, es, index_name
+    seeds, 20000, 0.8, 30, es, index_name
   );
 
   // Pass 'extSub' to function to await subgraph computation and send

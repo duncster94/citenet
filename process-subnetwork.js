@@ -25,8 +25,7 @@ function processSubnetwork(message, seeds) {
 
     // console.log(maxScore)
     // let radius = 30 * node.score / maxScore
-    let radius = 30 * node.score / maxScore
-    console.log(radius)
+    let radius = 30 * node.score
 
     // Set seed nodes to a fixed size.
     if (seeds.includes(node.id)) {

@@ -40,6 +40,7 @@ export default function View(props) {
           headers: { "Content-Type": "application/json" },
         })
         if (res.status && res.status !== 200) {
+          console.log(res)
           // TODO: redirect to more informative error page
           setRedirect(true)
           return
