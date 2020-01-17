@@ -13,13 +13,6 @@ ReactGA.initialize('UA-156373378-1', {
   }
 })
 
-// const history = createBrowserHistory()
-
-// history.listen(location => {
-//   ReactGA.set({ page: location.pathname })
-//   ReactGA.pageview(location.pathname)
-// })
-
 ReactGA.pageview(window.location.pathname + window.location.search)
 
 ReactDOM.render(

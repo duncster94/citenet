@@ -464,6 +464,7 @@ class ExtractSubnetwork {
     
     // 'stored_neighbours' already contains the edge information, so
     // this object can be parsed to extract edges.
+    // for (let type of ['semantic']) {
     // for (let type of ['citation', 'semantic']) {
     for (let type of ['citation']) {
       for (let node of Object.keys(top_results)) {
@@ -591,7 +592,7 @@ process.on('message', function (message) {
 
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 10000, 0.8, 50, es, index_name
+    seeds, 5000, 0.6, 30, es, index_name
   );
 
   // Pass 'extSub' to function to await subgraph computation and send
