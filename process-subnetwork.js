@@ -23,7 +23,10 @@ function processSubnetwork(message, seeds) {
     /* Given a node, take its score and map it to a radius.
     */
 
+    // console.log(maxScore)
+    // let radius = 30 * node.score / maxScore
     let radius = 30 * node.score / maxScore
+    console.log(radius)
 
     // Set seed nodes to a fixed size.
     if (seeds.includes(node.id)) {
@@ -191,6 +194,8 @@ function processSubnetwork(message, seeds) {
 
   message.subgraph.nodes.sort((a, b) => (a.score > b.score || seeds.includes(a.id)) ? -1 : 1)
   const maxScore = message.subgraph.nodes[0].score
+  // console.log(message.subgraph.nodes[0])
+  // console.log(seeds)
 
   const radii = message.subgraph.nodes.map(node => {
     return scoreToRadius(node, maxScore, seeds)

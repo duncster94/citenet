@@ -464,6 +464,7 @@ class ExtractSubnetwork {
     
     // 'stored_neighbours' already contains the edge information, so
     // this object can be parsed to extract edges.
+    // for (let type of ['semantic']) {
     // for (let type of ['citation', 'semantic']) {
     for (let type of ['citation']) {
       for (let node of Object.keys(top_results)) {

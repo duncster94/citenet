@@ -21,26 +21,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Called on page load.
-// app.get('/', (request, response) => {
-//   response.status(200).send({ message: `Server running on port ${port}` })
-// });
-
-app.post('/ping', (request, response, next) => {
-  response.json({res: request.body})
-  next(err)
+app.post('/ping', (req, res) => {
+  res.json({ res: req.body })
 })
 
 // Called on user selectize query.
-app.post('/homepage_search_query', (request, response) => {
-
-  // console.log(request)
+app.post('/homepage_search_query', (req, res) => {
 
   // Get Elasticsearch query Promise and package response on Promise
   // resolution.
-  query_es(request.body.value, index_name, es)
+  query_es(req.body.value, index_name, es)
     .then(function(es_response) {
-      response.send(es_response.hits.hits)
+      res.send(es_response.hits.hits)
     });
 });
 
@@ -74,16 +66,6 @@ app.post('/submit_paper', wrapAsync(async (req, res) => {
   })
 }))
 
-// async function validateSeeds (req, res, next) {
-//   /* Ensures user specified seeds are valid and exist in the database
-//   */
-
-//   const queryRes = await query_es(req.body, index_name, es)
-//   if (req.body.length !== queryRes.hits.hits.length)
-//   .then(function(es_response) {
-//     response.send(es_response.hits.hits)
-//   });
-// }
 
 let port
 
@@ -102,11 +84,9 @@ if (process.env.NODE_ENV === 'production') {
   port = 3002
 }
 
-
-
 app.use(function(err, req, res, next) {
   // error middleware
-  // console.log(err)
+  console.log(err)
   res.status(500).send({ message: err.message })
 })
 
