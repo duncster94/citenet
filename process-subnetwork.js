@@ -19,12 +19,10 @@ function processSubnetwork(message, seeds) {
   let min_date = Math.min(...dates)
   let max_date = Math.max(...dates)
 
-  function scoreToRadius(node, maxScore, seeds) {
+  function scoreToRadius(node, seeds) {
     /* Given a node, take its score and map it to a radius.
     */
 
-    // console.log(maxScore)
-    // let radius = 30 * node.score / maxScore
     let radius = 30 * node.score
 
     // Set seed nodes to a fixed size.
@@ -75,18 +73,27 @@ function processSubnetwork(message, seeds) {
 
     // Add author names to 'authorString'.
     for (author of authors) {
+
+      if (author.CollectiveName) {
+        authorString += `${author.CollectiveName}, `
+        continue
+      }
+
       let first_name
       if (author.ForeName) {
         first_name = author.ForeName.split(' ').map(str => {
           return str[0]
         }).join('')
-      } else {
-        first_name = ''
+        authorString += `${first_name} `
       }
 
-      let last_name = author.LastName
+      if (author.LastName) {
+        authorString += `${author.LastName}, `
+      }
+    }
 
-      authorString += `${first_name} ${last_name}, `
+    if (authorString.length === 0) {
+      return ''
     }
 
     // Remove final comma and space at end of 'authorString'.
@@ -192,18 +199,14 @@ function processSubnetwork(message, seeds) {
   }
 
   message.subgraph.nodes.sort((a, b) => (a.score > b.score || seeds.includes(a.id)) ? -1 : 1)
-  const maxScore = message.subgraph.nodes[0].score
-  // console.log(message.subgraph.nodes[0])
-  // console.log(seeds)
 
   const radii = message.subgraph.nodes.map(node => {
-    return scoreToRadius(node, maxScore, seeds)
+    return scoreToRadius(node, seeds)
   })
 
   const colours = message.subgraph.nodes.map(node => {
     return dateToColour(node, min_date, max_date, seeds)
   })
-
 
   message.subgraph.nodes.forEach(node => {
     node.formattedAuthors = formatAuthors(node.Authors)
