@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
+import { debounce } from 'debounce'
 
 import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
@@ -42,7 +43,7 @@ export default function RankView({ props }) {
   const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const [isModalOpen, setIsModalOpen] = React.useState(false)
   const lhsRef = React.useRef(null)
-  const paperInfoHeight = 200 // height of left-hand side paper info cards
+  const paperInfoHeight = 150 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.searchResults.metadata.radii)
 
   // Currently no Javascript hooks exist for CSS snap scroll events so
@@ -56,8 +57,9 @@ export default function RankView({ props }) {
   function handleScroll(e) {
     // should add scroll debouncing here at some point
     // also scroll snapping isn't working on edge, will need to polyfill
-    if (e.target.scrollTop in pixelIntervals) {
-      setSelectedPaper(pixelIntervals[e.target.scrollTop])
+
+    if (lhsRef.current.scrollTop in pixelIntervals) {
+      setSelectedPaper(pixelIntervals[lhsRef.current.scrollTop])
     }
   }
 
@@ -102,14 +104,16 @@ export default function RankView({ props }) {
           </svg>
           <div
             style={{
-              scrollSnapType: "y mandatory",
+              scrollSnapType: 'y mandatory',
+              scrollSnapStop: "normal",
               overflowY: "scroll",
               maxHeight: "100vh",
-              scrollSnapDestination: "50vh",
-              paddingLeft: "40px"
+              scrollSnapDestination: 'center',
+              paddingLeft: "40px",
+              transform: 'scaleX(-1)' // ensure scroll bar is on LHS
             }}
             className="lhs-paper-cards"
-            onScroll={handleScroll}
+            onScroll={debounce(handleScroll, 100)}
             ref={lhsRef}
           >
             {props.searchResults.subgraph.nodes.map((node, i) => {
@@ -144,7 +148,8 @@ export default function RankView({ props }) {
                     scrollSnapAlign: "center",
                     marginTop: marginTop,
                     marginBottom: marginBottom,
-                    marginRight: "2.5vh"
+                    marginRight: "2.5vh",
+                    transform: 'scaleX(-1)' // ensure card content is not reversed
                   }}
                   key={`paper-metadata-${i}`}
                 >
@@ -262,7 +267,7 @@ function NodeDialog({ props }) {
             style={{
               display: "flex",
               flexDirection: "column",
-              maxHeight: "90vh",
+              height: "90vh",
               margin: "5vh",
               marginLeft: "2.5vh"
             }}
