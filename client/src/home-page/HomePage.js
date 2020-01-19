@@ -14,6 +14,7 @@ const useStyles = makeStyles({
     flexGrow: 1,
     height: "inherit",
     width: "inherit",
+    overflow: 'hidden'
   },
   aboutLink: {
     position: "absolute",
