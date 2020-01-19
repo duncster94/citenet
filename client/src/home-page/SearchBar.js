@@ -128,7 +128,7 @@ export default withRouter(function SearchBar(props) {
         colors: {
           ...theme_.colors,
           primary: theme.palette.primary.main,
-          primary25: theme.palette.primary.mainLight
+          primary25: "#eeeeee"
         }
       })}
       styles={{
@@ -185,8 +185,7 @@ function MenuSearchButtons({ props }) {
     >
       <ButtonGroup
         variant="text"
-        size="small"
-        style={{boxShadow: "0px 0px 0px 0px"}}
+        size="large"
       >
         <Button
           aria-haspopup="true"
