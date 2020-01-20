@@ -93,7 +93,7 @@ function LoadingIndicator() {
         alignItems="center"
       >
         <Grid item>
-          <CircularProgress />
+          <CircularProgress color="secondary"/>
         </Grid>
       </Grid>
     </div>

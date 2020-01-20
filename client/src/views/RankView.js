@@ -200,7 +200,7 @@ export default function RankView({ props }) {
                   >
                     <CardContent>
                       <Typography
-                        variant="body1"
+                        variant="subtitle1"
                         color="textPrimary"
                         gutterBottom
                       >
@@ -208,7 +208,7 @@ export default function RankView({ props }) {
                       </Typography>
                       <Typography
                         className={classes.lhsAuthors}
-                        variant="caption"
+                        variant="body1"
                         color="textSecondary"
                       >
                         {node.formattedAuthors ? 

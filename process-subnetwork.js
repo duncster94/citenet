@@ -38,7 +38,7 @@ function processSubnetwork(message, seeds) {
 
     // If the node is a seed node, colour it differently.
     if (seeds.includes(node.id.toString())) {
-      return '#9D0000'
+      return '#FF5722'
     }
 
     // Get publication year.
