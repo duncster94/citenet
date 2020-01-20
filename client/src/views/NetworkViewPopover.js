@@ -1,6 +1,5 @@
 import React from "react"
 
-import Chip from "@material-ui/core/Chip"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
 import { Popper } from "@material-ui/core"

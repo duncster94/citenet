@@ -54,13 +54,13 @@ export default withRouter(function SearchBar(props) {
     return (
       <div style={optionStyles.root}>
         <Typography
-          variant="subtitle2"
+          variant="body2"
           color="textPrimary"
         >
           {values.labels.Title}
         </Typography>
         <Typography
-          variant="caption"
+          variant="subtitle2"
           color="textSecondary"
         >
           {authorString}
@@ -127,7 +127,7 @@ export default withRouter(function SearchBar(props) {
         ...theme_,
         colors: {
           ...theme_.colors,
-          primary: theme.palette.primary.main,
+          primary: theme.palette.secondary.main,
           primary25: "#eeeeee"
         }
       })}

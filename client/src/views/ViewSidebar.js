@@ -36,6 +36,10 @@ const useStyles = makeStyles({
   avatarMain: {
     color: "#fff",
     backgroundColor: theme.palette.primary.main
+  },
+  avatarRefine: {
+    color: "#fff",
+    backgroundColor: theme.palette.secondary.main
   }
 })
 
@@ -126,7 +130,7 @@ export default withRouter(function ViewSidebar(props) {
             false}
         >
           <ListItemIcon>
-            <Avatar className={classes.avatarMain}>
+            <Avatar className={classes.avatarRefine}>
               <Icon
                 path={mdiRedoVariant}
                 size={1}

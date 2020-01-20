@@ -12,8 +12,6 @@ import PopupModal from "./PopupModal"
 import dateToColour from '../utils/dateToColour'
 import "./RankView.css"
 
-import theme from "../Theme"
-
 const useStyles = makeStyles(theme => ({
   nodeDialog: {
     overflow: "hidden"
@@ -209,7 +207,7 @@ export default function RankView({ props }) {
                   >
                     <CardContent>
                       <Typography
-                        variant="body1"
+                        variant="subtitle1"
                         color="textPrimary"
                         gutterBottom
                       >
@@ -217,7 +215,7 @@ export default function RankView({ props }) {
                       </Typography>
                       <Typography
                         className={classes.lhsAuthors}
-                        variant="caption"
+                        variant="body1"
                         color="textSecondary"
                       >
                         {node.formattedAuthors ? 

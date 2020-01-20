@@ -4,7 +4,6 @@ import Link from "@material-ui/core/Link"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
-import theme from "../Theme"
 import SearchBar from "./SearchBar"
 
 const useStyles = makeStyles({
