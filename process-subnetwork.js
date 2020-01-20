@@ -16,8 +16,8 @@ function processSubnetwork(message, seeds) {
       dates.push(pub_year);
     }
   })
-  let min_date = Math.min(...dates)
-  let max_date = Math.max(...dates)
+  let minDate = Math.min(...dates)
+  let maxDate = Math.max(...dates)
 
   function scoreToRadius(node, seeds) {
     /* Given a node, take its score and map it to a radius.
@@ -30,39 +30,6 @@ function processSubnetwork(message, seeds) {
       radius = 15
     }
     return Math.max(5, radius)
-  }
-
-  function dateToColour(node, D_min, D_max, seeds) {
-    /* Given a node, map the appropriate colour.
-    */
-
-    // If the node is a seed node, colour it differently.
-    if (seeds.includes(node.id.toString())) {
-      return '#9D0000'
-    }
-
-    // Get publication year.
-    let year = node.PubDate.Year
-
-    // If publication year is not available, set node colour to
-    // grey.
-    if (!year) {
-      return '#ccc'
-    }
-
-    // Define minimum and maximum lightness.
-    L_min = 50
-    L_max = 100
-
-    // Get lightness of node colour based on date.
-    let m = (L_max - L_min) / (D_min - D_max)
-    let b = L_max - m * D_min
-
-    let lightness = m * year + b
-
-    let colour = `hsla(0,0%, ${lightness.toString()}%,1)`
-
-    return colour
   }
 
   function formatAuthors(authors) {
@@ -204,10 +171,6 @@ function processSubnetwork(message, seeds) {
     return scoreToRadius(node, seeds)
   })
 
-  const colours = message.subgraph.nodes.map(node => {
-    return dateToColour(node, min_date, max_date, seeds)
-  })
-
   message.subgraph.nodes.forEach(node => {
     node.formattedAuthors = formatAuthors(node.Authors)
   })
@@ -225,7 +188,8 @@ function processSubnetwork(message, seeds) {
     seeds, 
     metadata: {
       radii,
-      colours
+      minDate,
+      maxDate
     }
   })
 }
