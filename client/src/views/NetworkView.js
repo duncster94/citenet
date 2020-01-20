@@ -6,6 +6,7 @@ import PopupModal from "./PopupModal"
 import "./NetworkView.css"
 
 import theme from "../Theme"
+import dateToColour from '../utils/dateToColour'
 
 export default function NetworkView({ props }) {
   console.log(props.searchResults)
@@ -26,6 +27,14 @@ export default function NetworkView({ props }) {
   }
 
   React.useEffect(() => {
+
+    const { minDate, maxDate } = props.searchResults.metadata
+    const colours = dateToColour(
+      props.searchResults.subgraph.nodes, 
+      minDate, 
+      maxDate, 
+      props.searchQueue
+    )
 
     const svg = d3.select(svgRef.current)
     const g = svg.append("g") // Group to hold elements
@@ -97,10 +106,12 @@ export default function NetworkView({ props }) {
         return props.searchResults.metadata.radii[idx]
       })
       .attr("fill", function(_, idx) {
-        return props.searchResults.metadata.colours[idx]
+        // return props.searchResults.metadata.colours[idx]
+        return colours[idx]
       })
       .attr("stroke", function(_, idx) {
-        const lightness = props.searchResults.metadata.colours[idx].split(",")[2]
+        // const lightness = props.searchResults.metadata.colours[idx].split(",")[2]
+        const lightness = colours[idx].split(",")[2]
         if (lightness && 
           parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
           return "#ddd"
