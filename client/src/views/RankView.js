@@ -12,8 +12,6 @@ import PopupModal from "./PopupModal"
 import dateToColour from '../utils/dateToColour'
 import "./RankView.css"
 
-import theme from "../Theme"
-
 const useStyles = makeStyles(theme => ({
   nodeDialog: {
     overflow: "hidden"
