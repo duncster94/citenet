@@ -126,7 +126,7 @@ export default function ViewDialog({ props }) {
                 mdiMinusBox :
                 mdiPlusBox} 
               size={1.25}
-                          color={theme.palette.primary.dark}
+              color={theme.palette.primary.main}
             />       
           </IconButton>
         </Tooltip>
@@ -152,7 +152,7 @@ export default function ViewDialog({ props }) {
               <Icon
                 path={mdiOpenInNew}
                 size={1.25}
-                color={theme.palette.primary.dark}
+                color={theme.palette.primary.main}
               />       
             </IconButton>
           </a>
