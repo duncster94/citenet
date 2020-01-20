@@ -9,6 +9,7 @@ import { debounce } from 'debounce'
 
 import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
+import dateToColour from '../utils/dateToColour'
 import "./RankView.css"
 
 import theme from "../Theme"
@@ -45,6 +46,14 @@ export default function RankView({ props }) {
   const lhsRef = React.useRef(null)
   const paperInfoHeight = 175.0 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.searchResults.metadata.radii)
+
+  const { minDate, maxDate } = props.searchResults.metadata
+  const colours = dateToColour(
+    props.searchResults.subgraph.nodes, 
+    minDate, 
+    maxDate, 
+    props.searchQueue
+  )
 
   // Currently no Javascript hooks exist for CSS snap scroll events so
   // for now the `scrollTop` pixel values must be tracked to determine which
@@ -133,7 +142,7 @@ export default function RankView({ props }) {
               }
 
               // Put darker border around light coloured nodes.
-              const lightness = props.searchResults.metadata.colours[i].split(",")[2]
+              const lightness = colours[i].split(",")[2]
               let stroke
               if (lightness && 
                 parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
@@ -163,7 +172,7 @@ export default function RankView({ props }) {
                       cx={maxRadius + 2}
                       cy={(paperInfoHeight / 2) + 2}
                       r={props.searchResults.metadata.radii[i]}
-                      fill={props.searchResults.metadata.colours[i]}
+                      fill={colours[i]}
                       stroke={stroke}
                       strokeWidth="2.5px"
                       onClick={handleNodeClick(i * paperInfoHeight)}
