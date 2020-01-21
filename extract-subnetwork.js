@@ -21,8 +21,8 @@ class ExtractSubnetwork {
     this.es_client = es_client;
     this.es_index = es_index;
 
-    this.citation_edge_frequencies = {}
-    this.semantic_edge_frequencies = {}
+    this.types = ['citation', 'semantic']
+    this.edge_frequencies = {}
 
     this.stored_cites = {};
     this.stored_cited_by = {};
@@ -57,19 +57,22 @@ class ExtractSubnetwork {
     // Perform random walk with restart. Wrapping with `Promise.all`
     // allows both walks to be performed concurrently since the first
     // `randomWalk` call will not block.
-    await Promise.all([
-      this.randomWalk(walks_per_node, 'citation'),
-      this.randomWalk(walks_per_node, 'semantic')
-    ])
+    // await Promise.all([
+    //   this.randomWalk(walks_per_node, 'citation'),
+    //   this.randomWalk(walks_per_node, 'semantic')
+    // ])
+
+    await this.randomWalk(walks_per_node)
 
     // Get top results object.
-    let topCitationObj = this.getTop('citation')
-    let topSemanticObj = this.getTop('semantic')
-    let topObj = await this.combineTop(
-      [topCitationObj, topSemanticObj],
-      ['citation', 'semantic']
-      // [topCitationObj]
-    )
+    // let topCitationObj = this.getTop('citation')
+    // let topSemanticObj = this.getTop('semantic')
+    // let topObj = await this.combineTop(
+    //   [topCitationObj, topSemanticObj],
+    //   ['citation', 'semantic']
+    //   // [topCitationObj]
+    // )
+    let topObj = this.getTop()
 
     // let topObj = this.getTop('citation')
     // let topObj = this.getTop('semantic')
@@ -81,7 +84,7 @@ class ExtractSubnetwork {
     return subgraph;
   }
 
-  async randomWalk(walks_per_node, type) {
+  async randomWalk(walks_per_node) {
     /*
     The core of the search algorithm. Performs random walk with
     restart over the network.
@@ -103,7 +106,7 @@ class ExtractSubnetwork {
     // terminations in 'frequencies'.
     let promises = []
     for (let node of this.source_nodes) {
-      promises.push(this.walk(node, walks_per_node, type))
+      promises.push(this.walk(node, walks_per_node))
     }
     await Promise.all(promises)
   }
@@ -127,7 +130,7 @@ class ExtractSubnetwork {
     return walks_per_node;
   }
 
-  async walk(node, walks_per_node, type) {
+  async walk(node, walks_per_node) {
     /*
     TODO: documentation.
     */
@@ -138,31 +141,23 @@ class ExtractSubnetwork {
       let current_node = node;
 
       // Perform steps.
-      current_node = await this.step(current_node, type);
+      current_node = await this.step(current_node);
 
       // On walk end, update 'frequencies' to track the node
       // the walk terminated on. Add the node to 'frequencies'
       // if it is not in 'frequencies'. The frequency is
       // normalized by the total number of walks and multiplied
       // by 100 to give a percentage (readability purposes).
-      if (type === 'citation') {
-        if (!this.citation_edge_frequencies[current_node]) {
-          this.citation_edge_frequencies[current_node] = 1 / this.n_walks;
-        } else {
-          this.citation_edge_frequencies[current_node] += 1 / this.n_walks;
-        }
+      if (!this.edge_frequencies[current_node]) {
+        this.edge_frequencies[current_node] = 1 / this.n_walks;
       } else {
-        if (!this.semantic_edge_frequencies[current_node]) {
-          this.semantic_edge_frequencies[current_node] = 1 / this.n_walks;
-        } else {
-          this.semantic_edge_frequencies[current_node] += 1 / this.n_walks;
-        }
+        this.edge_frequencies[current_node] += 1 / this.n_walks;
       }
     }
 
   }
 
-  async step(passed_node, type) {
+  async step(passed_node) {
     /*
     TODO: documentation
     */
@@ -173,9 +168,15 @@ class ExtractSubnetwork {
     // Step until walk randomly ends.
     while (!end_walk) {
 
+      // Randomly select network type
+      let type = this.types[Math.floor(Math.random() * this.types.length)]
+      // console.log(type)
+
       // Get neighbours of 'current_node'.
       let node_neighbours = await this.findNeighbours(current_node, type)
-      if (node_neighbours.length === 0) break
+      if (node_neighbours.length === 0) {
+        break
+      }
 
       // Randomly select neighbour to jump to.
       let rand_index = Math.floor(Math.random() * node_neighbours.length);
@@ -295,7 +296,7 @@ class ExtractSubnetwork {
     return neighbours;
   }
 
-  getTop(type) {
+  getTop() {
     /*
     Returns the top 'n_top' scoring nodes in the random walk.
     */
@@ -303,18 +304,11 @@ class ExtractSubnetwork {
     // console.log(this.citation_edge_frequencies)
 
     // Map 'frequencies' object to an array of key, value pairs.
-    let frequencies_arr
-    if (type === 'citation') {
-      frequencies_arr = Object.keys(this.citation_edge_frequencies)
-        .map(function (key) {
-          return { key: key, value: this[key] };
-        }, this.citation_edge_frequencies);
-    } else {
-      frequencies_arr = Object.keys(this.semantic_edge_frequencies)
-        .map(function (key) {
-          return { key: key, value: this[key] };
-        }, this.semantic_edge_frequencies);
-    }
+    let frequencies_arr = Object.keys(this.edge_frequencies)
+      .map(function (key) {
+        return { key: key, value: this[key] };
+      }, this.edge_frequencies)
+
     return this.getTopCore(frequencies_arr)
   }
 
@@ -336,7 +330,7 @@ class ExtractSubnetwork {
     // Retain the top 'n_top' results and map back to object.
     let maxVal = 0
     let self = this
-    let top_n_results = frequencies_arr.slice(0, this.n_top + this.source_nodes.length)
+    let top_n_results = frequencies_arr.slice(0, this.n_top)
       .reduce(function (obj, prop) {
         obj[prop.key] = prop.value;
         
@@ -347,94 +341,19 @@ class ExtractSubnetwork {
         return obj;
       }, {});
 
+      
     // Add source nodes to result.
     this.source_nodes.forEach((node, idx) => {
       top_n_results[node] = maxVal
       IDtoRank[node] = idx
     })
-
-    return { 'topN': top_n_results, 'IDtoRank': IDtoRank };
-  }
-
-  async combineTop(topObjs, types) {
-    /* Given the top scoring nodes in the citation and semantic networks,
-    takes the average of node scores and reranks to obtain the final top
-    `this.n_top` nodes. In instances where a node has no edges in a network,
-    only the score from the network where it has edges is counted.
-    */
-
-    let maxCitationScore = 0
-    let maxSemanticScore = 0
-    let topFinal = {}
-
-    topObjs.forEach((topObj, i) => {
-    // for (let topObj of topObjs) {
-      let type = types[i]
-      let { topN } = topObj
-      for (let key in topN) {
-        if (!(key in topFinal)) {
-          topFinal[key] = topN[key]
-        } else {
-          // topFinal[key] += topN[key]
-          if (topN[key] > topFinal[key]) {
-            topFinal[key] = topN[key]
-          }
-        }
-
-        if (type === 'citation' && topN[key] > maxCitationScore) {
-          maxCitationScore = topN[key]
-        }
-
-        if (type === 'semantic' && topN[key] > maxSemanticScore) {
-          maxSemanticScore = topN[key]
-        }
-      }
-    })
-    
-    // TODO: determine which IDs in the keys of `topFinal` have edges in
-    // each network type given by `objTypes` and compute average (maybe try max too)
-    // score depending on whether the node has edges or not
-    
-    // let denominators = {}  // Determines which each score should be divided by
-    // let es_query = await this.es_client.search({
-    //   index: this.es_index,
-    //   body: {
-    //     size: Object.keys(topFinal).length,
-    //     _source: ['_id', 'cites', 'cited_by', 'semantic_sim'],
-    //     query: {
-    //       ids: {
-    //         type: 'paper',
-    //         values: Object.keys(topFinal)
-    //       }
-    //     }
-    //   }
-    // })
-
-    // // determine how to normalize frequencies, based on presence or absence of node
-    // // in each network type
-    // for (let article of es_query.hits.hits) {
-    //   let inCitationGraph = (('cites' in article._source) || ('cited_by' in article._source))
-    //   let inSemanticGraph = ('semantic_sim' in article._source && article._source['semantic_sim'].length > 0)
-    //   if (inCitationGraph && inSemanticGraph) {
-    //     denominators[article._id] = Math.max(maxCitationScore, maxSemanticScore)
-    //   } else if (inCitationGraph) {
-    //     denominators[article._id] = maxCitationScore
-    //   } else {
-    //     denominators[article._id] = maxSemanticScore
-    //   }
-    // }
-
-    for (let key in topFinal) {
-      // topFinal[key] /= denominators[key]
-      topFinal[key] /= Math.max(maxCitationScore, maxSemanticScore)
+      
+    // normalize scores to `maxVal`
+    for (let key of Object.keys(top_n_results)) {
+      top_n_results[key] /= maxVal
     }
 
-    let frequenciesArr = Object.keys(topFinal)
-    .map(function (key) {
-      return { key: key, value: this[key] };
-    }, topFinal)
-
-    return this.getTopCore(frequenciesArr)
+    return { 'topN': top_n_results, 'IDtoRank': IDtoRank };
   }
 
   async formatResponse(topResultsObj) {
@@ -445,6 +364,7 @@ class ExtractSubnetwork {
 
     let topResults = topResultsObj.topN
     let IDtoRank = topResultsObj.IDtoRank
+    // console.log(topResults)
 
     // Get an edge-list object containing all edges between nodes in
     // 'top_nodes'.
@@ -474,7 +394,6 @@ class ExtractSubnetwork {
 
     // Array to store edges.
     let edge_arr = [];
-
     
     for (let node of Object.keys(top_results)) {
       this.hasCitationEdges[node] = false
@@ -611,7 +530,7 @@ process.on('message', function (message) {
 
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 10000, 0.8, 30, es, index_name
+    seeds, 1000, 0.8, 30, es, index_name
   );
 
   // Pass 'extSub' to function to await subgraph computation and send
