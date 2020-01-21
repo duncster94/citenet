@@ -5,6 +5,7 @@ TODO: documentation.
 // Connect to Elasticsearch client.
 const elasticsearch = require('elasticsearch')
 const CONSTANTS = require('./constants')
+const seedrandom = require('seedrandom')
 
 const es = new elasticsearch.Client({
   host: CONSTANTS.DATABASE_IP,
@@ -13,7 +14,7 @@ const es = new elasticsearch.Client({
 
 class ExtractSubnetwork {
 
-  constructor(source_nodes, n_walks, restart_prob, n_top, es_client, es_index) {
+  constructor(source_nodes, n_walks, restart_prob, n_top, es_client, es_index, saveState) {
     this.source_nodes = source_nodes;
     this.n_walks = n_walks;
     this.restart_prob = restart_prob;
@@ -31,6 +32,9 @@ class ExtractSubnetwork {
 
     this.hasCitationEdges = {}
     this.hasSemanticEdges = {}
+
+    this.saveState = saveState
+    // seedrandom('', {state: saveState, global: true})
   }
 
   async get_subgraph() {
@@ -106,7 +110,8 @@ class ExtractSubnetwork {
     // terminations in 'frequencies'.
     let promises = []
     for (let node of this.source_nodes) {
-      promises.push(this.walk(node, walks_per_node))
+      let rng = seedrandom('', {state: this.saveState})
+      promises.push(this.walk(node, walks_per_node, rng))
     }
     await Promise.all(promises)
   }
@@ -130,7 +135,7 @@ class ExtractSubnetwork {
     return walks_per_node;
   }
 
-  async walk(node, walks_per_node) {
+  async walk(node, walks_per_node, rng) {
     /*
     TODO: documentation.
     */
@@ -141,7 +146,7 @@ class ExtractSubnetwork {
       let current_node = node;
 
       // Perform steps.
-      current_node = await this.step(current_node);
+      current_node = await this.step(current_node, rng);
 
       // On walk end, update 'frequencies' to track the node
       // the walk terminated on. Add the node to 'frequencies'
@@ -157,7 +162,7 @@ class ExtractSubnetwork {
 
   }
 
-  async step(passed_node) {
+  async step(passed_node, rng) {
     /*
     TODO: documentation
     */
@@ -179,7 +184,8 @@ class ExtractSubnetwork {
       }
 
       // Randomly select neighbour to jump to.
-      let rand_index = Math.floor(Math.random() * node_neighbours.length);
+      // let rand_index = Math.floor(Math.random() * node_neighbours.length);
+      let rand_index = Math.floor(rng() * node_neighbours.length);
       let sampled_node = node_neighbours[rand_index];
 
       // Check that `sampled_node` exists in ES.
@@ -195,7 +201,8 @@ class ExtractSubnetwork {
       }
 
       // Determine if walk ends.
-      end_walk = Math.random() <= this.restart_prob;
+      // end_walk = Math.random() <= this.restart_prob;
+      end_walk = rng() <= this.restart_prob;
     }
 
     // Return the node that the walk ended on.
@@ -347,7 +354,7 @@ class ExtractSubnetwork {
       top_n_results[node] = maxVal
       IDtoRank[node] = idx
     })
-      
+     
     // normalize scores to `maxVal`
     for (let key of Object.keys(top_n_results)) {
       top_n_results[key] /= maxVal
@@ -522,20 +529,22 @@ class ExtractSubnetwork {
   }
 }
 
-process.on('message', function (message) {
+process.on('message', async function (message) {
   // console.log('parent', message);
 
-  let seeds = message.seeds;
-  let index_name = message.index_name;
+  let { seeds, indexName, saveState } = message
+
+  // seedrandom('', {state: saveState, global: true})
 
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 1000, 0.8, 30, es, index_name
+    seeds, 10000, 0.85, 30, es, indexName, saveState
   );
 
+  
   // Pass 'extSub' to function to await subgraph computation and send
   // extracted subgraph.
-  send_subgraph(extSub);
+  await send_subgraph(extSub);
 })
 
 async function send_subgraph(extSub) {
