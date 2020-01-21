@@ -174,7 +174,7 @@ class ExtractSubnetwork {
     while (!end_walk) {
 
       // Randomly select network type
-      let type = this.types[Math.floor(Math.random() * this.types.length)]
+      let type = this.types[Math.floor(rng() * this.types.length)]
       // console.log(type)
 
       // Get neighbours of 'current_node'.
@@ -538,7 +538,7 @@ process.on('message', async function (message) {
 
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 10000, 0.85, 30, es, indexName, saveState
+    seeds, 20000, 0.85, 30, es, indexName, saveState
   );
 
   
