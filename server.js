@@ -5,7 +5,10 @@ const bodyParser = require('body-parser');
 const elasticsearch = require('elasticsearch');
 const { query_es } = require('./query-es');
 const { processSubnetwork } = require('./process-subnetwork')
+const seedrandom = require('seedrandom')
 const CONSTANTS = require('./constants')
+
+const saveState = seedrandom('123456', { state: true }).state()
 
 const app = express();
 const es = new elasticsearch.Client({
@@ -14,7 +17,7 @@ const es = new elasticsearch.Client({
 });
 
 // Elasticsearch index.
-const index_name = 'papers'
+const indexName = 'papers'
 
 // Boilerplate
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,7 +33,7 @@ app.post('/homepage_search_query', (req, res) => {
 
   // Get Elasticsearch query Promise and package response on Promise
   // resolution.
-  query_es(req.body.value, index_name, es)
+  query_es(req.body.value, indexName, es)
     .then(function(es_response) {
       res.send(es_response.hits.hits)
     });
@@ -43,7 +46,7 @@ app.post('/submit_paper', wrapAsync(async (req, res) => {
   let seeds = req.body;
 
   // Create message to send to child process.
-  let child_message = {seeds: seeds, index_name: index_name};
+  let child_message = {seeds, indexName, saveState};
 
   // Fork a child process.
   const fork_randomwalk = fork('extract-subnetwork.js');

@@ -5,6 +5,7 @@ TODO: documentation.
 // Connect to Elasticsearch client.
 const elasticsearch = require('elasticsearch')
 const CONSTANTS = require('./constants')
+const seedrandom = require('seedrandom')
 
 const es = new elasticsearch.Client({
   host: CONSTANTS.DATABASE_IP,
@@ -13,7 +14,7 @@ const es = new elasticsearch.Client({
 
 class ExtractSubnetwork {
 
-  constructor(source_nodes, n_walks, restart_prob, n_top, es_client, es_index) {
+  constructor(source_nodes, n_walks, restart_prob, n_top, es_client, es_index, saveState) {
     this.source_nodes = source_nodes;
     this.n_walks = n_walks;
     this.restart_prob = restart_prob;
@@ -31,6 +32,9 @@ class ExtractSubnetwork {
 
     this.hasCitationEdges = {}
     this.hasSemanticEdges = {}
+
+    this.saveState = saveState
+    // seedrandom('', {state: saveState, global: true})
   }
 
   async get_subgraph() {
@@ -103,7 +107,8 @@ class ExtractSubnetwork {
     // terminations in 'frequencies'.
     let promises = []
     for (let node of this.source_nodes) {
-      promises.push(this.walk(node, walks_per_node, type))
+      let rng = seedrandom('', {state: this.saveState})
+      promises.push(this.walk(node, walks_per_node, type, rng))
     }
     await Promise.all(promises)
   }
@@ -127,7 +132,7 @@ class ExtractSubnetwork {
     return walks_per_node;
   }
 
-  async walk(node, walks_per_node, type) {
+  async walk(node, walks_per_node, type, rng) {
     /*
     TODO: documentation.
     */
@@ -138,7 +143,7 @@ class ExtractSubnetwork {
       let current_node = node;
 
       // Perform steps.
-      current_node = await this.step(current_node, type);
+      current_node = await this.step(current_node, type, rng);
 
       // On walk end, update 'frequencies' to track the node
       // the walk terminated on. Add the node to 'frequencies'
@@ -162,7 +167,7 @@ class ExtractSubnetwork {
 
   }
 
-  async step(passed_node, type) {
+  async step(passed_node, type, rng) {
     /*
     TODO: documentation
     */
@@ -178,7 +183,8 @@ class ExtractSubnetwork {
       if (node_neighbours.length === 0) break
 
       // Randomly select neighbour to jump to.
-      let rand_index = Math.floor(Math.random() * node_neighbours.length);
+      // let rand_index = Math.floor(Math.random() * node_neighbours.length);
+      let rand_index = Math.floor(rng() * node_neighbours.length);
       let sampled_node = node_neighbours[rand_index];
 
       // Check that `sampled_node` exists in ES.
@@ -194,7 +200,8 @@ class ExtractSubnetwork {
       }
 
       // Determine if walk ends.
-      end_walk = Math.random() <= this.restart_prob;
+      // end_walk = Math.random() <= this.restart_prob;
+      end_walk = rng() <= this.restart_prob;
     }
 
     // Return the node that the walk ended on.
@@ -365,6 +372,7 @@ class ExtractSubnetwork {
 
     let maxCitationScore = 0
     let maxSemanticScore = 0
+    let maxScore = 0
     let topFinal = {}
 
     topObjs.forEach((topObj, i) => {
@@ -381,12 +389,16 @@ class ExtractSubnetwork {
           }
         }
 
-        if (type === 'citation' && topN[key] > maxCitationScore) {
-          maxCitationScore = topN[key]
+        if (topFinal[key] > maxScore) {
+          maxScore = topFinal[key]
         }
 
-        if (type === 'semantic' && topN[key] > maxSemanticScore) {
-          maxSemanticScore = topN[key]
+        if (type === 'citation' && topFinal[key] > maxCitationScore) {
+          maxCitationScore = topFinal[key]
+        }
+
+        if (type === 'semantic' && topFinal[key] > maxSemanticScore) {
+          maxSemanticScore = topFinal[key]
         }
       }
     })
@@ -395,38 +407,41 @@ class ExtractSubnetwork {
     // each network type given by `objTypes` and compute average (maybe try max too)
     // score depending on whether the node has edges or not
     
-    // let denominators = {}  // Determines which each score should be divided by
-    // let es_query = await this.es_client.search({
-    //   index: this.es_index,
-    //   body: {
-    //     size: Object.keys(topFinal).length,
-    //     _source: ['_id', 'cites', 'cited_by', 'semantic_sim'],
-    //     query: {
-    //       ids: {
-    //         type: 'paper',
-    //         values: Object.keys(topFinal)
-    //       }
-    //     }
-    //   }
-    // })
+    let denominators = {}  // Determines which each score should be divided by
+    let es_query = await this.es_client.search({
+      index: this.es_index,
+      body: {
+        size: Object.keys(topFinal).length,
+        _source: ['_id', 'cites', 'cited_by', 'semantic_sim'],
+        query: {
+          ids: {
+            type: 'paper',
+            values: Object.keys(topFinal)
+          }
+        }
+      }
+    })
 
-    // // determine how to normalize frequencies, based on presence or absence of node
-    // // in each network type
-    // for (let article of es_query.hits.hits) {
-    //   let inCitationGraph = (('cites' in article._source) || ('cited_by' in article._source))
-    //   let inSemanticGraph = ('semantic_sim' in article._source && article._source['semantic_sim'].length > 0)
-    //   if (inCitationGraph && inSemanticGraph) {
-    //     denominators[article._id] = Math.max(maxCitationScore, maxSemanticScore)
-    //   } else if (inCitationGraph) {
-    //     denominators[article._id] = maxCitationScore
-    //   } else {
-    //     denominators[article._id] = maxSemanticScore
-    //   }
-    // }
+    // determine how to normalize frequencies, based on presence or absence of node
+    // in each network type
+    for (let article of es_query.hits.hits) {
+      let inCitationGraph = (('cites' in article._source) || ('cited_by' in article._source))
+      let inSemanticGraph = ('semantic_sim' in article._source && article._source['semantic_sim'].length > 0)
+      if (inCitationGraph && inSemanticGraph) {
+        // denominators[article._id] = 2
+        denominators[article._id] = Math.max(maxCitationScore, maxSemanticScore)
+      } else if (inCitationGraph) {
+        // denominators[article._id] = 1
+        denominators[article._id] = maxCitationScore
+      } else {
+        // denominators[article._id] = 1
+        denominators[article._id] = maxSemanticScore
+      }
+    }
 
     for (let key in topFinal) {
-      // topFinal[key] /= denominators[key]
-      topFinal[key] /= Math.max(maxCitationScore, maxSemanticScore)
+      topFinal[key] /= denominators[key]
+      // topFinal[key] /= maxScore
     }
 
     let frequenciesArr = Object.keys(topFinal)
@@ -603,20 +618,22 @@ class ExtractSubnetwork {
   }
 }
 
-process.on('message', function (message) {
+process.on('message', async function (message) {
   // console.log('parent', message);
 
-  let seeds = message.seeds;
-  let index_name = message.index_name;
+  let { seeds, indexName, saveState } = message
+
+  // seedrandom('', {state: saveState, global: true})
 
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 10000, 0.8, 30, es, index_name
+    seeds, 10000, 0.85, 30, es, indexName, saveState
   );
 
+  
   // Pass 'extSub' to function to await subgraph computation and send
   // extracted subgraph.
-  send_subgraph(extSub);
+  await send_subgraph(extSub);
 })
 
 async function send_subgraph(extSub) {
