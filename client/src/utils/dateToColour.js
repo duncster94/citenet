@@ -1,3 +1,5 @@
+import theme from "../Theme"
+
 export default function dateToColour(nodes, dMin, dMax, seeds) {
   /* Given a node, map the appropriate colour.
   */
@@ -6,7 +8,7 @@ export default function dateToColour(nodes, dMin, dMax, seeds) {
 
     // If the node is a seed node, colour it differently.
     if (seeds.includes(node.id.toString())) {
-      return '#000000'
+      return theme.palette.secondary.main
     }
   
     // Get publication year.
@@ -28,7 +30,7 @@ export default function dateToColour(nodes, dMin, dMax, seeds) {
   
     let lightness = m * year + b
   
-    let colour = `hsla(0,0%, ${lightness.toString()}%,1)`
+    let colour = `hsla(198, 8%, ${lightness.toString()}%, 1)`
   
     return colour
   })

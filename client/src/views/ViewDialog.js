@@ -8,6 +8,7 @@ import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
 import { makeStyles } from "@material-ui/core/styles"
 import Icon from "@mdi/react"
+import Avatar from '@material-ui/core/Avatar';
 import { 
   mdiPlusBox,
   mdiMinusBox,
@@ -66,23 +67,26 @@ export default function ViewDialog({ props }) {
       <DialogContent dividers={true}>
         <div
           className={classes.chipDiv}
-        >
-          <Chip 
-            label={props.selectedPaper.Journal.Title}
-            size="small"
+        > 
+          <Chip
+            avatar={<Avatar>J</Avatar>}
+            color="secondary"
             className={classes.journalChip}
-            color="primary"
+            label={props.selectedPaper.Journal.Title}
+            size="medium"
+            style={{"font-weight": "bold"}}
             display={
               props.selectedPaper.Journal.Title == null ?
               'none':
               'block'
             }
           />
-          <Chip 
+          <Chip
+            avatar={<Avatar>D</Avatar>}
+            color="secondary"
             label={props.selectedPaper.formattedDate}
-            size="small"
-            style={{float: "right"}}
-            color="primary"
+            size="medium"
+            style={{"margin-left": "5px", "font-weight": "bold"}}
             display={
               props.selectedPaper.formattedDate == null ?
               'none':
@@ -121,8 +125,8 @@ export default function ViewDialog({ props }) {
               path={props.searchQueue.includes(props.selectedPaper.id) ?
                 mdiMinusBox :
                 mdiPlusBox} 
-              size={1}
-              color={theme.palette.primary.black}
+              size={1.25}
+              color={theme.palette.primary.main}
             />       
           </IconButton>
         </Tooltip>
@@ -146,9 +150,9 @@ export default function ViewDialog({ props }) {
               aria-label="To publisher's site"
             >
               <Icon
-                path={mdiOpenInNew} 
-                size={1}
-                color={theme.palette.primary.black}
+                path={mdiOpenInNew}
+                size={1.25}
+                color={theme.palette.primary.main}
               />       
             </IconButton>
           </a>

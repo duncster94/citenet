@@ -4,7 +4,6 @@ import { AppBar } from "@material-ui/core"
 import { withStyles } from "@material-ui/core/styles"
 import { Tab } from "@material-ui/core"
 import { Tabs } from "@material-ui/core"
-import { Typography } from "@material-ui/core"
 
 import theme from "../Theme"
 
