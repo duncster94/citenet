@@ -27,7 +27,7 @@ function processSubnetwork(message, seeds) {
 
     // Set seed nodes to a fixed size.
     if (seeds.includes(node.id)) {
-      radius = 15
+      radius = 32.5
     }
     return Math.max(5, radius)
   }
