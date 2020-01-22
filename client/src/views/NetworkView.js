@@ -148,6 +148,7 @@ export default function NetworkView({ props }) {
         clearTimeout(hoverTimeout)
       })
       .on("click", function(data) {
+        setPaperData(data)
         setIsModalOpen(true)
         d3.event.stopPropagation()
       })

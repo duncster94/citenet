@@ -74,7 +74,7 @@ export default function ViewDialog({ props }) {
             className={classes.journalChip}
             label={props.selectedPaper.Journal.Title}
             size="medium"
-            style={{"font-weight": "bold"}}
+            style={{fontWeight: "bold"}}
             display={
               props.selectedPaper.Journal.Title == null ?
               'none':
@@ -86,7 +86,7 @@ export default function ViewDialog({ props }) {
             color="secondary"
             label={props.selectedPaper.formattedDate}
             size="medium"
-            style={{"margin-left": "5px", "font-weight": "bold"}}
+            style={{marginLeft: "5px", fontWeight: "bold"}}
             display={
               props.selectedPaper.formattedDate == null ?
               'none':
