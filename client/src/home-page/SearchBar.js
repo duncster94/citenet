@@ -184,6 +184,7 @@ function MenuSearchButtons({ props }) {
     <div
       onMouseDown={e => e.stopPropagation()}
       onTouchStart={e => e.stopPropagation()}
+      onTouchEnd={e => e.stopPropagation()}
     >
       <ButtonGroup
         variant="text"
