@@ -120,9 +120,10 @@ export default withRouter(function SearchBar(props) {
       isMulti
       loadOptions={debounce(loadOptions, 250)}
       onChange={handleChange}
+      onBlur={event => event.preventDefault()}
       formatOptionLabel={formatOptionLabel}
       components={{IndicatorsContainer}}
-      placeholder="Enter paper title or author name(s)."
+      placeholder="Search for papers."
       theme={(theme_) => ({
         ...theme_,
         colors: {
