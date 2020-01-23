@@ -23,6 +23,7 @@ class ExtractSubnetwork {
     this.es_index = es_index;
 
     this.types = ['citation', 'semantic']
+    // this.types = ['citation']
     this.edge_frequencies = {}
 
     this.stored_cites = {};
