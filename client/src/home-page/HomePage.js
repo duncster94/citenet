@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     height: "auto",
   },
   search: {
-    marginTop: "45px",
+    marginTop: '30vh',
   }
 })
 
@@ -49,22 +49,23 @@ export default function HomePage({ props }) {
           alignItems="center"
         >
 
-          <Grid item>
-            <Logo />
-          </Grid>
+          <Grid item xs>
+            <Grid
+              container
+              className={classes.search}
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <Logo />
+              </Grid>
 
-          <Grid
-            container
-            className={classes.search}
-            justify="center"
-            alignItems="center"
-          >
+              <Grid item xs={8} style={{marginTop: '20px'}}>
+                {/* Paper select bar */}
+                <SearchBar props={props} />
+              </Grid>
 
-            <Grid item xs={8}>
-              {/* Paper select bar */}
-              <SearchBar props={props} />
             </Grid>
-
           </Grid>
 
         </Grid>
