@@ -45,8 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
   selectedPaperArrow: {
     position: "absolute",
-    // height: "15px",
-    // width: "15px",
     top: "calc(50vh - 10px)",
     left: "10px"
   }
