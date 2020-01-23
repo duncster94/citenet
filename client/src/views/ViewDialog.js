@@ -1,4 +1,5 @@
 import React from "react"
+import Box from '@material-ui/core/Box'
 import Chip from "@material-ui/core/Chip"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
@@ -67,32 +68,37 @@ export default function ViewDialog({ props }) {
       <DialogContent dividers={true}>
         <div
           className={classes.chipDiv}
-        > 
-          <Chip
-            avatar={<Avatar>J</Avatar>}
-            color="secondary"
-            className={classes.journalChip}
-            label={props.selectedPaper.Journal.Title}
-            size="medium"
-            style={{fontWeight: "bold"}}
-            display={
-              props.selectedPaper.Journal.Title == null || props.selectedPaper.Journal.Title === 'undefined' ?
-              'none':
-              'block'
-            }
-          />
-          <Chip
-            avatar={<Avatar>D</Avatar>}
-            color="secondary"
-            label={props.selectedPaper.formattedDate}
-            size="medium"
-            style={{marginLeft: "5px", fontWeight: "bold"}}
-            display={
-              props.selectedPaper.formattedDate == null || props.selectedPaper.formattedDate === 'undefined' ?
-              'none':
-              'block'
-            }
-          />        
+        >
+
+          <Box display={
+            props.selectedPaper.Journal.Title == null  || props.selectedPaper.Journal.Title === 'undefined'?
+            'none':
+            'inline-flex'
+          }> 
+            <Chip
+              avatar={<Avatar>J</Avatar>}
+              color="secondary"
+              className={classes.journalChip}
+              label={props.selectedPaper.Journal.Title}
+              size="medium"
+              style={{fontWeight: "bold"}}
+            />
+          </Box>
+
+          <Box display={
+            props.selectedPaper.formattedDate == null || props.selectedPaper.formattedDate === 'undefined'?
+            'none':
+            'inline-flex'
+          }>
+            <Chip
+              avatar={<Avatar>D</Avatar>}
+              color="secondary"
+              label={props.selectedPaper.formattedDate}
+              size="medium"
+              style={{marginLeft: "5px", fontWeight: "bold"}}
+            />        
+          </Box>
+
         </div>
         <DialogContentText
           variant="caption"
