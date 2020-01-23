@@ -76,7 +76,7 @@ export default function ViewDialog({ props }) {
             size="medium"
             style={{fontWeight: "bold"}}
             display={
-              props.selectedPaper.Journal.Title == null ?
+              props.selectedPaper.Journal.Title == null || props.selectedPaper.Journal.Title === 'undefined' ?
               'none':
               'block'
             }
@@ -88,7 +88,7 @@ export default function ViewDialog({ props }) {
             size="medium"
             style={{marginLeft: "5px", fontWeight: "bold"}}
             display={
-              props.selectedPaper.formattedDate == null ?
+              props.selectedPaper.formattedDate == null || props.selectedPaper.formattedDate === 'undefined' ?
               'none':
               'block'
             }
