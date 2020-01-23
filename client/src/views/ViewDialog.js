@@ -8,13 +8,19 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
 import { makeStyles } from "@material-ui/core/styles"
+import Avatar from '@material-ui/core/Avatar'
+import queryString from 'query-string'
+
 import Icon from "@mdi/react"
-import Avatar from '@material-ui/core/Avatar';
 import { 
   mdiPlusBox,
   mdiMinusBox,
-  mdiOpenInNew
+  mdiOpenInNew,
+  mdiThumbUp,
+  mdiThumbDown
 } from "@mdi/js"
+
+import { withRouter } from "react-router-dom"
 
 import theme from "../Theme"
 import "./NetworkView.css"
@@ -41,29 +47,36 @@ const useStyles = makeStyles({
   }
 })
 
-export default function ViewDialog({ props }) {
+export default withRouter(function ViewDialog(props) {
 
   const classes = useStyles()
+  const seeds = queryString.parse(props.location.search)['id'].split(',')
+  const { selectedPaper, searchQueue, setSearchQueue } = props.props
+  const { id } = selectedPaper
 
   function handleAddToSearchClick() {
 
-    if (props.searchQueue.includes(props.selectedPaper.id)) {
+    if (searchQueue.includes(id)) {
       // https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
-      let array = [...props.searchQueue]
-      let index = array.indexOf(props.selectedPaper.id)
+      let array = [...searchQueue]
+      let index = array.indexOf(id)
       if (index !== -1) {
         array.splice(index, 1)
-        props.setSearchQueue(array)
+        setSearchQueue(array)
       }
     } else {
-      props.setSearchQueue([...props.searchQueue, props.selectedPaper.id])
+      setSearchQueue([...searchQueue, id])
     }
+  }
+
+  const handleCurateClick = isRelevant => () => {
+    
   }
 
   return (
     <React.Fragment>
       <DialogTitle className={classes.title}>
-        {props.selectedPaper.Title}
+        {selectedPaper.Title}
       </DialogTitle>
       <DialogContent dividers={true}>
         <div
@@ -71,7 +84,7 @@ export default function ViewDialog({ props }) {
         >
 
           <Box display={
-            props.selectedPaper.Journal.Title == null  || props.selectedPaper.Journal.Title === 'undefined'?
+            selectedPaper.Journal.Title == null  || selectedPaper.Journal.Title === 'undefined'?
             'none':
             'inline-flex'
           }> 
@@ -79,21 +92,21 @@ export default function ViewDialog({ props }) {
               avatar={<Avatar>J</Avatar>}
               color="secondary"
               className={classes.journalChip}
-              label={props.selectedPaper.Journal.Title}
+              label={selectedPaper.Journal.Title}
               size="medium"
               style={{fontWeight: "bold"}}
             />
           </Box>
 
           <Box display={
-            props.selectedPaper.formattedDate == null || props.selectedPaper.formattedDate === 'undefined'?
+            selectedPaper.formattedDate == null || selectedPaper.formattedDate === 'undefined'?
             'none':
             'inline-flex'
           }>
             <Chip
               avatar={<Avatar>D</Avatar>}
               color="secondary"
-              label={props.selectedPaper.formattedDate}
+              label={selectedPaper.formattedDate}
               size="medium"
               style={{marginLeft: "5px", fontWeight: "bold"}}
             />        
@@ -104,19 +117,21 @@ export default function ViewDialog({ props }) {
           variant="caption"
           // classes={classes.authors}
         >
-          {props.selectedPaper.formattedAuthors ? 
-           props.selectedPaper.formattedAuthors :
+          {selectedPaper.formattedAuthors ? 
+           selectedPaper.formattedAuthors :
            ''}
         </DialogContentText>
         <DialogContentText>
-          {props.selectedPaper.Abstract ?
-           props.selectedPaper.Abstract :
+          {selectedPaper.Abstract ?
+           selectedPaper.Abstract :
            ''}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
+
+        {/* Add to refine */}
         <Tooltip 
-          title={props.searchQueue.includes(props.selectedPaper.id) ?
+          title={searchQueue.includes(id) ?
             "Remove from search queue" :
             "Add to search queue"}
           placement="top"
@@ -125,10 +140,12 @@ export default function ViewDialog({ props }) {
         >
           <IconButton
             onClick={handleAddToSearchClick}
-            aria-label="Add to search queue"
+            aria-label={searchQueue.includes(id) ?
+              "Remove from search queue" :
+              "Add to search queue"}
           >
             <Icon
-              path={props.searchQueue.includes(props.selectedPaper.id) ?
+              path={searchQueue.includes(id) ?
                 mdiMinusBox :
                 mdiPlusBox} 
               size={1.25}
@@ -136,6 +153,8 @@ export default function ViewDialog({ props }) {
             />       
           </IconButton>
         </Tooltip>
+
+        {/* Link out */}
         <Tooltip 
           title="Go to publisher's site"
           placement="top"
@@ -143,16 +162,15 @@ export default function ViewDialog({ props }) {
           leaveDelay={100}
         >
           <a
-            href={props.selectedPaper.id ?
+            href={id ?
               "https://www.ncbi.nlm.nih.gov/pubmed/" +
-              props.selectedPaper.id.toString() :
+              id.toString() :
               ""}
             target="_blank"
             rel='noopener noreferrer'
             style={{ textDecoration: "none" }}
           >
             <IconButton
-              // onClick={handleAddToSearchClick}
               aria-label="To publisher's site"
             >
               <Icon
@@ -163,8 +181,51 @@ export default function ViewDialog({ props }) {
             </IconButton>
           </a>
         </Tooltip>
+
+        {/* Thumbs up */}
+        <Box display={seeds.includes(id) ? 'none' : 'flex'}>
+          <Tooltip 
+            title="This is a relevant paper"
+            placement="top"
+            enterDelay={400}
+            leaveDelay={100}
+          >
+            <IconButton
+              onClick={handleCurateClick(true)}
+              aria-label="This is a relevant paper"
+            >
+              <Icon
+                path={mdiThumbUp} 
+                size={1.25}
+                color={theme.palette.primary.main}
+              />       
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        {/* Thumbs down */}
+        <Box display={seeds.includes(id) ? 'none' : 'flex'}>
+          <Tooltip 
+            title="This is not a relevant paper"
+            placement="top"
+            enterDelay={400}
+            leaveDelay={100}
+          >
+            <IconButton
+              onClick={handleCurateClick(false)}
+              aria-label="This is not a relevant paper"
+            >
+              <Icon
+                path={mdiThumbDown} 
+                size={1.25}
+                color={theme.palette.primary.main}
+              />       
+            </IconButton>
+          </Tooltip>
+        </Box>
+
         <div style={{flex: "1 0 0"}} /> {/* added so buttons float left */}
       </DialogActions>
     </React.Fragment>
   )
-}
+})
