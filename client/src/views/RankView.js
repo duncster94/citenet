@@ -8,7 +8,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles"
 import { debounce } from 'debounce'
 
 import Icon from "@mdi/react"
-import { 
+import {
   mdiChevronRight,
 } from "@mdi/js"
 
@@ -63,9 +63,9 @@ export default function RankView({ props }) {
 
   const { minDate, maxDate } = props.searchResults.metadata
   const colours = dateToColour(
-    props.searchResults.subgraph.nodes, 
-    minDate, 
-    maxDate, 
+    props.searchResults.subgraph.nodes,
+    minDate,
+    maxDate,
     props.searchQueue
   )
 
@@ -81,7 +81,7 @@ export default function RankView({ props }) {
 
     const position = lhsRef.current.scrollTop
     // determines which paper the center select icon is closest to
-    const nearest = Math.floor((position + maxRadius)/paperInfoHeight) * paperInfoHeight
+    const nearest = Math.floor((position + maxRadius) / paperInfoHeight) * paperInfoHeight
 
     if (nearest in pixelIntervals) {
       setSelectedPaper(pixelIntervals[nearest])
@@ -92,7 +92,8 @@ export default function RankView({ props }) {
     /* Scrolls LHS paper div to clicked paper.
     */
     e.stopPropagation()
-    lhsRef.current.scrollTo({top: interval, behavior: "smooth"})
+    setSelectedPaper(pixelIntervals[interval])
+    lhsRef.current.scrollTo({ top: interval, behavior: "smooth" })
 
     // media query to detect if modal should be displayed
     if (matches) {
@@ -153,9 +154,9 @@ export default function RankView({ props }) {
               // Put darker border around light coloured nodes.
               const lightness = colours[i].split(",")[2]
               let stroke
-              if (lightness && 
+              if (lightness &&
                 parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
-                stroke = "#ddd"    
+                stroke = "#ddd"
               } else {
                 stroke = "#fff"
               }
@@ -230,9 +231,9 @@ export default function RankView({ props }) {
                         variant="body1"
                         color="textSecondary"
                       >
-                        {node.formattedAuthors ? 
-                         node.formattedAuthors :
-                         ""}
+                        {node.formattedAuthors ?
+                          node.formattedAuthors :
+                          ""}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -245,10 +246,10 @@ export default function RankView({ props }) {
 
         <Grid item xs className={classes.dialogGrid}>
           <NodeDialog
-            props={{ 
-              selectedPaper, 
-              searchQueue: props.searchQueue, 
-              setSearchQueue: props.setSearchQueue 
+            props={{
+              selectedPaper,
+              searchQueue: props.searchQueue,
+              setSearchQueue: props.setSearchQueue
             }}
             key={+new Date()}  // unique key needed to retrigger animation
           />
@@ -261,7 +262,7 @@ export default function RankView({ props }) {
         selectedPaper,
         searchQueue: props.searchQueue,
         setSearchQueue: props.setSearchQueue
-      }}/>
+      }} />
     </React.Fragment>
   )
 }
@@ -274,7 +275,7 @@ function NodeDialog({ props }) {
   return (
     <div
       className={classes.nodeDialog}
-      // style={{ overflow: "hidden" }}
+    // style={{ overflow: "hidden" }}
     >
       <Grid
         container
