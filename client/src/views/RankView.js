@@ -7,6 +7,11 @@ import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
 import { debounce } from 'debounce'
 
+import Icon from "@mdi/react"
+import { 
+  mdiChevronRight,
+} from "@mdi/js"
+
 import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
 import dateToColour from '../utils/dateToColour'
@@ -26,11 +31,24 @@ const useStyles = makeStyles(theme => ({
       display: "none"
     }
   },
+  lhsText: {
+    display: "block",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    overflow: "hidden"
+  },
   lhsAuthors: {
     display: "block",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
     overflow: "hidden"
+  },
+  selectedPaperArrow: {
+    position: "absolute",
+    // height: "15px",
+    // width: "15px",
+    top: "calc(50vh - 10px)",
+    left: "10px"
   }
 }))
 
@@ -99,17 +117,12 @@ export default function RankView({ props }) {
         container
       >
         <Grid item xs>
-          <svg
-            style={{
-              position: "absolute",
-              height: "15px",
-              width: "15px",
-              top: "calc(50vh - 7.5px)",
-              left: "10px"
-            }}
-          >
-            <image xlinkHref="/focus-arrow.svg" height="15px" width="15px" />
-          </svg>
+          <Icon
+            path={mdiChevronRight}
+            size={1}
+            color="black"
+            className={classes.selectedPaperArrow}
+          />
           <div
             style={{
               // scrollSnapType: 'y mandatory',
@@ -207,6 +220,7 @@ export default function RankView({ props }) {
                   >
                     <CardContent>
                       <Typography
+                        className={classes.lhsText}
                         variant="subtitle1"
                         color="textPrimary"
                         gutterBottom
@@ -214,7 +228,7 @@ export default function RankView({ props }) {
                         {node.Title}
                       </Typography>
                       <Typography
-                        className={classes.lhsAuthors}
+                        className={classes.lhsText}
                         variant="body1"
                         color="textSecondary"
                       >
