@@ -124,11 +124,8 @@ export default function RankView({ props }) {
           />
           <div
             style={{
-              // scrollSnapType: 'y mandatory',
-              // scrollSnapStop: "normal",
               overflowY: "scroll",
               maxHeight: "100vh",
-              // scrollSnapDestination: 'center',
               paddingLeft: "40px",
               transform: 'scaleX(-1)' // ensure scroll bar is on LHS
             }}
@@ -161,86 +158,21 @@ export default function RankView({ props }) {
                 stroke = "#fff"
               }
               return (
-                <div
-                  style={{
-                    position: "relative",
-                    height: `${paperInfoHeight}px`,
-                    // scrollSnapAlign: "center",
-                    marginTop: marginTop,
-                    marginBottom: marginBottom,
-                    marginRight: "2.5vh",
-                    transform: 'scaleX(-1)' // ensure card content is not reversed
-                  }}
-                  key={`paper-metadata-${i}`}
-                >
-                  <svg
-                    height="100%"
-                    width="100%"
-                    style={{ position: "absolute" }}
-                  >
-                    <circle
-                      cx={maxRadius + 2}
-                      cy={(paperInfoHeight / 2) + 2}
-                      r={props.searchResults.metadata.radii[i]}
-                      fill={colours[i]}
-                      stroke={stroke}
-                      strokeWidth="2.5px"
-                      onClick={handleNodeClick(i * paperInfoHeight)}
-                    />
-                    <clipPath id={`clip_${i}`}>
-                      <circle
-                        cx={maxRadius + 2}
-                        cy={(paperInfoHeight / 2) + 2}
-                        r={props.searchResults.metadata.radii[i] - 1}
-                      />
-                    </clipPath>
-                    <image
-                      xlinkHref="/hatch.svg"
-                      width="150px"
-                      height="150px"
-                      x={-75 + maxRadius + 2}
-                      y={-75 + (paperInfoHeight / 2) + 2}
-                      style={{
-                        clipPath: `url(#clip_${i})`,
-                        display: props.searchQueue.includes(node.id) ? "inline" : "none"
-                      }}
-                      onClick={handleNodeClick(i * paperInfoHeight)}
-                    />
-                  </svg>
-                  <Card
-                    style={{
-                      position: "absolute",
-                      top: paperInfoHeight / 2,
-                      left: maxRadius,
-                      maxHeight: `calc(100% - ${maxRadius}px)`,
-                      width: `calc(100% - ${maxRadius}px - 5px)`
-                    }}
-                    onClick={handleNodeClick(i * paperInfoHeight)}
-                  >
-                    <CardContent>
-                      <Typography
-                        className={classes.lhsText}
-                        variant="subtitle1"
-                        color="textPrimary"
-                        gutterBottom
-                      >
-                        {node.Title}
-                      </Typography>
-                      <Typography
-                        className={classes.lhsText}
-                        variant="body1"
-                        color="textSecondary"
-                      >
-                        {node.formattedAuthors ?
-                          node.formattedAuthors :
-                          ""}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </div>
+                <LHSDetails props={{ 
+                  maxRadius,
+                  paperInfoHeight,
+                  node,
+                  handleNodeClick,
+                  i,
+                  marginTop,
+                  marginBottom,
+                  radius: props.searchResults.metadata.radii[i],
+                  colour: colours[i],
+                  stroke,
+                  inSearchQueue: props.searchQueue.includes(node.id),
+                }}/>
               )
             })}
-
           </div>
         </Grid>
 
@@ -299,5 +231,124 @@ function NodeDialog({ props }) {
         </Grid>
       </Grid>
     </div>
+  )
+}
+
+function LHSDetails({ props }) {
+
+  const classes = useStyles()
+  const { 
+    maxRadius,
+    paperInfoHeight,
+    node,
+    handleNodeClick,
+    i,
+    marginTop,
+    marginBottom,
+    radius,
+    colour,
+    stroke,
+    inSearchQueue
+  } = props
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        height: `${paperInfoHeight}px`,
+        marginTop: marginTop,
+        marginBottom: marginBottom,
+        marginRight: "2.5vh",
+        transform: 'scaleX(-1)' // ensure card content is not reversed
+      }}
+      key={`paper-metadata-${i}`}
+    >
+      <svg
+        height="100%"
+        width="100%"
+        style={{ position: "absolute" }}
+      >
+        <circle
+          cx={maxRadius + 2}
+          cy={(paperInfoHeight / 2) + 2}
+          r={radius}
+          fill={colour}
+          stroke={stroke}
+          strokeWidth="2.5px"
+          onClick={handleNodeClick(i * paperInfoHeight)}
+        />
+        <clipPath id={`clip_${i}`}>
+          <circle
+            cx={maxRadius + 2}
+            cy={(paperInfoHeight / 2) + 2}
+            r={radius - 1}
+          />
+        </clipPath>
+        <image
+          xlinkHref="/hatch.svg"
+          width="150px"
+          height="150px"
+          x={-75 + maxRadius + 2}
+          y={-75 + (paperInfoHeight / 2) + 2}
+          style={{
+            clipPath: `url(#clip_${i})`,
+            display: inSearchQueue ? "inline" : "none"
+          }}
+          onClick={handleNodeClick(i * paperInfoHeight)}
+        />
+      </svg>
+      <LHSCard props={{
+        maxRadius,
+        paperInfoHeight,
+        node,
+        handleNodeClick,
+        i
+      }} />
+    </div>
+  )
+}
+
+function LHSCard({ props }) {
+
+  const classes = useStyles()
+  const { 
+    maxRadius,
+    paperInfoHeight,
+    node,
+    handleNodeClick,
+    i
+  } = props
+
+  return (
+    <Card
+      style={{
+        position: "absolute",
+        top: paperInfoHeight / 2,
+        left: maxRadius,
+        maxHeight: `calc(100% - ${maxRadius}px)`,
+        width: `calc(100% - ${maxRadius}px - 5px)`
+      }}
+      onClick={handleNodeClick(i * paperInfoHeight)}
+    >
+      <CardContent>
+        <Typography
+          className={classes.lhsText}
+          variant="subtitle1"
+          color="textPrimary"
+          gutterBottom
+        >
+          {node.Title}
+        </Typography>
+        <Typography
+          className={classes.lhsText}
+          variant="body1"
+          color="textSecondary"
+        >
+          {node.formattedAuthors ?
+            node.formattedAuthors :
+            ""}
+        </Typography>
+      </CardContent>
+    </Card>
   )
 }
