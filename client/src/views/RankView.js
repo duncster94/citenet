@@ -14,6 +14,7 @@ import {
 
 import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
+import Chips from '../generic-components/Chips'
 import dateToColour from '../utils/dateToColour'
 import "./RankView.css"
 
@@ -331,6 +332,10 @@ function LHSCard({ props }) {
       onClick={handleNodeClick(i * paperInfoHeight)}
     >
       <CardContent>
+        {/* <Chips props={{
+          journalTitle: node.Journal.Title,
+          date: node.formattedDate
+        }}/> */}
         <Typography
           className={classes.lhsText}
           variant="subtitle1"

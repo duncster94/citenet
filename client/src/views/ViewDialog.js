@@ -1,6 +1,4 @@
 import React from "react"
-import Box from '@material-ui/core/Box'
-import Chip from "@material-ui/core/Chip"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
@@ -9,35 +7,20 @@ import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
 import { makeStyles } from "@material-ui/core/styles"
 import Icon from "@mdi/react"
-import Avatar from '@material-ui/core/Avatar';
 import { 
   mdiPlusBox,
   mdiMinusBox,
   mdiOpenInNew
 } from "@mdi/js"
 
-import theme from "../Theme"
-import "./NetworkView.css"
+import theme from '../Theme'
+import Chips from '../generic-components/Chips'
+import './NetworkView.css'
 
 const useStyles = makeStyles({
   title: {
     backgroundColor: theme.palette.primary.black,
     color: "#fff"
-  },
-  authors: {
-
-  },
-  journalChip: {
-    "& span": {
-      display: "block",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      maxWidth: "18vw",
-    }
-  },
-  chipDiv: {
-    marginBottom: "15px"
   }
 })
 
@@ -66,40 +49,10 @@ export default function ViewDialog({ props }) {
         {props.selectedPaper.Title}
       </DialogTitle>
       <DialogContent dividers={true}>
-        <div
-          className={classes.chipDiv}
-        >
-
-          <Box display={
-            props.selectedPaper.Journal.Title == null  || props.selectedPaper.Journal.Title === 'undefined'?
-            'none':
-            'inline-flex'
-          }> 
-            <Chip
-              avatar={<Avatar>J</Avatar>}
-              color="secondary"
-              className={classes.journalChip}
-              label={props.selectedPaper.Journal.Title}
-              size="medium"
-              style={{fontWeight: "bold"}}
-            />
-          </Box>
-
-          <Box display={
-            props.selectedPaper.formattedDate == null || props.selectedPaper.formattedDate === 'undefined'?
-            'none':
-            'inline-flex'
-          }>
-            <Chip
-              avatar={<Avatar>D</Avatar>}
-              color="secondary"
-              label={props.selectedPaper.formattedDate}
-              size="medium"
-              style={{marginLeft: "5px", fontWeight: "bold"}}
-            />        
-          </Box>
-
-        </div>
+        <Chips props={{
+          journalTitle: props.selectedPaper.Journal.Title,
+          date: props.selectedPaper.formattedDate
+        }}/>
         <DialogContentText
           variant="caption"
           // classes={classes.authors}
