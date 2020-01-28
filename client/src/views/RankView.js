@@ -53,6 +53,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function RankView({ props }) {
 
+  console.log(props)
+
   const classes = useStyles()
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("xs"))
@@ -67,7 +69,7 @@ export default function RankView({ props }) {
     props.searchResults.subgraph.nodes,
     minDate,
     maxDate,
-    props.searchQueue
+    props.searchResults.seeds
   )
 
   // Currently no Javascript hooks exist for CSS snap scroll events so
