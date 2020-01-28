@@ -7,8 +7,14 @@ import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
 import { debounce } from 'debounce'
 
+import Icon from "@mdi/react"
+import {
+  mdiChevronRight,
+} from "@mdi/js"
+
 import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
+import Chips from '../generic-components/Chips'
 import dateToColour from '../utils/dateToColour'
 import "./RankView.css"
 
@@ -26,11 +32,22 @@ const useStyles = makeStyles(theme => ({
       display: "none"
     }
   },
+  lhsText: {
+    display: "block",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    overflow: "hidden"
+  },
   lhsAuthors: {
     display: "block",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
     overflow: "hidden"
+  },
+  selectedPaperArrow: {
+    position: "absolute",
+    top: "calc(50vh - 10px)",
+    left: "10px"
   }
 }))
 
@@ -47,9 +64,9 @@ export default function RankView({ props }) {
 
   const { minDate, maxDate } = props.searchResults.metadata
   const colours = dateToColour(
-    props.searchResults.subgraph.nodes, 
-    minDate, 
-    maxDate, 
+    props.searchResults.subgraph.nodes,
+    minDate,
+    maxDate,
     props.searchQueue
   )
 
@@ -65,7 +82,7 @@ export default function RankView({ props }) {
 
     const position = lhsRef.current.scrollTop
     // determines which paper the center select icon is closest to
-    const nearest = Math.floor((position + maxRadius)/paperInfoHeight) * paperInfoHeight
+    const nearest = Math.floor((position + maxRadius) / paperInfoHeight) * paperInfoHeight
 
     if (nearest in pixelIntervals) {
       setSelectedPaper(pixelIntervals[nearest])
@@ -76,7 +93,8 @@ export default function RankView({ props }) {
     /* Scrolls LHS paper div to clicked paper.
     */
     e.stopPropagation()
-    lhsRef.current.scrollTo({top: interval, behavior: "smooth"})
+    setSelectedPaper(pixelIntervals[interval])
+    lhsRef.current.scrollTo({ top: interval, behavior: "smooth" })
 
     // media query to detect if modal should be displayed
     if (matches) {
@@ -99,24 +117,16 @@ export default function RankView({ props }) {
         container
       >
         <Grid item xs>
-          <svg
-            style={{
-              position: "absolute",
-              height: "15px",
-              width: "15px",
-              top: "calc(50vh - 7.5px)",
-              left: "10px"
-            }}
-          >
-            <image xlinkHref="/focus-arrow.svg" height="15px" width="15px" />
-          </svg>
+          <Icon
+            path={mdiChevronRight}
+            size={1}
+            color="black"
+            className={classes.selectedPaperArrow}
+          />
           <div
             style={{
-              // scrollSnapType: 'y mandatory',
-              // scrollSnapStop: "normal",
               overflowY: "scroll",
               maxHeight: "100vh",
-              // scrollSnapDestination: 'center',
               paddingLeft: "40px",
               transform: 'scaleX(-1)' // ensure scroll bar is on LHS
             }}
@@ -142,101 +152,37 @@ export default function RankView({ props }) {
               // Put darker border around light coloured nodes.
               const lightness = colours[i].split(",")[2]
               let stroke
-              if (lightness && 
+              if (lightness &&
                 parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
-                stroke = "#ddd"    
+                stroke = "#ddd"
               } else {
                 stroke = "#fff"
               }
               return (
-                <div
-                  style={{
-                    position: "relative",
-                    height: `${paperInfoHeight}px`,
-                    // scrollSnapAlign: "center",
-                    marginTop: marginTop,
-                    marginBottom: marginBottom,
-                    marginRight: "2.5vh",
-                    transform: 'scaleX(-1)' // ensure card content is not reversed
-                  }}
-                  key={`paper-metadata-${i}`}
-                >
-                  <svg
-                    height="100%"
-                    width="100%"
-                    style={{ position: "absolute" }}
-                  >
-                    <circle
-                      cx={maxRadius + 2}
-                      cy={(paperInfoHeight / 2) + 2}
-                      r={props.searchResults.metadata.radii[i]}
-                      fill={colours[i]}
-                      stroke={stroke}
-                      strokeWidth="2.5px"
-                      onClick={handleNodeClick(i * paperInfoHeight)}
-                    />
-                    <clipPath id={`clip_${i}`}>
-                      <circle
-                        cx={maxRadius + 2}
-                        cy={(paperInfoHeight / 2) + 2}
-                        r={props.searchResults.metadata.radii[i] - 1}
-                      />
-                    </clipPath>
-                    <image
-                      xlinkHref="/hatch.svg"
-                      width="150px"
-                      height="150px"
-                      x={-75 + maxRadius + 2}
-                      y={-75 + (paperInfoHeight / 2) + 2}
-                      style={{
-                        clipPath: `url(#clip_${i})`,
-                        display: props.searchQueue.includes(node.id) ? "inline" : "none"
-                      }}
-                      onClick={handleNodeClick(i * paperInfoHeight)}
-                    />
-                  </svg>
-                  <Card
-                    style={{
-                      position: "absolute",
-                      top: paperInfoHeight / 2,
-                      left: maxRadius,
-                      maxHeight: `calc(100% - ${maxRadius}px)`,
-                      width: `calc(100% - ${maxRadius}px - 5px)`
-                    }}
-                    onClick={handleNodeClick(i * paperInfoHeight)}
-                  >
-                    <CardContent>
-                      <Typography
-                        variant="subtitle1"
-                        color="textPrimary"
-                        gutterBottom
-                      >
-                        {node.Title}
-                      </Typography>
-                      <Typography
-                        className={classes.lhsAuthors}
-                        variant="body1"
-                        color="textSecondary"
-                      >
-                        {node.formattedAuthors ? 
-                         node.formattedAuthors :
-                         ""}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </div>
+                <LHSDetails props={{ 
+                  maxRadius,
+                  paperInfoHeight,
+                  node,
+                  handleNodeClick,
+                  i,
+                  marginTop,
+                  marginBottom,
+                  radius: props.searchResults.metadata.radii[i],
+                  colour: colours[i],
+                  stroke,
+                  inSearchQueue: props.searchQueue.includes(node.id),
+                }}/>
               )
             })}
-
           </div>
         </Grid>
 
         <Grid item xs className={classes.dialogGrid}>
           <NodeDialog
-            props={{ 
-              selectedPaper, 
-              searchQueue: props.searchQueue, 
-              setSearchQueue: props.setSearchQueue 
+            props={{
+              selectedPaper,
+              searchQueue: props.searchQueue,
+              setSearchQueue: props.setSearchQueue
             }}
             key={+new Date()}  // unique key needed to retrigger animation
           />
@@ -249,7 +195,7 @@ export default function RankView({ props }) {
         selectedPaper,
         searchQueue: props.searchQueue,
         setSearchQueue: props.setSearchQueue
-      }}/>
+      }} />
     </React.Fragment>
   )
 }
@@ -262,7 +208,7 @@ function NodeDialog({ props }) {
   return (
     <div
       className={classes.nodeDialog}
-      // style={{ overflow: "hidden" }}
+    // style={{ overflow: "hidden" }}
     >
       <Grid
         container
@@ -286,5 +232,128 @@ function NodeDialog({ props }) {
         </Grid>
       </Grid>
     </div>
+  )
+}
+
+function LHSDetails({ props }) {
+
+  const classes = useStyles()
+  const { 
+    maxRadius,
+    paperInfoHeight,
+    node,
+    handleNodeClick,
+    i,
+    marginTop,
+    marginBottom,
+    radius,
+    colour,
+    stroke,
+    inSearchQueue
+  } = props
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        height: `${paperInfoHeight}px`,
+        marginTop: marginTop,
+        marginBottom: marginBottom,
+        marginRight: "2.5vh",
+        transform: 'scaleX(-1)' // ensure card content is not reversed
+      }}
+      key={`paper-metadata-${i}`}
+    >
+      <svg
+        height="100%"
+        width="100%"
+        style={{ position: "absolute" }}
+      >
+        <circle
+          cx={maxRadius + 2}
+          cy={(paperInfoHeight / 2) + 2}
+          r={radius}
+          fill={colour}
+          stroke={stroke}
+          strokeWidth="2.5px"
+          onClick={handleNodeClick(i * paperInfoHeight)}
+        />
+        <clipPath id={`clip_${i}`}>
+          <circle
+            cx={maxRadius + 2}
+            cy={(paperInfoHeight / 2) + 2}
+            r={radius - 1}
+          />
+        </clipPath>
+        <image
+          xlinkHref="/hatch.svg"
+          width="150px"
+          height="150px"
+          x={-75 + maxRadius + 2}
+          y={-75 + (paperInfoHeight / 2) + 2}
+          style={{
+            clipPath: `url(#clip_${i})`,
+            display: inSearchQueue ? "inline" : "none"
+          }}
+          onClick={handleNodeClick(i * paperInfoHeight)}
+        />
+      </svg>
+      <LHSCard props={{
+        maxRadius,
+        paperInfoHeight,
+        node,
+        handleNodeClick,
+        i
+      }} />
+    </div>
+  )
+}
+
+function LHSCard({ props }) {
+
+  const classes = useStyles()
+  const { 
+    maxRadius,
+    paperInfoHeight,
+    node,
+    handleNodeClick,
+    i
+  } = props
+
+  return (
+    <Card
+      style={{
+        position: "absolute",
+        top: paperInfoHeight / 2,
+        left: maxRadius,
+        maxHeight: `calc(100% - ${maxRadius}px)`,
+        width: `calc(100% - ${maxRadius}px - 5px)`
+      }}
+      onClick={handleNodeClick(i * paperInfoHeight)}
+    >
+      <CardContent>
+        {/* <Chips props={{
+          journalTitle: node.Journal.Title,
+          date: node.formattedDate
+        }}/> */}
+        <Typography
+          className={classes.lhsText}
+          variant="subtitle1"
+          color="textPrimary"
+          gutterBottom
+        >
+          {node.Title}
+        </Typography>
+        <Typography
+          className={classes.lhsText}
+          variant="body1"
+          color="textSecondary"
+        >
+          {node.formattedAuthors ?
+            node.formattedAuthors :
+            ""}
+        </Typography>
+      </CardContent>
+    </Card>
   )
 }
