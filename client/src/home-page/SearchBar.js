@@ -10,6 +10,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
+import Tooltip from "@material-ui/core/Tooltip"
+
 
 import AsyncSelect from "react-select/async"
 import debounce from "debounce-promise"
@@ -190,16 +192,23 @@ function MenuSearchButtons({ props }) {
         variant="text"
         size="large"
       >
-        <Button
-          aria-haspopup="true"
-          onClick={handleToggle}
+        <Tooltip
+          title="Select view"
+          placement="top"
+          enterDelay={500}
+          leaveDelay={100}
         >
-          <Icon
-            path={mdiChevronDown}
-            size={1}
-            color={theme.palette.primary.black}
-          />
-        </Button>
+          <Button
+            aria-haspopup="true"
+            onClick={handleToggle}
+          >
+            <Icon
+              path={mdiChevronDown}
+              size={1}
+              color={theme.palette.primary.black}
+            />
+          </Button>
+        </Tooltip>
         <Button
           onClick={handleClick}
           // Check if `selectedPapers` is an array (default is null)
