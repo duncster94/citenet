@@ -9,13 +9,14 @@ import theme from "../Theme"
 import dateToColour from '../utils/dateToColour'
 
 export default function NetworkView({ props }) {
-  console.log(props.searchResults)
 
   const svgRef = React.useRef(null)
   
   const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
   const [paperData, setPaperData] = React.useState(0)
   const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const { readNodes, handleReadNodeClick } = props
+  const { seeds } = props.searchResults
 
   function handleWindowClick() {
     d3.selectAll("line").transition().duration(300)
@@ -33,7 +34,7 @@ export default function NetworkView({ props }) {
       props.searchResults.subgraph.nodes, 
       minDate, 
       maxDate, 
-      props.searchQueue
+      seeds
     )
 
     const svg = d3.select(svgRef.current)
@@ -105,12 +106,12 @@ export default function NetworkView({ props }) {
       .attr("r", function(_, idx) {
         return props.searchResults.metadata.radii[idx]
       })
-      .attr("fill", function(_, idx) {
-        // return props.searchResults.metadata.colours[idx]
-        return colours[idx]
+      .attr("fill", function(data, idx) {
+        return readNodes.has(data.id)
+          ? theme.palette.secondary.dark
+          : colours[idx]
       })
       .attr("stroke", function(_, idx) {
-        // const lightness = props.searchResults.metadata.colours[idx].split(",")[2]
         const lightness = colours[idx].split(",")[2]
         if (lightness && 
           parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
@@ -151,6 +152,19 @@ export default function NetworkView({ props }) {
         setPaperData(data)
         setIsModalOpen(true)
         d3.event.stopPropagation()
+      })
+      .on("contextmenu", function(data, idx) {
+        d3.event.preventDefault()
+        // console.log(d3.select(this).style("fill"))
+        // console.log(theme.palette.secondary.dark)
+        const status = handleReadNodeClick(data.id)
+        if (!seeds.includes(data.id)) {
+          d3.select(this).style("fill",
+            status === 'added'
+            ? theme.palette.secondary.dark
+            : colours[idx]
+          )
+        }
       })
 
     // Add a clip path for any overlaid images so they are clipped

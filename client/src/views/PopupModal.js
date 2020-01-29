@@ -6,8 +6,6 @@ export default function PopupModal({ props }) {
   /* Paper information dialog that displays on top of content.
   */
 
-  console.log(props)
-
   function handleClose() {
     props.setIsModalOpen(false)
   }

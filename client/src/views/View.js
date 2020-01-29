@@ -8,6 +8,7 @@ import { Redirect } from "react-router-dom"
 import queryString from "query-string"
 
 import ViewSidebar from "./ViewSidebar"
+import AlertSnackbar from '../generic-components/AlertSnackbar'
 import RankView from "./RankView"
 import NetworkView from "./NetworkView"
 import "./View.css"
@@ -17,6 +18,11 @@ export default function View(props) {
   const [redirect, setRedirect] = React.useState(false)
   const [searchResults, setSearchResults] = React.useState(null)
   const [searchQueue, setSearchQueue] = React.useState([])
+  const [readNodes, setReadNodes] = React.useState(
+    new Set(JSON.parse(localStorage.getItem('readNodes')))
+  )
+  const [isSnackbarOpen, setIsSnackbarOpen] = React.useState(false)
+  const [snackbarStatus, setSnackbarStatus] = React.useState(null)
 
   // Equivalent to `componentDidMount`.
   React.useEffect(() => {
@@ -54,6 +60,33 @@ export default function View(props) {
     }
   }, [])
 
+  function handleReadNodeClick(clickedNodeId) {
+    // const clickedNodeId = pixelIntervals[interval].id
+    let returnStatus
+    const readNodes_ = JSON.parse(localStorage.getItem('readNodes'))
+    if (!readNodes_) {
+      localStorage.setItem('readNodes', JSON.stringify([clickedNodeId]))
+      setReadNodes(new Set([clickedNodeId]))
+      returnStatus = 'added'
+    } else {
+      const readNodesSet = new Set(readNodes_)
+      if (readNodesSet.has(clickedNodeId)) {
+        // remove node from `readNodes`
+        readNodesSet.delete(clickedNodeId)
+        returnStatus = 'removed'
+      } else {
+        // add node to `readNodes`
+        readNodesSet.add(clickedNodeId)
+        returnStatus = 'added'
+      }
+      localStorage.setItem('readNodes', JSON.stringify(Array.from(readNodesSet)))
+      setReadNodes(readNodesSet)
+    }
+    setSnackbarStatus(returnStatus)
+    setIsSnackbarOpen(true)
+    return returnStatus
+  }
+
   // Redirect to 404 if no query string is passed.
   if (redirect) {
     return <Redirect to="/404" />
@@ -66,18 +99,35 @@ export default function View(props) {
 
     // Render appropriate view when `fetch` resolves.
   } else {
+    const viewProps = {
+      searchResults,
+      searchQueue,
+      setSearchQueue,
+      readNodes,
+      handleReadNodeClick
+    }
     if (props.match.params.view === "rank") {
       return (
         <React.Fragment>
-          <RankView props={{ searchResults, searchQueue, setSearchQueue }} />
+          <RankView props={viewProps} />
           <ViewSidebar props={{ searchQueue, view: "rank" }} />
+          <AlertSnackbar
+            status={snackbarStatus}
+            isOpen={isSnackbarOpen}
+            setIsOpen={setIsSnackbarOpen}
+          />
         </React.Fragment>
       )
     } else {
       return (
         <React.Fragment>
-          <NetworkView props={{ searchResults, searchQueue, setSearchQueue }} />
+          <NetworkView props={viewProps} />
           <ViewSidebar props={{ searchQueue, view: "network" }} />
+          <AlertSnackbar
+            status={snackbarStatus}
+            isOpen={isSnackbarOpen}
+            setIsOpen={setIsSnackbarOpen}
+          />
         </React.Fragment>
       )
     }
