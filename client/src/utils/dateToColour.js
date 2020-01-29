@@ -15,9 +15,9 @@ export default function dateToColour(nodes, dMin, dMax, seeds) {
     let year = node.PubDate.Year
   
     // If publication year is not available, set node colour to
-    // grey.
+    // white.
     if (!year) {
-      return '#ccc'
+      return '#fff'
     }
   
     // Define minimum and maximum lightness.

@@ -14,7 +14,7 @@ import {
 
 import ViewDialog from "./ViewDialog"
 import PopupModal from "./PopupModal"
-import Chips from '../generic-components/Chips'
+import theme from "../Theme"
 import dateToColour from '../utils/dateToColour'
 import "./RankView.css"
 
@@ -53,24 +53,27 @@ const useStyles = makeStyles(theme => ({
 
 export default function RankView({ props }) {
 
-  console.log(props)
-
   const classes = useStyles()
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.down("xs"))
+
   const [selectedPaper, setSelectedPaper] = React.useState(props.searchResults.subgraph.nodes[0])
   const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const [animationKey, setAnimationKey] = React.useState(0)
+
   const lhsRef = React.useRef(null)
   const paperInfoHeight = 175.0 // height of left-hand side paper info cards
   const maxRadius = Math.max(...props.searchResults.metadata.radii)
+  const { seeds } = props.searchResults
 
   const { minDate, maxDate } = props.searchResults.metadata
   const colours = dateToColour(
     props.searchResults.subgraph.nodes,
     minDate,
     maxDate,
-    props.searchResults.seeds
+    seeds
   )
+  const { readNodes, handleReadNodeClick } = props
 
   // Currently no Javascript hooks exist for CSS snap scroll events so
   // for now the `scrollTop` pixel values must be tracked to determine which
@@ -83,10 +86,11 @@ export default function RankView({ props }) {
   function handleScroll() {
 
     const position = lhsRef.current.scrollTop
-    // determines which paper the center select icon is closest to
+    // determines which node the center select icon is closest to
     const nearest = Math.floor((position + maxRadius) / paperInfoHeight) * paperInfoHeight
 
     if (nearest in pixelIntervals) {
+      setAnimationKey(nearest)
       setSelectedPaper(pixelIntervals[nearest])
     }
   }
@@ -95,6 +99,7 @@ export default function RankView({ props }) {
     /* Scrolls LHS paper div to clicked paper.
     */
     e.stopPropagation()
+    setAnimationKey(interval)
     setSelectedPaper(pixelIntervals[interval])
     lhsRef.current.scrollTo({ top: interval, behavior: "smooth" })
 
@@ -102,6 +107,12 @@ export default function RankView({ props }) {
     if (matches) {
       setIsModalOpen(true)
     }
+  }
+
+  const handleNodeRightClick = interval => e => {
+    e.preventDefault()
+    const clickedNodeId = pixelIntervals[interval].id
+    handleReadNodeClick(clickedNodeId)
   }
 
   React.useEffect(() => {
@@ -112,6 +123,10 @@ export default function RankView({ props }) {
       setIsModalOpen(false)
     }
   }, [matches])
+
+  React.useEffect(() => {
+    lhsRef.current.scrollTo(0, 0)
+  }, [])
 
   return (
     <React.Fragment>
@@ -162,10 +177,14 @@ export default function RankView({ props }) {
               }
               return (
                 <LHSDetails props={{ 
+                  id: node.id,
                   maxRadius,
                   paperInfoHeight,
                   node,
                   handleNodeClick,
+                  handleNodeRightClick,
+                  readNodes,
+                  seeds,
                   i,
                   marginTop,
                   marginBottom,
@@ -173,7 +192,9 @@ export default function RankView({ props }) {
                   colour: colours[i],
                   stroke,
                   inSearchQueue: props.searchQueue.includes(node.id),
-                }}/>
+                }}
+                key={i}
+                />
               )
             })}
           </div>
@@ -186,7 +207,7 @@ export default function RankView({ props }) {
               searchQueue: props.searchQueue,
               setSearchQueue: props.setSearchQueue
             }}
-            key={+new Date()}  // unique key needed to retrigger animation
+            key={animationKey}  // unique key needed to retrigger animation
           />
         </Grid>
       </Grid>
@@ -240,11 +261,15 @@ function NodeDialog({ props }) {
 function LHSDetails({ props }) {
 
   const classes = useStyles()
-  const { 
+  const {
+    id, 
     maxRadius,
     paperInfoHeight,
     node,
     handleNodeClick,
+    handleNodeRightClick,
+    readNodes,
+    seeds,
     i,
     marginTop,
     marginBottom,
@@ -275,10 +300,15 @@ function LHSDetails({ props }) {
           cx={maxRadius + 2}
           cy={(paperInfoHeight / 2) + 2}
           r={radius}
-          fill={colour}
+          fill={
+            readNodes.has(id) && !seeds.includes(id)
+            ? theme.palette.secondary.dark
+            : colour
+          }
           stroke={stroke}
           strokeWidth="2.5px"
           onClick={handleNodeClick(i * paperInfoHeight)}
+          onContextMenu={handleNodeRightClick(i * paperInfoHeight)}
         />
         <clipPath id={`clip_${i}`}>
           <circle
@@ -298,6 +328,7 @@ function LHSDetails({ props }) {
             display: inSearchQueue ? "inline" : "none"
           }}
           onClick={handleNodeClick(i * paperInfoHeight)}
+          onContextMenu={handleNodeRightClick(i * paperInfoHeight)}
         />
       </svg>
       <LHSCard props={{
@@ -305,6 +336,7 @@ function LHSDetails({ props }) {
         paperInfoHeight,
         node,
         handleNodeClick,
+        handleNodeRightClick,
         i
       }} />
     </div>
@@ -319,6 +351,7 @@ function LHSCard({ props }) {
     paperInfoHeight,
     node,
     handleNodeClick,
+    handleNodeRightClick,
     i
   } = props
 
@@ -332,6 +365,7 @@ function LHSCard({ props }) {
         width: `calc(100% - ${maxRadius}px - 5px)`
       }}
       onClick={handleNodeClick(i * paperInfoHeight)}
+      onContextMenu={handleNodeRightClick(i * paperInfoHeight)}
     >
       <CardContent>
         {/* <Chips props={{
