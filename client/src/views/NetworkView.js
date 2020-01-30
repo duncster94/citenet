@@ -107,7 +107,7 @@ export default function NetworkView({ props }) {
         return props.searchResults.metadata.radii[idx]
       })
       .attr("fill", function(data, idx) {
-        return readNodes.has(data.id)
+        return readNodes.has(data.id) && !seeds.includes(id)
           ? theme.palette.secondary.dark
           : colours[idx]
       })
