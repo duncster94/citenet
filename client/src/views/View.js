@@ -3,7 +3,7 @@ import React from "react"
 import Grid from "@material-ui/core/Grid"
 import CircularProgress from "@material-ui/core/CircularProgress"
 
-import { Redirect } from "react-router-dom"
+import { Redirect, withRouter } from "react-router-dom"
 
 import queryString from "query-string"
 
@@ -13,7 +13,7 @@ import RankView from "./RankView"
 import NetworkView from "./NetworkView"
 import "./View.css"
 
-export default function View(props) {
+function View(props) {
 
   const [redirect, setRedirect] = React.useState(false)
   const [searchResults, setSearchResults] = React.useState(null)
@@ -33,6 +33,7 @@ export default function View(props) {
       setRedirect(true)
 
     } else {
+      setSearchResults(null)
 
       // Put singleton in array.
       if (!Array.isArray(paperIDs.id)) {
@@ -58,7 +59,7 @@ export default function View(props) {
 
       submitPaper()
     }
-  }, [])
+  }, [props.location.search])
 
   function handleReadNodeClick(clickedNodeId) {
     // const clickedNodeId = pixelIntervals[interval].id
@@ -149,3 +150,5 @@ function LoadingIndicator() {
     </div>
   )
 }
+
+export default withRouter(View)
