@@ -1,5 +1,6 @@
 import React from "react"
 import Box from "@material-ui/core/Box"
+import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import Link from "@material-ui/core/Link"
 import Typography from "@material-ui/core/Typography"
@@ -9,8 +10,8 @@ const useStyles = makeStyles({
   root: {
     display: "flex",
     position: "absolute",
-    paddingTop: "30px",
-    width: "inherit"
+    paddingTop: "40px",
+    width: "inherit",
   },
   homeLink: {
     position: "absolute",
@@ -32,40 +33,30 @@ export default function AboutPage() {
 
   return (
     <div className={classes.root}>
-      <Grid
-        justify="center"
-        container
-      >
-        <Grid item xs={8}>
-          <Typography
-            variant="h4"
-            style={{
-              textAlign: "center"
-            }}
-            gutterBottom
-          >
-            CiteNet is an interactive <Bold>search</Bold> and <Bold>visualization</Bold> tool for biomedical literature.
+      <Container maxWidth="md">
+        <Typography
+          variant="h4"
+          gutterBottom
+        >
+          CiteNet is an interactive <Bold>search</Bold> and <Bold>visualization</Bold> tool for biomedical literature.
           </Typography>
-        </Grid>
-          {/* <hr /> */}
-        <Grid item xs={6}>
-          <Typography gutterBottom>
-            Papers are being published at an incredible rate. The ever-increasing body of literature makes sorting through
-            irrelevant research while at the same time not missing critically important results a daunting task. The 
-            traditional literature search paradigm is slow, fragmented and difficult to mentally 
-            organize (so many browser tabs!).
-          </Typography>
-          <Typography gutterBottom>
-            We've developed <Bold>CiteNet</Bold> in an attempt to alleviate the time-consuming and often frustrating 
-            process of finding relevant papers for your research.
-          </Typography>
-        </Grid>
-      </Grid>
-      <Typography className={classes.homeLink}>
-        <Link href="/">
-          Home
-        </Link>
-      </Typography>
+        {/* <hr /> */}
+        <Typography gutterBottom>
+          Papers are being published at an incredible rate. The ever-increasing body of literature makes sorting through
+          irrelevant research while at the same time not missing critically important results a daunting task. The
+          traditional literature search paradigm is slow, fragmented and difficult to mentally
+          organize (so many browser tabs!).
+        </Typography>
+        <Typography gutterBottom>
+          We've developed <Bold>CiteNet</Bold> in an attempt to alleviate the time-consuming and often frustrating
+          process of finding relevant papers for your research.
+        </Typography>
+        <Typography className={classes.homeLink}>
+          <Link href="/">
+            Home
+          </Link>
+        </Typography>
+      </Container>
     </div>
   )
 }
