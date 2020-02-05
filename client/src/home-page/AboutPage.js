@@ -3,14 +3,15 @@ import Box from "@material-ui/core/Box"
 import Container from "@material-ui/core/Container"
 import Grid from "@material-ui/core/Grid"
 import Link from "@material-ui/core/Link"
+import Paper from "@material-ui/core/Paper"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
     position: "absolute",
-    paddingTop: "40px",
+    paddingTop: "15px",
     width: "inherit",
   },
   homeLink: {
@@ -18,8 +19,11 @@ const useStyles = makeStyles({
     top: "15px",
     left: "20px",
     fontSize: "14px"
+  },
+  textSection: {
+    paddingTop: theme.spacing(4)
   }
-})
+}))
 
 const Bold = ({ children }) => <Box
   fontWeight="fontWeightBold"
@@ -34,9 +38,12 @@ export default function AboutPage() {
   return (
     <div className={classes.root}>
       <Container maxWidth="md">
+        <Paper elevation={3}>
+        <Container maxWidth="md">
         <Typography
           variant="h4"
           gutterBottom
+          className={classes.textSection}
         >
           CiteNet is an interactive <Bold>search</Bold> and <Bold>visualization</Bold> tool for biomedical literature.
           </Typography>
@@ -49,13 +56,32 @@ export default function AboutPage() {
         </Typography>
         <Typography gutterBottom>
           We've developed <Bold>CiteNet</Bold> in an attempt to alleviate the time-consuming and often frustrating
-          process of finding relevant papers for your research.
+          process of finding relevant papers for your research. Keyword-based searches often require specific, technical terms
+          to yield interesting results, which can be a major problem if you just want to <Bold>explore</Bold> the
+          research around a topic. CiteNet introduces an alternative paradigm to keyword searching, namely "keypaper" searching.
+          Here you can use a set of papers as your search query and CiteNet will give you a larger set of related papers.
+          Implicity, you define a set of topics by the papers you input and CiteNet attempts to find papers at the intersection
+          of these topics.
         </Typography>
+
+        <Typography
+          variant="h5"
+          gutterBottom
+          className={classes.textSection}
+        >
+          How to use CiteNet
+        </Typography>
+        <Typography gutterBottom>
+
+        </Typography>
+
         <Typography className={classes.homeLink}>
           <Link href="/">
             Home
           </Link>
         </Typography>
+        </Container>
+        </Paper>
       </Container>
     </div>
   )
