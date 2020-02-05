@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles"
 
 import SearchBar from "./SearchBar"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
     position: "absolute",
@@ -21,6 +21,15 @@ const useStyles = makeStyles({
     left: "20px",
     fontSize: "14px",
   },
+  versionText: {
+    position: "absolute",
+    bottom: "15px",
+    right: "20px",
+    fontSize: "10px",
+    // [theme.breakpoints.down('xs')]: {
+    //   display: "none"
+    // }
+  },
   logo: {
     display: "block",
     marginLeft: "auto",
@@ -31,7 +40,7 @@ const useStyles = makeStyles({
   search: {
     marginTop: '30vh',
   }
-})
+}))
 
 export default function HomePage({ props }) {
 
@@ -70,8 +79,8 @@ export default function HomePage({ props }) {
 
         </Grid>
       </div>
-      {/* <AboutPage props={{page}}/> */}
-      <AboutLink />
+      {/* <AboutLink /> */}
+      <VersionText />
     </React.Fragment>
   )
 }
@@ -98,6 +107,18 @@ function AboutLink() {
       <Link href="/about">
         About
       </Link>
+    </Typography>
+  )
+}
+
+function VersionText() {
+  const classes = useStyles()
+  return (
+    <Typography
+      className={classes.versionText}
+      color='textSecondary'
+    >
+      Build 0.1.0-alpha
     </Typography>
   )
 }
