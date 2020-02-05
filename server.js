@@ -8,6 +8,7 @@ const { query_es } = require('./query-es');
 const { processSubnetwork } = require('./process-subnetwork')
 const seedrandom = require('seedrandom')
 const CONSTANTS = require('./constants')
+require('dotenv').config()
 
 const saveState = seedrandom('123456', { state: true }).state()
 
@@ -72,7 +73,7 @@ app.post('/submit_paper', wrapAsync(async (req, res) => {
 
 app.post('/payload', (req, res) => {
   try {
-    const secret = 'test'
+    const secret = process.env.WEBHOOK_SECRET
     https://stackoverflow.com/questions/7480158/how-do-i-use-node-js-crypto-to-create-a-hmac-sha1-hash
     // const hashedSecret = crypto.createHmac(secret)
     console.log(req)
@@ -85,7 +86,7 @@ let port
 
 if (process.env.NODE_ENV === 'production') {
 
-  port = 3001
+  port = process.env.PRODUCTION_PORT
 
   // if environment is in production, serve the static production build
   app.use(express.static(path.join(__dirname, 'client/build')))
@@ -95,7 +96,7 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'client/build/index.html'))
   })
 } else {
-  port = 3002
+  port = process.env.DEVELOPMENT_PORT
 }
 
 app.use(function(err, req, res, next) {
