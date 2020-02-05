@@ -1,5 +1,4 @@
 import React from "react"
-import Chip from "@material-ui/core/Chip"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
@@ -14,28 +13,14 @@ import {
   mdiOpenInNew
 } from "@mdi/js"
 
-import theme from "../Theme"
-import "./NetworkView.css"
+import theme from '../Theme'
+import Chips from '../generic-components/Chips'
+import './NetworkView.css'
 
 const useStyles = makeStyles({
   title: {
     backgroundColor: theme.palette.primary.black,
     color: "#fff"
-  },
-  authors: {
-
-  },
-  journalChip: {
-    "& span": {
-      display: "block",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      maxWidth: "18vw",
-    }
-  },
-  chipDiv: {
-    marginBottom: "15px"
   }
 })
 
@@ -61,33 +46,25 @@ export default function ViewDialog({ props }) {
   return (
     <React.Fragment>
       <DialogTitle className={classes.title}>
-        {props.selectedPaper.title}
+        {props.selectedPaper.Title}
       </DialogTitle>
       <DialogContent dividers={true}>
-        <div
-          className={classes.chipDiv}
-        >
-          <Chip 
-            label={props.selectedPaper.journal}
-            size="small"
-            className={classes.journalChip}
-            color="primary"
-          />
-          <Chip 
-            label={props.selectedPaper.formattedDate}
-            size="small"
-            style={{float: "right"}}
-            color="primary"
-          />
-        </div>
+        <Chips props={{
+          journalTitle: props.selectedPaper.Journal.Title,
+          date: props.selectedPaper.formattedDate
+        }}/>
         <DialogContentText
           variant="caption"
           // classes={classes.authors}
         >
-          {props.selectedPaper.formattedAuthors}
+          {props.selectedPaper.formattedAuthors ? 
+           props.selectedPaper.formattedAuthors :
+           ''}
         </DialogContentText>
         <DialogContentText>
-          {props.selectedPaper.abstract}
+          {props.selectedPaper.Abstract ?
+           props.selectedPaper.Abstract :
+           ''}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -107,8 +84,8 @@ export default function ViewDialog({ props }) {
               path={props.searchQueue.includes(props.selectedPaper.id) ?
                 mdiMinusBox :
                 mdiPlusBox} 
-              size={1}
-              color={theme.palette.primary.black}
+              size={1.25}
+              color={theme.palette.primary.main}
             />       
           </IconButton>
         </Tooltip>
@@ -124,6 +101,7 @@ export default function ViewDialog({ props }) {
               props.selectedPaper.id.toString() :
               ""}
             target="_blank"
+            rel='noopener noreferrer'
             style={{ textDecoration: "none" }}
           >
             <IconButton
@@ -131,9 +109,9 @@ export default function ViewDialog({ props }) {
               aria-label="To publisher's site"
             >
               <Icon
-                path={mdiOpenInNew} 
-                size={1}
-                color={theme.palette.primary.black}
+                path={mdiOpenInNew}
+                size={1.25}
+                color={theme.palette.primary.main}
               />       
             </IconButton>
           </a>

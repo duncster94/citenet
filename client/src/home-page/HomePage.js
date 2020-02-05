@@ -1,22 +1,34 @@
 import React from "react"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
-import theme from "../Theme"
 import SearchBar from "./SearchBar"
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
+    display: "flex",
     position: "absolute",
     flexGrow: 1,
-    display: "flex",
     height: "inherit",
     width: "inherit",
+    overflow: 'hidden'
   },
-  search: {
-    marginTop: "10px",
-    marginBottom: "10px",
+  aboutLink: {
+    position: "absolute",
+    top: "15px",
+    left: "20px",
+    fontSize: "14px",
+  },
+  versionText: {
+    position: "absolute",
+    bottom: "15px",
+    right: "20px",
+    fontSize: "10px",
+    // [theme.breakpoints.down('xs')]: {
+    //   display: "none"
+    // }
   },
   logo: {
     display: "block",
@@ -25,11 +37,10 @@ const useStyles = makeStyles({
     maxWidth: "50%",
     height: "auto",
   },
-  // tagline: {
-  //   color: theme.palette.primary.main,
-  //   marginBottom: "15vh"
-  // }
-})
+  search: {
+    marginTop: '30vh',
+  }
+}))
 
 export default function HomePage({ props }) {
 
@@ -37,7 +48,9 @@ export default function HomePage({ props }) {
 
   return (
     <React.Fragment>
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+      >
         <Grid
           container
           direction="column"
@@ -45,37 +58,29 @@ export default function HomePage({ props }) {
           alignItems="center"
         >
 
-          <Grid item>
-            <Logo />
-          </Grid>
-
-          <Grid
-            container
-            className={classes.search}
-            justify="center"
-            alignItems="center"
-          >
-
-            <Grid item xs={8}>
-              {/* Paper select bar */}
-              <SearchBar props={props} />
-            </Grid>
-
-          </Grid>
-
-          <Grid item>
-            <Typography 
-              style={{
-                color: theme.palette.primary.main,
-                marginBottom: "15vh"
-              }} // This should be in `makeStyles` but it doesn't work...?
+          <Grid item xs>
+            <Grid
+              container
+              className={classes.search}
+              justify="center"
+              alignItems="center"
             >
-              A powerfully intuitive way to search the scientific literature
-            </Typography>
+              <Grid item>
+                <Logo />
+              </Grid>
+
+              <Grid item xs={8} style={{marginTop: '20px'}}>
+                {/* Paper select bar */}
+                <SearchBar props={props} />
+              </Grid>
+
+            </Grid>
           </Grid>
 
         </Grid>
       </div>
+      {/* <AboutLink /> */}
+      <VersionText />
     </React.Fragment>
   )
 }
@@ -90,5 +95,30 @@ function Logo() {
       alt="CiteNet logo"
       src="/images/citenet_logo.png"
     />
+  )
+}
+
+function AboutLink() {
+
+  const classes = useStyles()
+
+  return (
+    <Typography className={classes.aboutLink}>
+      <Link href="/about">
+        About
+      </Link>
+    </Typography>
+  )
+}
+
+function VersionText() {
+  const classes = useStyles()
+  return (
+    <Typography
+      className={classes.versionText}
+      color='textSecondary'
+    >
+      Build 0.1.0-alpha
+    </Typography>
   )
 }

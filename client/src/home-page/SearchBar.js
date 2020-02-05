@@ -10,6 +10,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
+import Tooltip from "@material-ui/core/Tooltip"
+
 
 import AsyncSelect from "react-select/async"
 import debounce from "debounce-promise"
@@ -47,19 +49,20 @@ export default withRouter(function SearchBar(props) {
   function formatOptionLabel(values) {
     // Custom option component
 
-    const authorString = values.labels.authors.map(function (element) {
+    console.log(values)
+    const authorString = values.labels.Authors.map(function (element) {
       return `${element.Initials} ${element.LastName}`
     }).join(", ")
     return (
       <div style={optionStyles.root}>
         <Typography
-          variant="subtitle2"
+          variant="body2"
           color="textPrimary"
         >
-          {values.labels.title}
+          {values.labels.Title}
         </Typography>
         <Typography
-          variant="caption"
+          variant="subtitle2"
           color="textSecondary"
         >
           {authorString}
@@ -119,15 +122,16 @@ export default withRouter(function SearchBar(props) {
       isMulti
       loadOptions={debounce(loadOptions, 250)}
       onChange={handleChange}
+      onBlur={event => event.preventDefault()}
       formatOptionLabel={formatOptionLabel}
       components={{IndicatorsContainer}}
-      placeholder="Enter paper title or author name(s)."
+      placeholder="Search for papers."
       theme={(theme_) => ({
         ...theme_,
         colors: {
           ...theme_.colors,
-          primary: theme.palette.primary.main,
-          primary25: theme.palette.primary.mainLight
+          primary: theme.palette.secondary.main,
+          primary25: "#eeeeee"
         }
       })}
       styles={{
@@ -181,22 +185,30 @@ function MenuSearchButtons({ props }) {
   return (
     <div
       onMouseDown={e => e.stopPropagation()}
+      onTouchStart={e => e.stopPropagation()}
+      onTouchEnd={e => e.stopPropagation()}
     >
       <ButtonGroup
         variant="text"
-        size="small"
-        style={{boxShadow: "0px 0px 0px 0px"}}
+        size="large"
       >
-        <Button
-          aria-haspopup="true"
-          onClick={handleToggle}
+        <Tooltip
+          title="Select view"
+          placement="top"
+          enterDelay={500}
+          leaveDelay={100}
         >
-          <Icon
-            path={mdiChevronDown}
-            size={1}
-            color={theme.palette.primary.black}
-          />
-        </Button>
+          <Button
+            aria-haspopup="true"
+            onClick={handleToggle}
+          >
+            <Icon
+              path={mdiChevronDown}
+              size={1}
+              color={theme.palette.primary.black}
+            />
+          </Button>
+        </Tooltip>
         <Button
           onClick={handleClick}
           // Check if `selectedPapers` is an array (default is null)

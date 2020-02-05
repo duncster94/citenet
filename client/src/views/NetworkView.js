@@ -6,6 +6,7 @@ import PopupModal from "./PopupModal"
 import "./NetworkView.css"
 
 import theme from "../Theme"
+import dateToColour from '../utils/dateToColour'
 
 export default function NetworkView({ props }) {
 
@@ -14,6 +15,8 @@ export default function NetworkView({ props }) {
   const [popoverAnchorEl, setPopoverAnchorEl] = React.useState(null)
   const [paperData, setPaperData] = React.useState(0)
   const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const { readNodes, handleReadNodeClick } = props
+  const { seeds } = props.searchResults
 
   function handleWindowClick() {
     d3.selectAll("line").transition().duration(300)
@@ -25,6 +28,14 @@ export default function NetworkView({ props }) {
   }
 
   React.useEffect(() => {
+
+    const { minDate, maxDate } = props.searchResults.metadata
+    const colours = dateToColour(
+      props.searchResults.subgraph.nodes, 
+      minDate, 
+      maxDate, 
+      seeds
+    )
 
     const svg = d3.select(svgRef.current)
     const g = svg.append("g") // Group to hold elements
@@ -61,13 +72,15 @@ export default function NetworkView({ props }) {
       .style("stroke", "none")
 
     const simulation = d3.forceSimulation()
-      .force("charge", d3.forceManyBody().strength(-600))
+      .force("charge", d3.forceManyBody()
+        .strength(-600))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("collide", d3.forceCollide()
         .radius(function(_, idx) {
-            return props.searchResults.metadata.radii[idx] + 3;
+          return props.searchResults.metadata.radii[idx] + 3;
         }))
       .force("link", d3.forceLink().id(function(d) {return d.id}))
+
 
     const links = g.append("g")
       .selectAll("line")
@@ -93,11 +106,13 @@ export default function NetworkView({ props }) {
       .attr("r", function(_, idx) {
         return props.searchResults.metadata.radii[idx]
       })
-      .attr("fill", function(_, idx) {
-        return props.searchResults.metadata.colours[idx]
+      .attr("fill", function(data, idx) {
+        return readNodes.has(data.id) && !seeds.includes(data.id)
+          ? theme.palette.secondary.dark
+          : colours[idx]
       })
       .attr("stroke", function(_, idx) {
-        const lightness = props.searchResults.metadata.colours[idx].split(",")[2]
+        const lightness = colours[idx].split(",")[2]
         if (lightness && 
           parseFloat(lightness.replace("%", "").replace(" ", "")) >= 90) {
           return "#ddd"
@@ -134,8 +149,22 @@ export default function NetworkView({ props }) {
         clearTimeout(hoverTimeout)
       })
       .on("click", function(data) {
+        setPaperData(data)
         setIsModalOpen(true)
         d3.event.stopPropagation()
+      })
+      .on("contextmenu", function(data, idx) {
+        d3.event.preventDefault()
+        // console.log(d3.select(this).style("fill"))
+        // console.log(theme.palette.secondary.dark)
+        const status = handleReadNodeClick(data.id)
+        if (!seeds.includes(data.id)) {
+          d3.select(this).style("fill",
+            status === 'added'
+            ? theme.palette.secondary.dark
+            : colours[idx]
+          )
+        }
       })
 
     // Add a clip path for any overlaid images so they are clipped
@@ -188,6 +217,19 @@ export default function NetworkView({ props }) {
 
     simulation.nodes(props.searchResults.subgraph.nodes)
     simulation.force("link").links(props.searchResults.subgraph.links)
+
+    // the following forces ensure disconnected nodes are forced closer to the center
+    simulation
+      .force('x', d3.forceX().x(function(d) {
+        return 3 * window.innerWidth / 4
+      })
+        .strength( function(d) {return d.hasCitationEdges ? 0 : 0.5})
+      )
+      .force('y', d3.forceY().y(function(d) {
+        return window.innerHeight / 2
+      })
+        .strength( function(d) {return d.hasCitationEdges ? 0 : 0.5})
+      )
 
     simulation.on("tick", () => {
       links
