@@ -2,6 +2,7 @@ const express = require('express');
 const { fork } = require('child_process');
 const path = require('path');
 const bodyParser = require('body-parser');
+const crypto = require('crypto')
 const elasticsearch = require('elasticsearch');
 const { query_es } = require('./query-es');
 const { processSubnetwork } = require('./process-subnetwork')
@@ -69,6 +70,16 @@ app.post('/submit_paper', wrapAsync(async (req, res) => {
   })
 }))
 
+app.post('/payload', (req, res) => {
+  try {
+    const secret = 'test'
+    https://stackoverflow.com/questions/7480158/how-do-i-use-node-js-crypto-to-create-a-hmac-sha1-hash
+    // const hashedSecret = crypto.createHmac(secret)
+    console.log(req)
+  } catch (err) {
+    console.log(err)
+  }
+})
 
 let port
 
