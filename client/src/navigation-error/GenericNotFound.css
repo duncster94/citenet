@@ -1,0 +1,7 @@
+.error404-root {
+    position: absolute;
+    flex: 1;
+    display: flex;
+    height: inherit;
+    width: inherit;
+}

@@ -1,30 +1,39 @@
 {
-  "name": "CiteNet",
-  "author": "Duncan Forster",
-  "description": "CiteNet, a better way to search the scientific literature.",
-  "keywords": [
-    "science",
-    "scientific",
-    "search",
-    "literature",
-    "visulization"
-  ],
+  "name": "citenet",
+  "version": "0.1.0",
+  "description": "Scientific literature search and visualization.",
+  "main": "server.js",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "browserify": "^16.2.2",
-    "ejs": "^2.6.1",
-    "elasticsearch": "^15.1.1",
-    "express": "^4.16.3",
-    "neo4j-driver": "^1.6.0",
-    "selectize": "^0.12.6"
+    "concurrently": "^4.1.2",
+    "ejs": "^3.0.1",
+    "elasticsearch": "^16.3.0",
+    "express": "^4.17.1",
+    "nodemon": "^1.19.1",
+    "seedrandom": "^3.0.5"
   },
-  "main": "index.js",
+  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server.js",
+    "client": "node start-client.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JohnGiorgi/citenet"
+    "url": "git+https://github.com/JohnGiorgi/citenet.git"
   },
-  "version": "0.1.0"
+  "keywords": [
+    "science",
+    "literature",
+    "search",
+    "knowledge",
+    "visualization",
+    "citations"
+  ],
+  "author": "Duncan Forster",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JohnGiorgi/citenet/issues"
+  },
+  "homepage": "https://github.com/JohnGiorgi/citenet#readme"
 }

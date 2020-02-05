@@ -1,0 +1,20 @@
+.lhs-paper-cards {
+    -ms-overflow-style: none;
+    /* scrollbar-width: none; */
+    /* overflow: -moz-scrollbars-none; */
+}
+
+.lhs-paper-cards::-webkit-scrollbar {
+    /* display: none; */
+}
+
+.changed {
+    animation: shake 0.15s;
+}
+
+@keyframes shake {
+    
+    50% {
+        transform: translate3d(0, 4px, 0)
+    }
+  }

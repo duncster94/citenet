@@ -1,0 +1,7 @@
+.loading-indicator {
+    position: absolute;
+    height: inherit;
+    width: inherit;
+    display: flex;
+    flex: 1
+}

@@ -1,0 +1,24 @@
+.network-root {
+    height: inherit;
+    width: inherit;
+    display: flex;
+    flex: 1;
+}
+
+.network-node-popover {
+    pointer-events: none;
+}
+
+.network-node-popover-grid {
+    padding: 10px;
+    max-width: 300px;
+}
+
+.popper-transition-exit {
+opacity: 1;
+}
+
+.popper-transition-exit-active {
+opacity: 0;
+transition: opacity 250ms;
+}
