@@ -91,11 +91,12 @@ if (process.env.NODE_ENV === 'production') {
 app.post('/payload', (req, res) => {
   try {
     const secret = process.env.WEBHOOK_SECRET
+    console.log(secret)
     // https://stackoverflow.com/questions/7480158/how-do-i-use-node-js-crypto-to-create-a-hmac-sha1-hash
-    const hashedSecret = crypto.createHmac('sha1', secret)
-      .update(req.body)
-      .digest('hex')
-    console.log(hashedSecret)
+    // const hashedSecret = crypto.createHmac('sha1', secret)
+    //   .update(req.body)
+    //   .digest('hex')
+    // console.log(hashedSecret)
     console.log(req.body)
     // console.log(crypto.timingSafeEqual(hashedSecret))
   } catch (err) {
