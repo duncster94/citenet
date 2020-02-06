@@ -100,8 +100,9 @@ app.post('/payload', (req, res) => {
     console.log(hashedSecret)
     console.log(reqSecret)
     console.log(req.body)
-    console.log(crypto.timingSafeEqual(hashedSecret, reqSecret))
-    if (!crypto.timingSafeEqual(hashedSecret, reqSecret)) {
+    const safe = crypto.timingSafeEqual(Buffer.from(reqSecret), Buffer.from(hashedSecret))
+    console.log(safe)
+    if (!safe) {
       return res.status(401).send({ message: 'Mismatched signatures' })
     }
     console.log(req.body.action)
