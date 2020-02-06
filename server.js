@@ -91,25 +91,25 @@ if (process.env.NODE_ENV === 'production') {
 app.post('/payload', (req, res) => {
   try {
     const secret = process.env.WEBHOOK_SECRET
-    console.log(secret)
     // https://stackoverflow.com/questions/7480158/how-do-i-use-node-js-crypto-to-create-a-hmac-sha1-hash
     const hashedSecret = `sha1=${crypto.createHmac('sha1', secret)
-      .update(JSON.stringify(req.body.payload))
+      .update(JSON.stringify(req.body))
       .digest('hex')}`
     const reqSecret = req.headers['x-hub-signature']
-    console.log(hashedSecret)
-    console.log(reqSecret)
-    console.log(req.body)
     const safe = crypto.timingSafeEqual(Buffer.from(reqSecret), Buffer.from(hashedSecret))
-    console.log(safe)
     if (!safe) {
       return res.status(401).send({ message: 'Mismatched signatures' })
     }
     console.log(req.body.action)
     console.log(req.headers['x-github-event'])
-    // Execute code here
+    if (req.headers['x-github-event'] && req.body.ref === 'refs/heads/master') {
+      // deploy new build
+      res.status(200).send({ message: 'new build deployed' })
+    }
+    res.status(200).send({ message: 'hook recieved' })
   } catch (err) {
     console.log(err)
+    res.status(500).send({ message: err })
   }
 })
 
