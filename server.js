@@ -107,7 +107,7 @@ app.post('/payload', (req, res) => {
     const event = req.headers['x-github-event']
     const branch = req.body.ref.split('/')[2]
     console.log(event, branch)
-    if (event === 'push' && branch === 'production' && process.env.NODE_ENV === 'production') {
+    if (event === 'push' && branch === 'master' && process.env.NODE_ENV === 'production') {
       // deploy new build
       shell.exec('./deploy-production.sh')
       res.status(200).send({ message: 'production build deployed' })
