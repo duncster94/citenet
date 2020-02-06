@@ -109,15 +109,14 @@ app.post('/payload', (req, res) => {
     console.log(event, branch)
     if (event === 'push' && branch === 'master' && process.env.NODE_ENV === 'production') {
       // deploy new build
-      shell.exec('./deploy-production.sh')
-      res.status(200).send({ message: 'production build deployed' })
+      res.status(200).send({ message: 'production build deploying' })
+      shell.exec('./deploy.sh production')
     }
 
-    console.log(process.env.NODE_ENV)
-
-    if (event === 'push' && branch === 'development' && process.env.NODE_ENV === 'development') {
+    if (event === 'push' && branch === 'development') {
       // TODO: deploy development
-      res.status(200).send({ message: 'development build deployed' })
+      res.status(200).send({ message: 'development build deploying' })
+      shell.exec('./deploy.sh development')
     }
 
     res.status(200).send({ message: 'hook recieved, no deployment' })
