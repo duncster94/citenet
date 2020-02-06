@@ -94,7 +94,7 @@ app.post('/payload', (req, res) => {
     console.log(secret)
     // https://stackoverflow.com/questions/7480158/how-do-i-use-node-js-crypto-to-create-a-hmac-sha1-hash
     const hashedSecret = `sha1=${crypto.createHmac('sha1', secret)
-      .update(JSON.stringify(req.body))
+      .update(JSON.stringify(req.body.payload))
       .digest('hex')}`
     const reqSecret = req.headers['x-hub-signature']
     console.log(hashedSecret)
