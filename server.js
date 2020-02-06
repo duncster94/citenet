@@ -3,6 +3,7 @@ const { fork } = require('child_process');
 const path = require('path');
 const bodyParser = require('body-parser');
 const crypto = require('crypto')
+const shell = require('shelljs')
 const elasticsearch = require('elasticsearch');
 const { query_es } = require('./query-es');
 const { processSubnetwork } = require('./process-subnetwork')
@@ -44,6 +45,8 @@ app.post('/homepage_search_query', (req, res) => {
 // Called when user submits papers.
 app.post('/submit_paper', wrapAsync(async (req, res) => {
 
+  console.log(req.headers['x-real-ip'], new Date(), req.body)
+
   // Get seeds from req body.
   let seeds = req.body;
 
@@ -81,7 +84,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')))
 
   app.get('*', (req, res) => {
-    console.log(req.headers['x-real-ip'])
+    console.log(req.headers['x-real-ip'], new Date())
     res.sendFile(path.join(__dirname, 'client/build/index.html'))
   })
 } else {
@@ -100,13 +103,24 @@ app.post('/payload', (req, res) => {
     if (!safe) {
       return res.status(401).send({ message: 'Mismatched signatures' })
     }
-    console.log(req.headers['x-github-event'])
-    console.log(req.body.ref)
-    if (req.headers['x-github-event'] === 'push' && req.body.ref === 'refs/heads/master') {
+
+    const event = req.headers['x-github-event']
+    const branch = req.body.ref.split('/')[2]
+    console.log(event, branch)
+    if (event === 'push' && branch === 'production' && process.env.NODE_ENV === 'production') {
       // deploy new build
-      res.status(200).send({ message: 'new build deployed' })
+      shell.exec('./deploy-production.sh')
+      res.status(200).send({ message: 'production build deployed' })
     }
-    res.status(200).send({ message: 'hook recieved' })
+
+    console.log(process.env.NODE_ENV)
+
+    if (event === 'push' && branch === 'development' && process.env.NODE_ENV === 'development') {
+      // TODO: deploy development
+      res.status(200).send({ message: 'development build deployed' })
+    }
+
+    res.status(200).send({ message: 'hook recieved, no deployment' })
   } catch (err) {
     console.log(err)
     res.status(500).send({ message: err })
