@@ -88,6 +88,21 @@ if (process.env.NODE_ENV === 'production') {
   port = process.env.DEVELOPMENT_PORT
 }
 
+app.post('/payload', (req, res) => {
+  try {
+    const secret = process.env.WEBHOOK_SECRET
+    // https://stackoverflow.com/questions/7480158/how-do-i-use-node-js-crypto-to-create-a-hmac-sha1-hash
+    const hashedSecret = crypto.createHmac('sha1', secret)
+      .update(req.body)
+      .digest('hex')
+    console.log(hashedSecret)
+    console.log(req.body)
+    // console.log(crypto.timingSafeEqual(hashedSecret))
+  } catch (err) {
+    console.log(err)
+  }
+})
+
 app.use(function(err, req, res, next) {
   // error middleware
   console.log(err)
