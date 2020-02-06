@@ -97,6 +97,8 @@ app.post('/payload', (req, res) => {
     //   .update(req.body)
     //   .digest('hex')
     // console.log(hashedSecret)
+    console.log(req.headers)
+    console.log(req.headers['X-Hub-Signature'])
     console.log(req.body)
     // console.log(crypto.timingSafeEqual(hashedSecret))
   } catch (err) {
