@@ -100,9 +100,9 @@ app.post('/payload', (req, res) => {
     if (!safe) {
       return res.status(401).send({ message: 'Mismatched signatures' })
     }
-    console.log(req.body.action)
     console.log(req.headers['x-github-event'])
-    if (req.headers['x-github-event'] && req.body.ref === 'refs/heads/master') {
+    console.log(req.body.ref)
+    if (req.headers['x-github-event'] === 'push' && req.body.ref === 'refs/heads/master') {
       // deploy new build
       res.status(200).send({ message: 'new build deployed' })
     }
