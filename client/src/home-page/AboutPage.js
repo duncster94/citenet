@@ -72,7 +72,14 @@ export default function AboutPage() {
           How to use CiteNet
         </Typography>
         <Typography gutterBottom>
-
+          A CiteNet search starts by seeding the search algorithm with papers from fields you are interested in. You can add these
+          papers directly by entering the PubMed ID of the article into the search bar, or by entering the article title, journal,
+          author(s) or publication date into the search bar and selecting the correct paper from the dropdown. The more papers you
+          input, the more refined your search will be. After selecting your seed papers you can optionally choose which
+          visualization you'd like to see by clicking the view dropdown button beside the search button.
+        </Typography>
+        <Typography gutterBottom>
+          CiteNet currently offers two visualizations: a <Bold>rank view</Bold> (default) and a <Bold>network view</Bold>. 
         </Typography>
 
         <Typography className={classes.homeLink}>
