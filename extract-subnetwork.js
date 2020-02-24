@@ -559,4 +559,6 @@ async function send_subgraph(extSub) {
 
   // Send subgraph back to parent process.
   process.send({ subgraph: subgraph })
+
+  process.exit()
 }
