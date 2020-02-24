@@ -110,12 +110,15 @@ app.post('/payload', (req, res) => {
     if (event === 'push' && branch === 'master' && process.env.NODE_ENV === 'production') {
       // deploy new build
       res.status(200).send({ message: 'production build deploying' })
+      console.log('post res')
       shell.exec('./deploy-production.sh')
       return
     }
 
+    console.log('outside cond')
     res.status(200).send({ message: 'hook recieved, no deployment' })
   } catch (err) {
+    console.log('here in err')
     console.log(err)
     res.status(500).send({ message: err })
   }
@@ -123,7 +126,7 @@ app.post('/payload', (req, res) => {
 
 app.use(function(err, req, res, next) {
   // error middleware
-  console.log(err)
+  console.log('got this ', err)
   res.status(500).send({ message: err.message })
 })
 
