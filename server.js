@@ -111,6 +111,7 @@ app.post('/payload', (req, res) => {
       // deploy new build
       res.status(200).send({ message: 'production build deploying' })
       shell.exec('./deploy-production.sh')
+      return
     }
 
     res.status(200).send({ message: 'hook recieved, no deployment' })
