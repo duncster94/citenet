@@ -33,7 +33,7 @@ const Disclaimer = () => {
         </Typography>
         <Typography>
           While we are making considerable efforts to ensure CiteNet indexes all bioRxiv and medRxiv papers and remains up-to-date in light
-          of the current COVID-19 pandemic, <Bold>we make no guarantees about any aspect of CiteNet or its database therein.</Bold>
+          of the COVID-19 pandemic, <Bold>we make no guarantees about any aspect of CiteNet or its database therein.</Bold>
         </Typography>
       </Container>
       </div>
