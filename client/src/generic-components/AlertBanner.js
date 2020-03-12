@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
 const MESSAGE = `CiteNet is currently in development. However, due to the COVID-19 pandemic we have opted
-to: 1. make CiteNet available to the public and 2. index bioRxiv and medRxiv on a nightly basis. We hope to provide
+to: 1. Make CiteNet available to the public and 2. Index bioRxiv and medRxiv on a nightly basis. We hope to provide
 a useful, up-to-date literature search tool for the scientific community.`
 
 const useStyles = makeStyles(theme => ({
