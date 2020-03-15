@@ -5,6 +5,8 @@ import { withRouter } from "react-router-dom"
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
+import Divider from "@material-ui/core/Divider"
+import Grid from "@material-ui/core/Grid"
 import ListSubheader from "@material-ui/core/ListSubheader"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Menu from "@material-ui/core/Menu"
@@ -30,13 +32,6 @@ const viewOptions = [
   "Network"
 ]
 
-const optionStyles = {
-  root: {
-    display: "flex",
-    flexDirection: "column"
-  }
-}
-
 export default withRouter(function SearchBar(props) {
 
   const { 
@@ -49,26 +44,43 @@ export default withRouter(function SearchBar(props) {
   function formatOptionLabel(values) {
     // Custom option component
 
-    console.log(values)
     const authorString = values.labels.Authors.map(function (element) {
+      if (element.Initials === undefined) {
+        return element.LastName
+      }
       return `${element.Initials} ${element.LastName}`
     }).join(", ")
     return (
-      <div style={optionStyles.root}>
-        <Typography
-          variant="body2"
-          color="textPrimary"
+      // <div style={optionStyles.root}>
+      <Grid container>
+        <Grid item xs={values.labels.is_preprint ? 10 : 12}>
+          <Typography variant="body1" color="textPrimary">
+            {values.labels.Title}
+          </Typography>
+        </Grid>
+
+        <Grid
+          item
+          xs={2}
+          style={{
+            display: values.labels.is_preprint ? "block" : "none"
+          }}
         >
-          {values.labels.Title}
-        </Typography>
-        <Typography
-          variant="subtitle2"
-          color="textSecondary"
-        >
-          {authorString}
-        </Typography>
-      </div>
-    )
+          <Box fontStyle="italic" color={theme.palette.secondary.main}>
+            <Typography align="right" variant="subtitle2">
+              Preprint
+            </Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography variant="subtitle2" color="textSecondary">
+            {authorString}
+          </Typography>
+        </Grid>
+      </Grid>
+      // </div>
+    );
   }
 
   function loadOptions(input) {
@@ -135,9 +147,15 @@ export default withRouter(function SearchBar(props) {
         }
       })}
       styles={{
-        menuList: (base) => ({
+        menuList: base => ({
           ...base,
           maxHeight: "40vh",
+        }),
+        option: base => ({
+          ...base,
+          borderBottom: `0.5px solid #eee`,
+          paddingTop: '15px',
+          paddingBottom: '15px',
         })
       }}
     />
