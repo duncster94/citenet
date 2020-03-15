@@ -245,7 +245,7 @@ class ExtractSubnetwork {
       body: {
         query: {
           ids: {
-            type: 'paper',
+            type: '_doc',
             values: [node]
           }
         }
@@ -411,8 +411,8 @@ class ExtractSubnetwork {
     // 'stored_neighbours' already contains the edge information, so
     // this object can be parsed to extract edges.
     // for (let type of ['semantic']) {
-    // for (let type of ['citation', 'semantic']) {
-    for (let type of ['citation']) {
+    for (let type of ['citation', 'semantic']) {
+    // for (let type of ['citation']) {
       for (let node of Object.keys(top_results)) {
   
         // Get node edges.
@@ -431,13 +431,13 @@ class ExtractSubnetwork {
           for (let neighbour of node_neighbours) {
             if (top_results[neighbour]) {
               if (type === 'citation') {
-                this.hasCitationEdges[parseInt(node)] = true
+                this.hasCitationEdges[node] = true
                 this.hasCitationEdges[neighbour] = true
               } else {
-                this.hasSemanticEdges[parseInt(node)] = true
+                this.hasSemanticEdges[node] = true
                 this.hasSemanticEdges[neighbour] = true
               }
-              edge_arr.push({ source: parseInt(node), target: neighbour, type });
+              edge_arr.push({ source: node, target: neighbour, type });
             }
           }
         }
@@ -460,7 +460,7 @@ class ExtractSubnetwork {
         size: this.n_top + this.source_nodes.length,
         query: {
           ids: {
-            type: 'paper',
+            type: '_doc',
             values: Object.keys(top_results)
           }
         }
@@ -479,6 +479,7 @@ class ExtractSubnetwork {
       let Journal = source.Journal;
       let Authors = source.Authors;
       let Abstract = source.Abstract;
+      let isPreprint = source.is_preprint;
       let score = top_results[id];
       let hasCitationEdges = this.hasCitationEdges[id]
       let hasSemanticEdges = this.hasSemanticEdges[id]
@@ -491,6 +492,7 @@ class ExtractSubnetwork {
         Journal,
         Authors,
         Abstract,
+        isPreprint,
         score,
         hasCitationEdges,
         hasSemanticEdges,
@@ -531,18 +533,14 @@ class ExtractSubnetwork {
 }
 
 process.on('message', async function (message) {
-  // console.log('parent', message);
 
   let { seeds, indexName, saveState } = message
 
-  // seedrandom('', {state: saveState, global: true})
-
   // Create new 'ExtractSubnetwork' object.
   extSub = new ExtractSubnetwork(
-    seeds, 20000, 0.85, 30, es, indexName, saveState
+    seeds, 5000, 0.85, 30, es, indexName, saveState
   );
 
-  
   // Pass 'extSub' to function to await subgraph computation and send
   // extracted subgraph.
   await send_subgraph(extSub);
@@ -559,4 +557,6 @@ async function send_subgraph(extSub) {
 
   // Send subgraph back to parent process.
   process.send({ subgraph: subgraph })
+
+  process.exit()
 }

@@ -8,19 +8,46 @@ function query_es(query, index_name, es) {
   let fields = ['Title', 'Authors.ForeName', 'Authors.LastName', '_id', 'PubDate.Year', 'Journal.Title', 'Journal.ISO']
 
   // Query Elasticsearch.
+  // let queryRes = es.search({
+  //   index: index_name,
+  //   type: '_doc',
+  //   size: 10,
+  //   body: {
+  //     query: {
+  //       bool: {
+  //         must: {
+  //           multi_match: {
+  //             query: query,
+  //             fields: fields,
+  //             type: 'cross_fields'
+  //           }
+  //         },
+  //         filter: {
+  //           term: {
+  //             has_edges: true
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
+
   let queryRes = es.search({
+    // index: index_name,
     index: index_name,
-    type: 'paper',
-    size: 10,
+    type: '_doc',
+    size: 20,
     body: {
       query: {
         bool: {
           must: {
-            multi_match: {
-              query: query,
-              fields: fields,
-              type: 'cross_fields'
-            }
+            match: {
+              query_field: {
+                query: query,
+                fuzziness: 'AUTO',
+                lenient: true
+              }
+            },
           },
           filter: {
             term: {

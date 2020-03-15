@@ -20,7 +20,7 @@ const es = new elasticsearch.Client({
 });
 
 // Elasticsearch index.
-const indexName = 'papers'
+const indexName = 'papers_reindex'
 
 // Boilerplate
 app.use(express.static(path.join(__dirname, 'public')));
@@ -51,20 +51,20 @@ app.post('/submit_paper', wrapAsync(async (req, res) => {
   let seeds = req.body;
 
   // Create message to send to child process.
-  let child_message = {seeds, indexName, saveState};
+  let childMessage = {seeds, indexName, saveState};
 
   // Fork a child process.
-  const fork_randomwalk = fork('extract-subnetwork.js');
+  const forkRandomWalk = fork('extract-subnetwork.js');
 
   // Send 'message' to child process to run random walk and extract
   // the relevant subnetwork.
-  fork_randomwalk.send(child_message)
+  forkRandomWalk.send(childMessage)
 
   // Once the child process has extracted the subnetwork, send to
   // client.
-  fork_randomwalk.on('message', function(message) {
-    // get metadata from network
+  forkRandomWalk.on('message', function(message) {
 
+    // get metadata from network
     try {
       const data = processSubnetwork(message, seeds)
       res.status(200).json(data)
