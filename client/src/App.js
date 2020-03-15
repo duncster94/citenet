@@ -17,7 +17,7 @@ export default withRouter(function App(props) {
 
   // Props for view selector.
   const [selectedView, setSelectedView] = React.useState(0)
-  
+
   // Props for selected papers.
   const [selectedPapers, setSelectedPapers] = React.useState(null)
 
