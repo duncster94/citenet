@@ -43,6 +43,15 @@ export default function ViewDialog({ props }) {
     }
   }
 
+  let href
+  if (props.selectedPaper.id && props.selectedPaper.isPreprint) {
+    href = `https://doi.org/${props.selectedPaper.id}`
+  } else if (props.selectedPaper.id) {
+    href = `https://www.ncbi.nlm.nih.gov/pubmed/${props.selectedPaper.id}`
+  } else {
+    href = ''
+  }
+
   return (
     <React.Fragment>
       <DialogTitle className={classes.title}>
@@ -96,10 +105,7 @@ export default function ViewDialog({ props }) {
           leaveDelay={100}
         >
           <a
-            href={props.selectedPaper.id ?
-              "https://www.ncbi.nlm.nih.gov/pubmed/" +
-              props.selectedPaper.id.toString() :
-              ""}
+            href={href}
             target="_blank"
             rel='noopener noreferrer'
             style={{ textDecoration: "none" }}

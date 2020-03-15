@@ -20,7 +20,7 @@ const es = new elasticsearch.Client({
 });
 
 // Elasticsearch index.
-const indexName = 'papers'
+const indexName = 'papers_reindex'
 
 // Boilerplate
 app.use(express.static(path.join(__dirname, 'public')));
