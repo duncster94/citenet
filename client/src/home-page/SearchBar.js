@@ -40,7 +40,14 @@ export default withRouter(function SearchBar(props) {
     selectedPapers,
     setSelectedPapers,
     searchBarValue,
-    setSearchBarValue
+    setSearchBarValue,
+    inputValue,
+    setInputValue,
+    defaultOptions,
+    setDefaultOptions,
+    menuOpen,
+    setMenuOpen,
+    key
   } = props.props
 
   function formatOptionLabel(values) {
@@ -105,7 +112,6 @@ export default withRouter(function SearchBar(props) {
     )
   }
 
-
   function handleChange(event) {
     if (event) {
       // Extract unique identifiers from `event` array.
@@ -113,6 +119,7 @@ export default withRouter(function SearchBar(props) {
       setSearchBarValue(event.map(paper => paper))
     } else {
       setSelectedPapers(null)
+      setSearchBarValue(null)
     }
   }
 
@@ -131,17 +138,44 @@ export default withRouter(function SearchBar(props) {
     return <MenuSearchButtons props={props}/>
   }
 
+  function handleInputChange(value, action) {
+    if (action.action !== 'input-blur' && action.action !== 'menu-close') {
+      setInputValue(value)
+    }
+    setDefaultOptions(false)
+  }
+
+  function handleFocus() {
+    setMenuOpen(true)
+    // setDefaultOptions(false)
+  }
+
+  function handleBlur(event) {
+    event.preventDefault()
+    setMenuOpen(false)
+    // setDefaultOptions(false)
+  }
+
   return (
-    <>
     <AsyncSelect
       isMulti
       value={searchBarValue}
       loadOptions={debounce(loadOptions, 250)}
+
+      defaultOptions={defaultOptions}
+      menuIsOpen={menuOpen}
+      key={JSON.stringify(key)}
+
       onChange={handleChange}
-      onBlur={event => event.preventDefault()}
+      onBlur={handleBlur}
+      onFocus={handleFocus}
       formatOptionLabel={formatOptionLabel}
       components={{IndicatorsContainer}}
       placeholder="Search for papers"
+      
+      onInputChange={handleInputChange}
+      inputValue={inputValue}
+
       theme={(theme_) => ({
         ...theme_,
         colors: {
@@ -163,8 +197,6 @@ export default withRouter(function SearchBar(props) {
         })
       }}
     />
-    {/* <Link component="button" onClick={fetchExample} style={{marginLeft: "10px"}}>Show me an example</Link> */}
-    </>
   )
 })
 

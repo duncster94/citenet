@@ -3,11 +3,20 @@ import Link from '@material-ui/core/Link'
 
 const ExampleLink = ({ props }) => {
 
-  const { setSelectedPapers, setSearchBarValue } = props
+  const {
+    setSelectedPapers,
+    setSearchBarValue,
+    setInputValue,
+    setDefaultOptions,
+    setMenuOpen,
+    setKey
+  } = props
 
   async function fetchExample() {
 
-    const IDS = ["10.1101/2020.01.29.924100","10.1101/2020.03.07.981928"]
+    // const IDS = ["10.1101/2020.01.29.924100","10.1101/2020.03.07.981928"]
+    const INPUT_TEXT = "sars cov 2 protease"
+    const IDS = ["10.1101/2020.01.29.924100"]
 
     const res = await fetch("/fetch_example", {
       method: "POST",
@@ -17,15 +26,19 @@ const ExampleLink = ({ props }) => {
       })
     })
     const data = await res.json()
-    console.log(data)
     const formattedData = data.map(function(element) {
       return {
         value: element._id,
         labels: element._source
       }
     })
+
     setSelectedPapers(IDS)
     setSearchBarValue(formattedData)
+    setInputValue(INPUT_TEXT)
+    setDefaultOptions(true)
+    setMenuOpen(true)
+    setKey(+new Date())
   }
 
   return (

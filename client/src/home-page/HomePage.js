@@ -47,7 +47,26 @@ const useStyles = makeStyles(theme => ({
 export default function HomePage({ props }) {
 
   const classes = useStyles()
+
+  // search bar state
   const [searchBarValue, setSearchBarValue] = React.useState(null)
+  const [inputValue, setInputValue] = React.useState("")
+  const [defaultOptions, setDefaultOptions] = React.useState(false)
+  const [menuOpen, setMenuOpen] = React.useState(false)
+  const [key, setKey] = React.useState(+new Date())
+
+  const searchProps = {
+    searchBarValue,
+    setSearchBarValue,
+    inputValue,
+    setInputValue,
+    defaultOptions,
+    setDefaultOptions,
+    menuOpen,
+    setMenuOpen,
+    key,
+    setKey
+  }
   const { setSelectedPapers } = props
 
   return (
@@ -69,12 +88,12 @@ export default function HomePage({ props }) {
 
               <Grid item xs={8} style={{ marginTop: "20px" }}>
                 {/* Paper select bar */}
-                <SearchBar props={{...props, searchBarValue, setSearchBarValue}} />
+                <SearchBar props={{...props, ...searchProps}} />
               </Grid>
 
               <Grid item xs={8} style={{ marginTop: "20px" }}>
                 <Grid container justify="center">
-                  <ExampleLink props={{ setSelectedPapers, setSearchBarValue }} />
+                  <ExampleLink props={{ setSelectedPapers, ...searchProps }} />
                 </Grid>
               </Grid>
 
