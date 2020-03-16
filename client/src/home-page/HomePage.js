@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import SearchBar from "./SearchBar"
+import AlertBanner from "../generic-components/AlertBanner"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,6 +58,7 @@ export default function HomePage({ props }) {
           justify="center"
           alignItems="center"
         >
+          <AlertBanner />
 
           <Grid item xs>
             <Grid
@@ -65,6 +67,7 @@ export default function HomePage({ props }) {
               justify="center"
               alignItems="center"
             >
+
               <Grid item>
                 <Logo />
               </Grid>
@@ -73,6 +76,7 @@ export default function HomePage({ props }) {
                 {/* Paper select bar */}
                 <SearchBar props={props} />
               </Grid>
+
 
             </Grid>
           </Grid>
