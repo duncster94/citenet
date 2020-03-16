@@ -109,9 +109,9 @@ app.post('/payload', (req, res) => {
     console.log(event, branch)
     if (event === 'push' && branch === 'master' && process.env.NODE_ENV === 'production') {
       // deploy new build
+      shell.exec('./deploy-production.sh')
       res.status(200).send({ message: 'production build deploying' })
       console.log('post res')
-      shell.exec('./deploy-production.sh')
       return
     }
 
