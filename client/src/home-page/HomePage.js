@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import SearchBar from "./SearchBar"
+import ExampleLink from "./ExampleLink"
 import AlertBanner from "../generic-components/AlertBanner"
 
 const useStyles = makeStyles(theme => ({
@@ -47,17 +48,31 @@ export default function HomePage({ props }) {
 
   const classes = useStyles()
 
+  // search bar state
+  const [searchBarValue, setSearchBarValue] = React.useState(null)
+  const [inputValue, setInputValue] = React.useState("")
+  const [defaultOptions, setDefaultOptions] = React.useState(false)
+  const [menuOpen, setMenuOpen] = React.useState(false)
+  const [key, setKey] = React.useState(+new Date())
+
+  const searchProps = {
+    searchBarValue,
+    setSearchBarValue,
+    inputValue,
+    setInputValue,
+    defaultOptions,
+    setDefaultOptions,
+    menuOpen,
+    setMenuOpen,
+    key,
+    setKey
+  }
+  const { setSelectedPapers } = props
+
   return (
     <React.Fragment>
-      <div
-        className={classes.root}
-      >
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-        >
+      <div className={classes.root}>
+        <Grid container direction="column" justify="center" alignItems="center">
           <AlertBanner />
 
           <Grid item xs>
@@ -67,26 +82,29 @@ export default function HomePage({ props }) {
               justify="center"
               alignItems="center"
             >
-
               <Grid item>
                 <Logo />
               </Grid>
 
-              <Grid item xs={8} style={{marginTop: '20px'}}>
+              <Grid item xs={8} style={{ marginTop: "20px" }}>
                 {/* Paper select bar */}
-                <SearchBar props={props} />
+                <SearchBar props={{...props, ...searchProps}} />
               </Grid>
 
+              <Grid item xs={8} style={{ marginTop: "20px" }}>
+                <Grid container justify="center">
+                  <ExampleLink props={{ setSelectedPapers, ...searchProps }} />
+                </Grid>
+              </Grid>
 
             </Grid>
           </Grid>
-
         </Grid>
       </div>
       {/* <AboutLink /> */}
       <VersionText />
     </React.Fragment>
-  )
+  );
 }
 
 function Logo() {

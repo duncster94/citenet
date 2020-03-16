@@ -31,6 +31,16 @@ export default withRouter(function App(props) {
     setSelectedPapers
   }
 
+  // Resets `selectedPapers` so that they do not persist when navigating back
+  // to the home page
+  React.useEffect(() => {
+    props.history.listen(location => {
+      if (location.pathname === '/') {
+        setSelectedPapers(null)
+      }
+    })
+  }, [])
+
   return (
     <MuiThemeProvider theme={theme}>
       <Switch >
