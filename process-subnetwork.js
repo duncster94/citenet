@@ -29,7 +29,7 @@ function processSubnetwork(message, seeds) {
     if (seeds.includes(node.id)) {
       radius = 32.5
     }
-    return Math.max(5, radius)
+    return Math.max(15, radius)
   }
 
   function formatAuthors(authors) {
@@ -142,6 +142,42 @@ function processSubnetwork(message, seeds) {
           dateString += 'November '
           break
         case '12':
+          dateString += 'December '
+          break
+        case 1:
+          dateString += 'January '
+          break
+        case 2:
+          dateString += 'February '
+          break
+        case 3:
+          dateString += 'March '
+          break
+        case 4:
+          dateString += 'April '
+          break
+        case 5:
+          dateString += 'May'
+          break
+        case 6:
+          dateString += 'June '
+          break
+        case 7:
+          dateString += 'July '
+          break
+        case 8:
+          dateString += 'August '
+          break
+        case 9:
+          dateString += 'September '
+          break
+        case 10:
+          dateString += 'October '
+          break
+        case 11:
+          dateString += 'November '
+          break
+        case 12:
           dateString += 'December '
           break
         default:
