@@ -62,33 +62,4 @@ function query_es(query, index_name, es) {
   return queryRes
 }
 
-// function queryExists(seeds, index_name, es) {
-//   /* Determines if seeds in `seeds` are present in the database
-//   and contain edges.
-//   */
-
-//  let query = es.search({
-//   index: index_name,
-//   type: 'paper',
-//   size: seeds.length,
-//   body: {
-//     query: {
-//       bool: {
-//         must: {
-//           match: {
-//             query: seeds,
-//             fields: ['_id']
-//           }
-//         },
-//         filter: {
-//           term: {
-//             has_edges: true
-//           }
-//         }
-//       }
-//     }
-//   }
-// })
-// }
-
 module.exports.query_es = query_es
