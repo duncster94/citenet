@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto')
 const shell = require('shelljs')
 const elasticsearch = require('elasticsearch');
-const { query_es } = require('./query-es');
+const { query_es, query_exact } = require('./query-es');
 const { processSubnetwork } = require('./process-subnetwork')
 const seedrandom = require('seedrandom')
 const CONSTANTS = require('./constants')
@@ -37,6 +37,16 @@ app.post('/homepage_search_query', (req, res) => {
   // Get Elasticsearch query Promise and package response on Promise
   // resolution.
   query_es(req.body.value, indexName, es)
+    .then(function(es_response) {
+      res.send(es_response.hits.hits)
+    });
+});
+
+app.post('/fetch_example', (req, res) => {
+
+  // Get Elasticsearch query Promise and package response on Promise
+  // resolution.
+  query_exact(req.body.value, indexName, es)
     .then(function(es_response) {
       res.send(es_response.hits.hits)
     });

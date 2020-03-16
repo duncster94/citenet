@@ -5,8 +5,8 @@ import { withRouter } from "react-router-dom"
 import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
-import Divider from "@material-ui/core/Divider"
 import Grid from "@material-ui/core/Grid"
+import Link from "@material-ui/core/Link"
 import ListSubheader from "@material-ui/core/ListSubheader"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Menu from "@material-ui/core/Menu"
@@ -34,11 +34,13 @@ const viewOptions = [
 
 export default withRouter(function SearchBar(props) {
 
-  const { 
-    selectedView, 
-    setSelectedView, 
-    selectedPapers, 
-    setSelectedPapers
+  const {
+    selectedView,
+    setSelectedView,
+    selectedPapers,
+    setSelectedPapers,
+    searchBarValue,
+    setSearchBarValue
   } = props.props
 
   function formatOptionLabel(values) {
@@ -51,10 +53,9 @@ export default withRouter(function SearchBar(props) {
       return `${element.Initials} ${element.LastName}`
     }).join(", ")
     return (
-      // <div style={optionStyles.root}>
       <Grid container>
         <Grid item xs={values.labels.is_preprint ? 10 : 12}>
-          <Typography variant="body1" color="textPrimary">
+          <Typography variant="body1" color="textPrimary" style={{textOverflow: 'ellipsis'}}>
             {values.labels.Title}
           </Typography>
         </Grid>
@@ -79,8 +80,7 @@ export default withRouter(function SearchBar(props) {
           </Typography>
         </Grid>
       </Grid>
-      // </div>
-    );
+    )
   }
 
   function loadOptions(input) {
@@ -105,10 +105,12 @@ export default withRouter(function SearchBar(props) {
     )
   }
 
+
   function handleChange(event) {
     if (event) {
       // Extract unique identifiers from `event` array.
       setSelectedPapers(event.map(paper => paper.value))
+      setSearchBarValue(event.map(paper => paper))
     } else {
       setSelectedPapers(null)
     }
@@ -130,14 +132,16 @@ export default withRouter(function SearchBar(props) {
   }
 
   return (
+    <>
     <AsyncSelect
       isMulti
+      value={searchBarValue}
       loadOptions={debounce(loadOptions, 250)}
       onChange={handleChange}
       onBlur={event => event.preventDefault()}
       formatOptionLabel={formatOptionLabel}
       components={{IndicatorsContainer}}
-      placeholder="Search for papers."
+      placeholder="Search for papers"
       theme={(theme_) => ({
         ...theme_,
         colors: {
@@ -159,6 +163,8 @@ export default withRouter(function SearchBar(props) {
         })
       }}
     />
+    {/* <Link component="button" onClick={fetchExample} style={{marginLeft: "10px"}}>Show me an example</Link> */}
+    </>
   )
 })
 
@@ -230,7 +236,7 @@ function MenuSearchButtons({ props }) {
         <Button
           onClick={handleClick}
           // Check if `selectedPapers` is an array (default is null)
-          disabled={!Boolean(props.selectedPapers)}
+          disabled={!Boolean(props.selectedPapers) || props.selectedPapers.length === 0}
         >
           <Icon
             path={mdiMagnify}

@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import SearchBar from "./SearchBar"
+import ExampleLink from "./ExampleLink"
 import AlertBanner from "../generic-components/AlertBanner"
 
 const useStyles = makeStyles(theme => ({
@@ -46,18 +47,13 @@ const useStyles = makeStyles(theme => ({
 export default function HomePage({ props }) {
 
   const classes = useStyles()
+  const [searchBarValue, setSearchBarValue] = React.useState(null)
+  const { setSelectedPapers } = props
 
   return (
     <React.Fragment>
-      <div
-        className={classes.root}
-      >
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-        >
+      <div className={classes.root}>
+        <Grid container direction="column" justify="center" alignItems="center">
           <AlertBanner />
 
           <Grid item xs>
@@ -67,26 +63,29 @@ export default function HomePage({ props }) {
               justify="center"
               alignItems="center"
             >
-
               <Grid item>
                 <Logo />
               </Grid>
 
-              <Grid item xs={8} style={{marginTop: '20px'}}>
+              <Grid item xs={8} style={{ marginTop: "20px" }}>
                 {/* Paper select bar */}
-                <SearchBar props={props} />
+                <SearchBar props={{...props, searchBarValue, setSearchBarValue}} />
               </Grid>
 
+              <Grid item xs={8} style={{ marginTop: "20px" }}>
+                <Grid container justify="center">
+                  <ExampleLink props={{ setSelectedPapers, setSearchBarValue }} />
+                </Grid>
+              </Grid>
 
             </Grid>
           </Grid>
-
         </Grid>
       </div>
       {/* <AboutLink /> */}
       <VersionText />
     </React.Fragment>
-  )
+  );
 }
 
 function Logo() {

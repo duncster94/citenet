@@ -62,4 +62,21 @@ function query_es(query, index_name, es) {
   return queryRes
 }
 
+function query_exact(ids, index_name, es) {
+  let queryRes = es.search({
+    index: index_name,
+    type: '_doc',
+    body: {
+      query: {
+        terms: {
+          _id: ids
+        }
+      }
+    }
+  })
+
+  return queryRes
+}
+
 module.exports.query_es = query_es
+module.exports.query_exact = query_exact
