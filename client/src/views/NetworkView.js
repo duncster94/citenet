@@ -73,7 +73,7 @@ export default function NetworkView({ props }) {
 
     const simulation = d3.forceSimulation()
       .force("charge", d3.forceManyBody()
-        .strength(-600))
+        .strength(-900))
       .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
       .force("collide", d3.forceCollide()
         .radius(function(_, idx) {
