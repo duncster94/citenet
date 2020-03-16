@@ -8,4 +8,4 @@ cd client
 npm install
 npm run build
 cd ..
-NODE_ENV=production pm2 restart app --update-env
+NODE_ENV=production pm2 restart server --update-env
