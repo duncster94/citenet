@@ -8,6 +8,9 @@ const elasticsearch = require('elasticsearch');
 const { query_es, query_exact } = require('./query-es');
 const { processSubnetwork } = require('./process-subnetwork')
 const seedrandom = require('seedrandom')
+const nodemailer = require('nodemailer')
+const { body } = require('express-validator')
+const fetch = require('node-fetch')
 const CONSTANTS = require('./constants')
 require('dotenv').config()
 
@@ -18,6 +21,19 @@ const es = new elasticsearch.Client({
   host: CONSTANTS.DATABASE_IP,
   log: 'error'
 });
+const transporter = nodemailer.createTransport({
+  host: 'smtp.sendgrid.net',
+  secure: false,
+  port: 25,
+  auth: {
+    user: 'apikey',
+    pass: process.env.SENDGRID_SECRET
+  },
+  tls: {
+    // https://github.com/nodemailer/nodemailer/issues/406
+    rejectUnauthorized: false
+  }
+})
 
 // Elasticsearch index.
 const indexName = 'papers_reindex'
@@ -29,6 +45,48 @@ app.use(bodyParser.json());
 
 app.post('/ping', (req, res) => {
   res.json({ res: req.body })
+})
+
+// reCaptcha verification middleware
+const verifyReCaptcha = async (req, res, next) => {
+  const secret = process.env.RECAPTCHA_SECRET
+  const url = `https://www.google.com/recaptcha/api/siteverify?`
+    + `secret=${secret}&response=${req.body.token}`
+  const recapRes = await fetch(url, {
+    method: "POST"
+  })
+  const data = await recapRes.json()
+  req.body.score = data.score
+  next()
+}
+
+const contactUsMiddleware = [
+  verifyReCaptcha,
+  body('email')
+    .isEmail()
+    .normalizeEmail(),
+  body('text')
+    .not().isEmpty()
+    .trim()
+    .escape()
+]
+
+// Contact us route
+app.post('/contact_us', contactUsMiddleware, async (req, res) => {
+
+  if (req.body.score > 0.5) {
+    const info = await transporter.sendMail({
+      to: 'duncan.forster@mail.utoronto.ca',
+      // cc: 'johnmgiorgi@gmail.com',
+      from: '"CiteNet Contact" <contact@citenet.com>',
+      subject: `Contact from ${req.body.email}`,
+      text: req.body.text
+    })
+    res.status(200).send({info})
+  } else {
+    res.status(409).send({message: "reCaptcha failed"})
+  }
+
 })
 
 // Called on user selectize query.
