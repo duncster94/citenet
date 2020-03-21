@@ -4,7 +4,8 @@ import { BrowserRouter, Route } from "react-router-dom"
 import './index.css';
 import App from './App';
 import ReactGA from 'react-ga'
-import { createBrowserHistory } from 'history'
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
+
 import * as serviceWorker from './serviceWorker';
 
 ReactGA.initialize('UA-156373378-1', {
@@ -16,9 +17,13 @@ ReactGA.initialize('UA-156373378-1', {
 ReactGA.pageview(window.location.pathname + window.location.search)
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Route component={App} />
-  </BrowserRouter>,
+  <GoogleReCaptchaProvider
+    reCaptchaKey="6LeP_eIUAAAAAHUAkbzcgkcsKI-rFZ4I9k9ECKRf"
+  >
+    <BrowserRouter>
+      <Route component={App} />
+    </BrowserRouter>
+  </GoogleReCaptchaProvider>,
   document.getElementById('root')
 );
 
