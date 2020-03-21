@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 
 import SearchBar from "./SearchBar"
+import ContactForm, { ContactLink } from "../generic-components/ContactForm"
 import ExampleLink from "./ExampleLink"
 import AlertBanner from "../generic-components/AlertBanner"
 
@@ -25,8 +26,8 @@ const useStyles = makeStyles(theme => ({
   },
   versionText: {
     position: "absolute",
-    bottom: "15px",
-    right: "20px",
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
     fontSize: "10px",
     // [theme.breakpoints.down('xs')]: {
     //   display: "none"
@@ -41,6 +42,11 @@ const useStyles = makeStyles(theme => ({
   },
   search: {
     marginTop: '30vh',
+  },
+  contactLinkRoot: {
+    position: "absolute",
+    bottom: theme.spacing(2),
+    left: theme.spacing(2)
   }
 }))
 
@@ -53,6 +59,7 @@ export default function HomePage({ props }) {
   const [inputValue, setInputValue] = React.useState("")
   const [defaultOptions, setDefaultOptions] = React.useState(false)
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const [contactOpen, setContactOpen] = React.useState(false)
   const [key, setKey] = React.useState(+new Date())
 
   const searchProps = {
@@ -70,7 +77,7 @@ export default function HomePage({ props }) {
   const { setSelectedPapers } = props
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.root}>
         <Grid container direction="column" justify="center" alignItems="center">
           <AlertBanner />
@@ -102,8 +109,12 @@ export default function HomePage({ props }) {
         </Grid>
       </div>
       {/* <AboutLink /> */}
+      <ContactForm props={{contactOpen, setContactOpen}}/>
+      <div className={classes.contactLinkRoot}>
+        <ContactLink props={{setContactOpen}}/>
+      </div>
       <VersionText />
-    </React.Fragment>
+    </>
   );
 }
 
