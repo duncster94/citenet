@@ -74,7 +74,7 @@ const contactUsMiddleware = [
 // Contact us route
 app.post('/contact_us', contactUsMiddleware, async (req, res) => {
 
-  if (req.body.score > 0.5) {
+  if (req.body.score > 0.2) {
     const info = await transporter.sendMail({
       to: 'duncan.forster@mail.utoronto.ca',
       // cc: 'johnmgiorgi@gmail.com',
