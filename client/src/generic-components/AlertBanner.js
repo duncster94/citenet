@@ -14,7 +14,7 @@ a useful, up-to-date literature search tool for the scientific community.`
 
 const useStyles = makeStyles(theme => ({
   root: {
-    zIndex: -1
+    zIndex: 0
   },
   text: {
     color: '#fff',
