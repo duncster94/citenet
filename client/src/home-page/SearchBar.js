@@ -17,6 +17,7 @@ import { makeStyles } from "@material-ui/core/styles"
 
 
 import AsyncSelect from "react-select/async"
+import { components } from "react-select"
 import debounce from "debounce-promise"
 import Icon from "@mdi/react"
 import { 
@@ -35,14 +36,13 @@ const viewOptions = [
 
 const useStyles = makeStyles(theme => ({
   optionTitle: {
-    textOverflow: 'ellipsis',
     [theme.breakpoints.down('xs')]: {
-      fontSize: '1em'
+      fontSize: '0.8em'
     }
   },
   optionAuthors: {
     [theme.breakpoints.down('xs')]: {
-      fontSize: '0.9em'
+      fontSize: '0.7em'
     }
   },
 
@@ -70,12 +70,8 @@ export default withRouter(function SearchBar(props) {
   function formatOptionLabel(values) {
     // Custom option component
 
-    const authorString = values.labels.Authors.map(function (element) {
-      if (element.Initials === undefined) {
-        return element.LastName
-      }
-      return `${element.Initials} ${element.LastName}`
-    }).join(", ")
+    const authorString = formatAuthors(values.labels.Authors)
+
     return (
       <Grid container>
         <Grid item xs={values.labels.is_preprint ? 10 : 12}>
@@ -109,7 +105,7 @@ export default withRouter(function SearchBar(props) {
                 align="right"
                 variant="subtitle2"
                 style={{
-                  fontSize: '0.9em'
+                  fontSize: '0.7em'
                 }}
               >
                 P
@@ -179,6 +175,31 @@ export default withRouter(function SearchBar(props) {
     return <MenuSearchButtons props={props}/>
   }
 
+  const MultiValueLabel = props => {
+    const {Title, Authors, is_preprint} = props.data.labels
+    const classes = useStyles()
+    return (
+      // <components.MultiValueLabel {...props} />
+      // <Grid container style={{padding: '10px'}}>
+      //   <Grid item xs>
+          <Typography
+            variant="body1"
+            color="textPrimary"
+            className={classes.optionTitle}
+            noWrap
+            style={{
+              paddingLeft: "10px",
+              paddingTop: "10px",
+              paddingBottom: "10px",
+            }}
+          >
+            {Title}
+          </Typography>
+      //   </Grid>
+      // </Grid>
+    )
+  }
+
   function handleInputChange(value, action) {
     if (action.action !== 'input-blur' && action.action !== 'menu-close') {
       setInputValue(value)
@@ -211,7 +232,7 @@ export default withRouter(function SearchBar(props) {
       onBlur={handleBlur}
       onFocus={handleFocus}
       formatOptionLabel={formatOptionLabel}
-      components={{IndicatorsContainer}}
+      components={{IndicatorsContainer, MultiValueLabel}}
       placeholder="Search for papers"
       
       onInputChange={handleInputChange}
@@ -226,23 +247,30 @@ export default withRouter(function SearchBar(props) {
         }
       })}
       styles={{
+        input: base => ({
+          ...base,
+          [theme.breakpoints.down('xs')]: {
+            fontSize: '0.8em'
+          }
+        }),
         menuList: base => ({
           ...base,
           maxHeight: "40vh",
+        }),
+        multiValueLabel: base => ({
+          ...base,
+          textOverflow: 'ellipsis',
         }),
         option: base => ({
           ...base,
           borderBottom: `0.5px solid #eee`,
           paddingTop: '15px',
-          paddingBottom: '15px',
-          [theme.breakpoints.down('xs')]: {
-            fontSize: '0.7em'
-          }
+          paddingBottom: '15px'
         }),
         placeholder: base => ({
           ...base,
           [theme.breakpoints.down('xs')]: {
-            fontSize: '0.7em'
+            fontSize: '0.8em'
           }
         })
       }}
@@ -369,4 +397,14 @@ function MenuSearchButtons({ props }) {
       </Menu>
     </div>
   )
+}
+
+const formatAuthors = authors => {
+  const authorString = authors.map(function (element) {
+    if (element.Initials === undefined) {
+      return element.LastName
+    }
+    return `${element.Initials} ${element.LastName}`
+  }).join(", ")
+  return authorString
 }

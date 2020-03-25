@@ -40,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: "auto",
     marginRight: "auto",
     maxWidth: "50%",
+    [theme.breakpoints.down('xs')]: {
+      maxWidth: "95%"
+    },
     height: "auto",
   },
   search: {
