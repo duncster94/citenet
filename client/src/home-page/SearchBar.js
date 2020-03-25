@@ -13,6 +13,7 @@ import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
 import Tooltip from "@material-ui/core/Tooltip"
+import { makeStyles } from "@material-ui/core/styles"
 
 
 import AsyncSelect from "react-select/async"
@@ -32,6 +33,16 @@ const viewOptions = [
   "Network"
 ]
 
+console.log(theme)
+
+const useStyles = makeStyles(theme => ({
+  placeholder: {
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '0.7em'
+    }
+  }
+}))
+
 export default withRouter(function SearchBar(props) {
 
   const {
@@ -49,6 +60,7 @@ export default withRouter(function SearchBar(props) {
     setMenuOpen,
     key
   } = props.props
+  const classes = useStyles()
 
   function formatOptionLabel(values) {
     // Custom option component
@@ -194,6 +206,12 @@ export default withRouter(function SearchBar(props) {
           borderBottom: `0.5px solid #eee`,
           paddingTop: '15px',
           paddingBottom: '15px',
+        }),
+        placeholder: base => ({
+          ...base,
+          [theme.breakpoints.down('xs')]: {
+            fontSize: '0.7em'
+          }
         })
       }}
     />
