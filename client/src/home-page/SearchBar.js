@@ -6,7 +6,7 @@ import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 import Grid from "@material-ui/core/Grid"
-import Link from "@material-ui/core/Link"
+import Hidden from "@material-ui/core/Hidden"
 import ListSubheader from "@material-ui/core/ListSubheader"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Menu from "@material-ui/core/Menu"
@@ -33,14 +33,19 @@ const viewOptions = [
   "Network"
 ]
 
-console.log(theme)
-
 const useStyles = makeStyles(theme => ({
-  placeholder: {
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '0.7em'
+  optionTitle: {
+    textOverflow: 'ellipsis',
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '1em'
     }
-  }
+  },
+  optionAuthors: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.9em'
+    }
+  },
+
 }))
 
 export default withRouter(function SearchBar(props) {
@@ -74,7 +79,11 @@ export default withRouter(function SearchBar(props) {
     return (
       <Grid container>
         <Grid item xs={values.labels.is_preprint ? 10 : 12}>
-          <Typography variant="body1" color="textPrimary" style={{textOverflow: 'ellipsis'}}>
+          <Typography
+            variant="body1"
+            color="textPrimary"
+            className={classes.optionTitle}
+          >
             {values.labels.Title}
           </Typography>
         </Grid>
@@ -87,14 +96,34 @@ export default withRouter(function SearchBar(props) {
           }}
         >
           <Box fontStyle="italic" color={theme.palette.secondary.main}>
-            <Typography align="right" variant="subtitle2">
-              Preprint
-            </Typography>
+            <Hidden xsDown>
+              <Typography
+                align="right"
+                variant="subtitle2"
+              >
+                Preprint
+              </Typography>
+            </Hidden>
+            <Hidden smUp>
+              <Typography
+                align="right"
+                variant="subtitle2"
+                style={{
+                  fontSize: '0.9em'
+                }}
+              >
+                P
+              </Typography>
+            </Hidden>
           </Box>
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            className={classes.optionAuthors}
+          >
             {authorString}
           </Typography>
         </Grid>
@@ -206,6 +235,9 @@ export default withRouter(function SearchBar(props) {
           borderBottom: `0.5px solid #eee`,
           paddingTop: '15px',
           paddingBottom: '15px',
+          [theme.breakpoints.down('xs')]: {
+            fontSize: '0.7em'
+          }
         }),
         placeholder: base => ({
           ...base,
