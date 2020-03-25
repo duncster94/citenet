@@ -14,20 +14,20 @@ a useful, up-to-date literature search tool for the scientific community.`
 
 const useStyles = makeStyles(theme => ({
   root: {
-    position: 'absolute',
-    top: theme.spacing(2)
+    zIndex: -1
   },
-  card: {
-    backgroundColor: 'red',
-    color: 'white'
-  },
-  link: {
-    color: 'white'
+  text: {
+    color: '#fff',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '0.7em'
+    }
   }
 
 }))
 
 const AlertBanner = () => {
+
+  const classes = useStyles()
   const [open, setOpen] = React.useState(true);
 
   const handleClose = (event, reason) => {
@@ -38,7 +38,7 @@ const AlertBanner = () => {
   }
 
   return (
-    <div>
+    <div className={classes.root}>
       <Snackbar
         anchorOrigin={{
           vertical: "top",
@@ -49,7 +49,7 @@ const AlertBanner = () => {
       >
         <Paper style={{ backgroundColor: theme.palette.secondary.main, padding: "10px" }}>
           <div style={{display: 'flex'}}>
-          <Typography style={{color: '#fff'}}>
+          <Typography className={classes.text}>
             {MESSAGE}
           </Typography>
           <IconButton
