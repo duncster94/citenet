@@ -1,5 +1,6 @@
 import React from "react"
 import Grid from "@material-ui/core/Grid"
+import Hidden from "@material-ui/core/Hidden"
 import Link from "@material-ui/core/Link"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
@@ -7,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import SearchBar from "./SearchBar"
 import ContactForm, { ContactLink } from "../generic-components/ContactForm"
 import ExampleLink from "./ExampleLink"
+import MobileWarning from "../generic-components/MobileWarning"
 import AlertBanner from "../generic-components/AlertBanner"
 
 const useStyles = makeStyles(theme => ({
@@ -79,6 +81,11 @@ export default function HomePage({ props }) {
   return (
     <>
       <div className={classes.root}>
+
+        <Hidden smUp>
+          <MobileWarning />
+        </Hidden>
+
         <Grid container direction="column" justify="center" alignItems="center">
           <AlertBanner />
 
