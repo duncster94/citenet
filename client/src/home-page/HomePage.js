@@ -49,11 +49,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: '30vh',
   },
   searchBarRoot: {
-    marginTop: theme.spacing(2),
-    [theme.breakpoints.down('xs')]: {
-      paddingLeft: "5px",
-      paddingRight: "5px"
-    }
+    marginTop: theme.spacing(2)
   },
   contactLinkRoot: {
     position: "absolute",
@@ -110,7 +106,7 @@ export default function HomePage({ props }) {
                 <Logo />
               </Grid>
 
-              <Grid item xs={12} sm={8} className={classes.searchBarRoot}>
+              <Grid item xs={11} sm={8} className={classes.searchBarRoot}>
                 {/* Paper select bar */}
                 <SearchBar props={{...props, ...searchProps}} />
               </Grid>

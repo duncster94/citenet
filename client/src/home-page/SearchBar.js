@@ -179,24 +179,14 @@ export default withRouter(function SearchBar(props) {
     const {Title, Authors, is_preprint} = props.data.labels
     const classes = useStyles()
     return (
-      // <components.MultiValueLabel {...props} />
-      // <Grid container style={{padding: '10px'}}>
-      //   <Grid item xs>
-          <Typography
-            variant="body1"
-            color="textPrimary"
-            className={classes.optionTitle}
-            noWrap
-            style={{
-              paddingLeft: "10px",
-              paddingTop: "10px",
-              paddingBottom: "10px",
-            }}
-          >
-            {Title}
-          </Typography>
-      //   </Grid>
-      // </Grid>
+      <Typography
+        variant="body1"
+        color="textPrimary"
+        className={classes.optionTitle}
+        noWrap
+      >
+        {Title}
+      </Typography>
     )
   }
 
@@ -257,9 +247,9 @@ export default withRouter(function SearchBar(props) {
           ...base,
           maxHeight: "40vh",
         }),
-        multiValueLabel: base => ({
+        multiValue: base => ({
           ...base,
-          textOverflow: 'ellipsis',
+          padding: "5px",
         }),
         option: base => ({
           ...base,
