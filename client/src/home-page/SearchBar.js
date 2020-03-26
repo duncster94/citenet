@@ -6,16 +6,18 @@ import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import ButtonGroup from "@material-ui/core/ButtonGroup"
 import Grid from "@material-ui/core/Grid"
-import Link from "@material-ui/core/Link"
+import Hidden from "@material-ui/core/Hidden"
 import ListSubheader from "@material-ui/core/ListSubheader"
 import ListItemIcon from "@material-ui/core/ListItemIcon"
 import Menu from "@material-ui/core/Menu"
 import MenuItem from "@material-ui/core/MenuItem"
 import Typography from "@material-ui/core/Typography"
 import Tooltip from "@material-ui/core/Tooltip"
+import { makeStyles } from "@material-ui/core/styles"
 
 
 import AsyncSelect from "react-select/async"
+import { components } from "react-select"
 import debounce from "debounce-promise"
 import Icon from "@mdi/react"
 import { 
@@ -31,6 +33,20 @@ const viewOptions = [
   "Ranked List",
   "Network"
 ]
+
+const useStyles = makeStyles(theme => ({
+  optionTitle: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.8em'
+    }
+  },
+  optionAuthors: {
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '0.7em'
+    }
+  },
+
+}))
 
 export default withRouter(function SearchBar(props) {
 
@@ -49,20 +65,21 @@ export default withRouter(function SearchBar(props) {
     setMenuOpen,
     key
   } = props.props
+  const classes = useStyles()
 
   function formatOptionLabel(values) {
     // Custom option component
 
-    const authorString = values.labels.Authors.map(function (element) {
-      if (element.Initials === undefined) {
-        return element.LastName
-      }
-      return `${element.Initials} ${element.LastName}`
-    }).join(", ")
+    const authorString = formatAuthors(values.labels.Authors)
+
     return (
       <Grid container>
         <Grid item xs={values.labels.is_preprint ? 10 : 12}>
-          <Typography variant="body1" color="textPrimary" style={{textOverflow: 'ellipsis'}}>
+          <Typography
+            variant="body1"
+            color="textPrimary"
+            className={classes.optionTitle}
+          >
             {values.labels.Title}
           </Typography>
         </Grid>
@@ -75,14 +92,34 @@ export default withRouter(function SearchBar(props) {
           }}
         >
           <Box fontStyle="italic" color={theme.palette.secondary.main}>
-            <Typography align="right" variant="subtitle2">
-              Preprint
-            </Typography>
+            <Hidden xsDown>
+              <Typography
+                align="right"
+                variant="subtitle2"
+              >
+                Preprint
+              </Typography>
+            </Hidden>
+            <Hidden smUp>
+              <Typography
+                align="right"
+                variant="subtitle2"
+                style={{
+                  fontSize: '0.7em'
+                }}
+              >
+                P
+              </Typography>
+            </Hidden>
           </Box>
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            className={classes.optionAuthors}
+          >
             {authorString}
           </Typography>
         </Grid>
@@ -138,6 +175,21 @@ export default withRouter(function SearchBar(props) {
     return <MenuSearchButtons props={props}/>
   }
 
+  const MultiValueLabel = props => {
+    const {Title, Authors, is_preprint} = props.data.labels
+    const classes = useStyles()
+    return (
+      <Typography
+        variant="body1"
+        color="textPrimary"
+        className={classes.optionTitle}
+        noWrap
+      >
+        {Title}
+      </Typography>
+    )
+  }
+
   function handleInputChange(value, action) {
     if (action.action !== 'input-blur' && action.action !== 'menu-close') {
       setInputValue(value)
@@ -170,7 +222,7 @@ export default withRouter(function SearchBar(props) {
       onBlur={handleBlur}
       onFocus={handleFocus}
       formatOptionLabel={formatOptionLabel}
-      components={{IndicatorsContainer}}
+      components={{IndicatorsContainer, MultiValueLabel}}
       placeholder="Search for papers"
       
       onInputChange={handleInputChange}
@@ -185,15 +237,31 @@ export default withRouter(function SearchBar(props) {
         }
       })}
       styles={{
+        input: base => ({
+          ...base,
+          [theme.breakpoints.down('xs')]: {
+            fontSize: '0.8em'
+          }
+        }),
         menuList: base => ({
           ...base,
           maxHeight: "40vh",
+        }),
+        multiValue: base => ({
+          ...base,
+          padding: "5px",
         }),
         option: base => ({
           ...base,
           borderBottom: `0.5px solid #eee`,
           paddingTop: '15px',
-          paddingBottom: '15px',
+          paddingBottom: '15px'
+        }),
+        placeholder: base => ({
+          ...base,
+          [theme.breakpoints.down('xs')]: {
+            fontSize: '0.8em'
+          }
         })
       }}
     />
@@ -319,4 +387,14 @@ function MenuSearchButtons({ props }) {
       </Menu>
     </div>
   )
+}
+
+const formatAuthors = authors => {
+  const authorString = authors.map(function (element) {
+    if (element.Initials === undefined) {
+      return element.LastName
+    }
+    return `${element.Initials} ${element.LastName}`
+  }).join(", ")
+  return authorString
 }

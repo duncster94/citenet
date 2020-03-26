@@ -2,6 +2,7 @@ import React from "react"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 import Grid from "@material-ui/core/Grid"
+import Hidden from "@material-ui/core/Hidden"
 import Typography from "@material-ui/core/Typography"
 import useMediaQuery from "@material-ui/core/useMediaQuery"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
@@ -47,7 +48,8 @@ const useStyles = makeStyles(theme => ({
   selectedPaperArrow: {
     position: "absolute",
     top: "calc(50vh - 10px)",
-    left: "10px"
+    left: "10px",
+    zIndex: 1
   }
 }))
 
@@ -134,12 +136,14 @@ export default function RankView({ props }) {
         container
       >
         <Grid item xs>
-          <Icon
-            path={mdiChevronRight}
-            size={1}
-            color="black"
-            className={classes.selectedPaperArrow}
-          />
+          <Hidden xsDown>
+            <Icon
+              path={mdiChevronRight}
+              size={1}
+              color="black"
+              className={classes.selectedPaperArrow}
+            />
+          </Hidden>
           <div
             style={{
               overflowY: "scroll",
