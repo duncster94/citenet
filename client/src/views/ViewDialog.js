@@ -3,11 +3,14 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogTitle from "@material-ui/core/DialogTitle"
+import Hidden from "@material-ui/core/Hidden"
 import IconButton from "@material-ui/core/IconButton"
 import Tooltip from "@material-ui/core/Tooltip"
+import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
 import Icon from "@mdi/react"
-import { 
+import {
+  mdiClose,
   mdiPlusBox,
   mdiMinusBox,
   mdiOpenInNew
@@ -17,16 +20,30 @@ import theme from '../Theme'
 import Chips from '../generic-components/Chips'
 import './NetworkView.css'
 
-const useStyles = makeStyles({
+console.log(theme)
+
+const useStyles = makeStyles(theme => ({
   title: {
     backgroundColor: theme.palette.primary.black,
     color: "#fff"
+  },
+  titleText: {
+    fontSize: '1.5rem',
+    lineHeight: '1.5rem',
+    fontWeight: theme.typography.fontWeightRegular,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '1.3rem'
+    },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '1.1rem'
+    }
   }
-})
+}))
 
 export default function ViewDialog({ props }) {
 
   const classes = useStyles()
+  const { handleClose } = props
 
   function handleAddToSearchClick() {
 
@@ -53,9 +70,30 @@ export default function ViewDialog({ props }) {
   }
 
   return (
-    <React.Fragment>
-      <DialogTitle className={classes.title}>
-        {props.selectedPaper.Title}
+    <>
+      <DialogTitle className={classes.title} disableTypography>
+        <Typography className={classes.titleText} variant='h2'>
+          {props.selectedPaper.Title}
+        </Typography>
+
+        {/* close button for fullscreen modal */}
+        <Hidden smUp>
+          <IconButton
+            size="small"
+            aria-label="close"
+            onClick={handleClose}
+            style={{
+              position: 'absolute',
+              top: '5px',
+              right: '5px',
+              height: '30px',
+              width: '30px'
+            }}
+          >
+            <Icon path={mdiClose} size={1} color="#fff"/>
+          </IconButton>
+        </Hidden>
+
       </DialogTitle>
       <DialogContent dividers={true}>
         <Chips props={{
@@ -124,6 +162,6 @@ export default function ViewDialog({ props }) {
         </Tooltip>
         <div style={{flex: "1 0 0"}} /> {/* added so buttons float left */}
       </DialogActions>
-    </React.Fragment>
+    </>
   )
 }

@@ -40,10 +40,16 @@ const useStyles = makeStyles(theme => ({
     marginLeft: "auto",
     marginRight: "auto",
     maxWidth: "50%",
+    [theme.breakpoints.down('xs')]: {
+      maxWidth: "95%"
+    },
     height: "auto",
   },
   search: {
     marginTop: '30vh',
+  },
+  searchBarRoot: {
+    marginTop: theme.spacing(2)
   },
   contactLinkRoot: {
     position: "absolute",
@@ -100,7 +106,7 @@ export default function HomePage({ props }) {
                 <Logo />
               </Grid>
 
-              <Grid item xs={8} style={{ marginTop: "20px" }}>
+              <Grid item xs={11} sm={8} className={classes.searchBarRoot}>
                 {/* Paper select bar */}
                 <SearchBar props={{...props, ...searchProps}} />
               </Grid>
