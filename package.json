@@ -14,7 +14,7 @@
     "nodemailer": "^6.4.6",
     "nodemon": "^1.19.1",
     "seedrandom": "^3.0.5",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {},
   "scripts": {
